@@ -253,6 +253,66 @@
   .no-fert-pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}.no-fert-pill{font-size:13px;background:var(--color-background-secondary);padding:4px 12px;border-radius:100px;color:var(--color-text-secondary)}
   .inv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-top:12px}.inv-item{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 12px}.inv-name{font-size:13px;font-weight:500}.inv-npk{font-size:11px;color:var(--color-text-tertiary);margin-top:2px}.inv-have{font-size:10px;color:var(--color-text-success);margin-top:2px}
 
+  /* FIELD LOG */
+  .fl-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 10px; }
+  .fl-add-btn { background: #2d6a2d; color: #fff; border: none; border-radius: var(--border-radius-md); padding: 9px 18px; font-size: 14px; font-weight: 500; }
+  .fl-add-btn:hover { opacity: 0.88; }
+  .fl-sub-nav { display: flex; gap: 6px; margin-bottom: 1.25rem; flex-wrap: wrap; }
+  .fl-sub-btn { padding: 5px 14px; font-size: 12px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); background: transparent; color: var(--color-text-secondary); }
+  .fl-sub-btn.active { background: var(--color-background-success); color: var(--color-text-success); border-color: var(--color-border-success); font-weight: 500; }
+  .fl-filters { display: flex; gap: 8px; margin-bottom: 1.25rem; flex-wrap: wrap; align-items: center; }
+  .fl-filter-label { font-size: 12px; color: var(--color-text-tertiary); }
+  .fl-filter-select { font-size: 12px; padding: 5px 10px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); }
+  .fl-list { display: flex; flex-direction: column; gap: 8px; }
+  .fl-entry { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 12px 14px; }
+  .fl-entry:hover { border-color: var(--color-border-secondary); }
+  .fl-entry-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+  .fl-type-badge { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 100px; }
+  .fl-type-note { background: #E6F1FB; color: #185FA5; }
+  .fl-type-harvest { background: #EAF3DE; color: #2d6a2d; }
+  .fl-type-reminder { background: #FAEEDA; color: #854F0B; }
+  .fl-entry-plant { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+  .fl-entry-date { font-size: 11px; color: var(--color-text-tertiary); margin-left: auto; }
+  .fl-entry-body { font-size: 13px; color: var(--color-text-secondary); line-height: 1.5; }
+  .fl-entry-harvest { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 4px; }
+  .fl-harvest-qty { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
+  .fl-quality { display: flex; gap: 2px; }
+  .fl-star { font-size: 13px; }
+  .fl-entry-actions { display: flex; gap: 8px; margin-top: 8px; padding-top: 8px; border-top: 0.5px solid var(--color-border-tertiary); }
+  .fl-entry-btn { font-size: 11px; padding: 3px 10px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); background: transparent; color: var(--color-text-secondary); }
+  .fl-entry-btn:hover { background: var(--color-background-secondary); }
+  .fl-entry-btn.danger { color: var(--color-text-danger); border-color: var(--color-border-danger); }
+  .fl-entry-btn.danger:hover { background: var(--color-background-danger); }
+  .fl-reminder-due { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 100px; }
+  .fl-reminder-overdue { background: var(--color-background-danger); color: var(--color-text-danger); }
+  .fl-reminder-today { background: var(--color-background-warning); color: var(--color-text-warning); }
+  .fl-reminder-upcoming { background: var(--color-background-secondary); color: var(--color-text-secondary); }
+  .fl-reminder-done { background: var(--color-background-success); color: var(--color-text-success); text-decoration: line-through; opacity: 0.6; }
+  .fl-empty { text-align: center; padding: 3rem; color: var(--color-text-tertiary); font-size: 14px; }
+  .fl-reminder-banner { background: var(--color-background-warning); border: 0.5px solid #e8c870; border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 1.25rem; }
+  .fl-reminder-banner-title { font-size: 14px; font-weight: 500; color: var(--color-text-warning); margin-bottom: 8px; }
+  .fl-reminder-item { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-top: 0.5px solid #e8c870; gap: 10px; flex-wrap: wrap; }
+  .fl-reminder-item-text { font-size: 13px; color: var(--color-text-primary); }
+  .fl-reminder-item-plant { font-size: 11px; color: var(--color-text-secondary); }
+  .fl-reminder-done-btn { font-size: 11px; padding: 3px 10px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-text-success); background: transparent; color: var(--color-text-success); }
+
+  /* HARVEST SUMMARY */
+  .hs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 10px; }
+  .hs-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 12px 14px; }
+  .hs-plant { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+  .hs-totals { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 4px; }
+  .hs-count { font-size: 11px; color: var(--color-text-tertiary); }
+  .hs-year-filter { display: flex; gap: 8px; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; }
+  .hs-year-btn { padding: 5px 14px; font-size: 12px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); background: transparent; color: var(--color-text-secondary); }
+  .hs-year-btn.active { background: var(--color-background-success); color: var(--color-text-success); border-color: var(--color-border-success); font-weight: 500; }
+
+  /* FIELD LOG IN DETAIL PANEL */
+  .fl-detail-entry { padding: 10px 12px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); margin-bottom: 6px; }
+  .fl-detail-entry-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; }
+  .fl-detail-season-total { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: var(--color-background-success); border-radius: var(--border-radius-md); margin-bottom: 10px; flex-wrap: wrap; gap: 6px; }
+  .fl-detail-season-total-label { font-size: 12px; color: var(--color-text-success); font-weight: 500; }
+  .fl-detail-season-total-val { font-size: 13px; color: var(--color-text-success); font-weight: 500; }
+
   /* SYNC INDICATOR */
   .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-text-success); display: inline-block; margin-right: 4px; }
   .sync-dot.saving { background: var(--color-text-warning); animation: pulse 1s ease-in-out infinite; }
@@ -311,6 +371,7 @@
   <div class="nav">
     <button class="nav-btn active" onclick="showSection('catalog')">Plant Catalog</button>
     <button class="nav-btn" onclick="showSection('bloom')">Bloom Tracker</button>
+    <button class="nav-btn" onclick="showSection('fieldlog')">Field Log</button>
     <button class="nav-btn" onclick="showSection('schedule')">Seed Schedule</button>
     <button class="nav-btn" onclick="showSection('fert')">Fertilizer Reference</button>
   </div>
@@ -342,8 +403,22 @@
     <div id="bv-history" style="display:none"></div>
   </div>
 
-  <!-- SCHEDULE -->
-  <div id="sec-schedule" style="display:none"><div id="schedContent"></div></div>
+  <!-- FIELD LOG -->
+  <div id="sec-fieldlog" style="display:none">
+    <div id="flReminderBanner"></div>
+    <div class="fl-header">
+      <div style="font-size:15px;font-weight:500;color:var(--color-text-primary);">Field Log</div>
+      <button class="fl-add-btn" onclick="openFLModal()">+ New Entry</button>
+    </div>
+    <div class="fl-sub-nav">
+      <button class="fl-sub-btn active" id="flsn-log" onclick="showFLView('log')">All Entries</button>
+      <button class="fl-sub-btn" id="flsn-reminders" onclick="showFLView('reminders')">Reminders</button>
+      <button class="fl-sub-btn" id="flsn-harvest" onclick="showFLView('harvest')">Harvest Summary</button>
+    </div>
+    <div id="flv-log"></div>
+    <div id="flv-reminders" style="display:none"></div>
+    <div id="flv-harvest" style="display:none"></div>
+  </div>
 
   <!-- FERT -->
   <div id="sec-fert" style="display:none"><div id="fertContent"></div></div>
@@ -387,7 +462,6 @@
       <div class="form-field"><label class="form-label">Winter Storage Method</label><input type="text" id="f-storage"></div>
       <div class="form-field"><label class="form-label">Storage Location</label><input type="text" id="f-storageloc"></div>
       <div class="form-section">History &amp; Notes</div>
-      <div class="form-field full"><label class="form-label">Season Notes</label><textarea id="f-season"></textarea></div>
       <div class="form-field full"><label class="form-label">Wishlist / To-Do</label><textarea id="f-wishlist"></textarea></div>
       <div class="form-field full"><label class="form-label">General Notes</label><textarea id="f-notes"></textarea></div>
     </div>
@@ -402,6 +476,43 @@
     <div class="ci-sub" id="ciSub"></div>
     <div id="ciBody"></div>
     <div class="ci-actions"><button class="btn-cancel" onclick="closeCI()">Cancel</button><button class="btn-bloom-save" onclick="saveCheckin()">Save This Week's Blooms</button></div>
+  </div>
+</div>
+
+<!-- FIELD LOG MODAL -->
+<div class="modal-overlay" id="flModalBg">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
+      <h2 id="flModalTitle" style="margin:0">New Field Log Entry</h2>
+      <button class="close-btn" onclick="closeFLModal()">✕</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-field full">
+        <label class="form-label">Entry Type *</label>
+        <select id="fl-type" onchange="renderFLTypeFields()">
+          <option value="note">Note</option>
+          <option value="harvest">Harvest</option>
+          <option value="reminder">Reminder</option>
+        </select>
+      </div>
+      <div class="form-field full">
+        <label class="form-label">Plant *</label>
+        <select id="fl-plant"></select>
+      </div>
+      <div class="form-field" id="fl-date-wrap">
+        <label class="form-label" id="fl-date-label">Date</label>
+        <input type="date" id="fl-date">
+      </div>
+      <div id="fl-type-fields" style="grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:12px;"></div>
+      <div class="form-field full">
+        <label class="form-label" id="fl-note-label">Note</label>
+        <textarea id="fl-note" style="height:80px;" placeholder="What happened, what you noticed, what to remember…"></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeFLModal()">Cancel</button>
+      <button class="btn-save" onclick="saveFLEntry()">Save Entry</button>
+    </div>
   </div>
 </div>
 
@@ -445,10 +556,11 @@ const fbApp = initializeApp(firebaseConfig);
 const db = getFirestore(fbApp);
 
 // ─── STATE ──────────────────────────────────────────────────────
-let plants = [], bloomData = {}, freqGroups = [];
+let plants = [], bloomData = {}, freqGroups = [], fieldLog = [];
 let editId = null, detailId = null, expandedVars = {};
 let activeFilter = 'All', currentSection = 'catalog';
 let bloomView = 'timeline', weeklyKey = '', historyPlant = '';
+let flView = 'log', flFilterType = 'all', flFilterPlant = 'all', flEditId = null, hsYear = '';
 let pendingCI = {}, ciWeekKey = '';
 let comboTimer = null, saveTimer = null;
 
@@ -456,8 +568,8 @@ const CATS = ['All','Cut Flower','Perennial','Vegetable','Fruit','Herb'];
 const DEFAULT_FREQS = ['Once Per Season (Spring)','Once Per Planting','2–3 Times Per Season','Every 6–8 Weeks','Monthly','Every 2 Weeks','Weekly','No Fertilizer'];
 const BLOOM_OPT_IN = ['Calendula','Chocolate Cosmos','Cosmos','Coneflower','Coreopsis','Dahlia','Delphinium','Eucalyptus','Feverfew','Lisianthus','Marigold','Milkweed','Nasturtium','Pansy','Poppy','Ranunculus','Anemone','Rudbeckia','Scabiosa','Snapdragon','Stock','Sunflower','Sweet Pea','Zinnia','Daffodil','Tulip','Peony','Lavender','Rose','Helleborus','Lavender (Herb)'];
 
-const FIELDS = ['cat','type','sun','status','loc','seedStart','hardeningSched','transplantSched','directSow','harvest','lastHarvest','seedInstructions','germination','hardening','transplanting','fert','fertFreq','fertNotes','pruning','disease','storage','storageLoc','season','wishlist','notes'];
-const FIDS   = ['f-cat','f-type','f-sun','f-status','f-loc','f-seedstart','f-hardsched','f-transched','f-directsow','f-harvest','f-lastharvest','f-seedinstr','f-germination','f-hardening','f-transplanting','f-fert','f-fertfreq','f-fertnotes','f-pruning','f-disease','f-storage','f-storageloc','f-season','f-wishlist','f-notes'];
+const FIELDS = ['cat','type','sun','status','loc','seedStart','hardeningSched','transplantSched','directSow','harvest','lastHarvest','seedInstructions','germination','hardening','transplanting','fert','fertFreq','fertNotes','pruning','disease','storage','storageLoc','wishlist','notes'];
+const FIDS   = ['f-cat','f-type','f-sun','f-status','f-loc','f-seedstart','f-hardsched','f-transched','f-directsow','f-harvest','f-lastharvest','f-seedinstr','f-germination','f-hardening','f-transplanting','f-fert','f-fertfreq','f-fertnotes','f-pruning','f-disease','f-storage','f-storageloc','f-wishlist','f-notes'];
 
 // ─── SYNC INDICATOR ─────────────────────────────────────────────
 function setSyncState(state) {
@@ -473,6 +585,7 @@ async function loadFromFirebase() {
     const plantsDoc = await getDoc(doc(db, 'ggg', 'plants'));
     const bloomDoc  = await getDoc(doc(db, 'ggg', 'bloom'));
     const freqDoc   = await getDoc(doc(db, 'ggg', 'freq'));
+    const flDoc     = await getDoc(doc(db, 'ggg', 'fieldlog'));
 
     if (plantsDoc.exists() && plantsDoc.data().list) {
       plants = plantsDoc.data().list;
@@ -484,11 +597,11 @@ async function loadFromFirebase() {
 
     bloomData = bloomDoc.exists() ? (bloomDoc.data().data || {}) : {};
     freqGroups = freqDoc.exists() ? (freqDoc.data().list || [...DEFAULT_FREQS]) : [...DEFAULT_FREQS];
+    fieldLog = flDoc.exists() ? (flDoc.data().entries || []) : [];
 
   } catch(e) {
     console.error('Firebase load error:', e);
     setSyncState('error');
-    // Fall back to defaults so app is still usable
     if (!plants.length) plants = DEFAULT_PLANTS.map(p => ({...p, id: uid(), inBloom: BLOOM_OPT_IN.includes(p.name), varieties: (p.varieties||[]).map(v=>({...v}))}));
     if (!freqGroups.length) freqGroups = [...DEFAULT_FREQS];
   }
@@ -497,9 +610,10 @@ async function loadFromFirebase() {
 async function saveToFirebase(which) {
   setSyncState('saving');
   try {
-    if (!which || which === 'plants') await setDoc(doc(db, 'ggg', 'plants'), { list: plants });
-    if (!which || which === 'bloom')  await setDoc(doc(db, 'ggg', 'bloom'),  { data: bloomData });
-    if (!which || which === 'freq')   await setDoc(doc(db, 'ggg', 'freq'),   { list: freqGroups });
+    if (!which || which === 'plants')   await setDoc(doc(db, 'ggg', 'plants'),   { list: plants });
+    if (!which || which === 'bloom')    await setDoc(doc(db, 'ggg', 'bloom'),    { data: bloomData });
+    if (!which || which === 'freq')     await setDoc(doc(db, 'ggg', 'freq'),     { list: freqGroups });
+    if (!which || which === 'fieldlog') await setDoc(doc(db, 'ggg', 'fieldlog'), { entries: fieldLog });
     setSyncState('synced');
   } catch(e) {
     console.error('Firebase save error:', e);
@@ -537,6 +651,7 @@ async function init() {
   await loadFromFirebase();
   weeklyKey = curWK();
   historyPlant = bloomPs()[0]?.name || '';
+  hsYear = new Date().getFullYear().toString();
   document.getElementById('loadingScreen').style.display = 'none';
   document.getElementById('mainApp').style.display = '';
   renderGrid();
@@ -548,7 +663,7 @@ window.openBackup = () => document.getElementById('backupModal').classList.add('
 window.closeBackup = () => document.getElementById('backupModal').classList.remove('open');
 
 window.exportBackup = () => {
-  const data = { version: 1, exportedAt: new Date().toISOString(), plants, bloomData, freqGroups };
+  const data = { version: 1, exportedAt: new Date().toISOString(), plants, bloomData, freqGroups, fieldLog };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -568,6 +683,7 @@ window.importBackup = async (e) => {
     plants = data.plants;
     bloomData = data.bloomData || {};
     freqGroups = data.freqGroups || [...DEFAULT_FREQS];
+    fieldLog = data.fieldLog || [];
     await saveToFirebase();
     closeBackup();
     renderGrid();
@@ -581,10 +697,11 @@ window.importBackup = async (e) => {
 // ─── SECTION ROUTING ─────────────────────────────────────────────
 window.showSection = function(s) {
   currentSection = s;
-  ['catalog','bloom','schedule','fert'].forEach(x => { document.getElementById('sec-'+x).style.display = x===s?'':'none'; });
+  ['catalog','bloom','fieldlog','schedule','fert'].forEach(x => { document.getElementById('sec-'+x).style.display = x===s?'':'none'; });
   document.getElementById('addPlantBtn').style.display = s==='catalog'?'':'none';
-  document.querySelectorAll('.nav-btn').forEach((b,i) => b.classList.toggle('active', ['catalog','bloom','schedule','fert'][i]===s));
+  document.querySelectorAll('.nav-btn').forEach((b,i) => b.classList.toggle('active', ['catalog','bloom','fieldlog','schedule','fert'][i]===s));
   if(s==='bloom') renderBloom();
+  if(s==='fieldlog') renderFieldLog();
   if(s==='schedule') renderSchedule();
   if(s==='fert') renderFert();
 };
@@ -725,11 +842,11 @@ function renderDetail() {
       ${dF('Winter Storage Method', p.storage, true, true)}
       ${dF('Storage Location', p.storageLoc)}
     </div></div>
-    <div class="detail-section"><div class="detail-section-label">History &amp; Notes</div><div class="detail-grid">
-      ${dF('Season Notes', p.season, true, true)}
-      ${dF('Wishlist / To-Do', p.wishlist, true, true)}
-      ${dF('General Notes', p.notes, true, true)}
-    </div></div>
+    <div class="detail-section"><div class="detail-section-label">History &amp; Notes</div>
+      ${renderDetailFieldLog(p)}
+      <div style="margin-top:10px;">${dF('Wishlist / To-Do', p.wishlist, true, true)}</div>
+      <div style="margin-top:10px;">${dF('General Notes', p.notes, true, true)}</div>
+    </div>
     <div class="detail-actions">
       <button class="btn-del" onclick="delPlant('${p.id}')">Remove Plant</button>
       <button class="btn-edit" onclick="closeDetail();openModal('${p.id}')">Edit Plant</button>
@@ -1022,6 +1139,319 @@ window.renderFert = function() {
   if(allNF.length) h+=`<hr class="qr-divider"><div class="qr-section"><div class="qr-section-header"><div class="qr-section-title">No Fertilizer</div><span class="qr-freq-badge freq-none">None Needed</span></div><div class="no-fert-pills">${allNF.map(n=>`<span class="no-fert-pill">${n}</span>`).join('')}</div></div>`;
   document.getElementById('fertContent').innerHTML=h;
 };
+
+// ─── FIELD LOG ───────────────────────────────────────────────────
+const FL_UNITS = ['Stems','Bunches','Heads','Lbs','Oz','Bags','Quarts','Gallons','Each'];
+const FL_TYPE_LABEL = { note:'Note', harvest:'Harvest', reminder:'Reminder' };
+const FL_TYPE_CLASS = { note:'fl-type-note', harvest:'fl-type-harvest', reminder:'fl-type-reminder' };
+
+function flTypeBadge(type) { return `<span class="fl-type-badge ${FL_TYPE_CLASS[type]||''}">${FL_TYPE_LABEL[type]||type}</span>`; }
+function flStars(n) { return [1,2,3,4,5].map(i=>`<span class="fl-star">${i<=n?'★':'☆'}</span>`).join(''); }
+function flDateStr(iso) { if(!iso)return''; try{return new Date(iso+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}catch(e){return iso;} }
+function todayISO() { return new Date().toISOString().slice(0,10); }
+function flReminderStatus(entry) {
+  if(entry.done) return 'done';
+  const today = todayISO();
+  if(entry.dueDate < today) return 'overdue';
+  if(entry.dueDate === today) return 'today';
+  return 'upcoming';
+}
+
+// Render field log entries in detail panel
+function renderDetailFieldLog(p) {
+  const entries = fieldLog.filter(e => e.plantName === p.name).sort((a,b) => (b.date||b.dueDate||'').localeCompare(a.date||a.dueDate||''));
+  const year = new Date().getFullYear().toString();
+  const harvests = fieldLog.filter(e => e.type==='harvest' && e.plantName===p.name && (e.date||'').startsWith(year));
+
+  // Build season total
+  let seasonTotalHtml = '';
+  if (harvests.length > 0) {
+    const totals = {};
+    harvests.forEach(h => { const k=h.unit||''; totals[k]=(totals[k]||0)+(parseFloat(h.qty)||0); });
+    const totalStr = Object.entries(totals).map(([u,v])=>`${v} ${u}`).join(', ');
+    seasonTotalHtml = `<div class="fl-detail-season-total">
+      <span class="fl-detail-season-total-label">${year} Season Total</span>
+      <span class="fl-detail-season-total-val">${totalStr} · ${harvests.length} harvest${harvests.length!==1?'s':''}</span>
+    </div>`;
+  }
+
+  if (!entries.length && !seasonTotalHtml) {
+    return `${seasonTotalHtml}<div style="font-size:13px;color:var(--color-text-tertiary);font-style:italic;">No field log entries yet. <button onclick="openFLModalForPlant('${p.name.replace(/'/g,"\\'")}');closeDetail();" style="background:none;border:none;color:var(--color-text-info);cursor:pointer;font-size:13px;padding:0;">Add one from the Field Log tab.</button></div>`;
+  }
+
+  const entryHtml = entries.map(e => {
+    const dateStr = flDateStr(e.date || e.dueDate);
+    let bodyHtml = '';
+    if (e.type === 'harvest') {
+      bodyHtml = `<div class="fl-entry-harvest"><span class="fl-harvest-qty">${e.qty} ${e.unit}</span><div class="fl-quality">${flStars(e.quality||0)}</div></div>`;
+    } else if (e.type === 'reminder') {
+      const st = flReminderStatus(e);
+      const stClass = {overdue:'fl-reminder-overdue',today:'fl-reminder-today',upcoming:'fl-reminder-upcoming',done:'fl-reminder-done'}[st];
+      bodyHtml = `<span class="fl-reminder-due ${stClass}">${st==='done'?'Done':st==='overdue'?'Overdue':st==='today'?'Due Today':'Due '+flDateStr(e.dueDate)}</span> `;
+    }
+    if (e.note) bodyHtml += `<div class="fl-entry-body">${e.note}</div>`;
+    return `<div class="fl-detail-entry">
+      <div class="fl-detail-entry-header">${flTypeBadge(e.type)}<span style="font-size:11px;color:var(--color-text-tertiary);">${dateStr}</span></div>
+      ${bodyHtml}
+    </div>`;
+  }).join('');
+
+  return `${seasonTotalHtml}${entryHtml}`;
+}
+
+function renderFieldLog() {
+  renderFLReminderBanner();
+  if(flView==='log') renderFLLog();
+  else if(flView==='reminders') renderFLReminders();
+  else renderFLHarvest();
+}
+
+window.showFLView = v => {
+  flView=v;
+  ['log','reminders','harvest'].forEach(x=>{ document.getElementById('flv-'+x).style.display=x===v?'':'none'; document.getElementById('flsn-'+x).classList.toggle('active',x===v); });
+  renderFieldLog();
+};
+
+function renderFLReminderBanner() {
+  const today = todayISO();
+  const due = fieldLog.filter(e => e.type==='reminder' && !e.done && e.dueDate <= today);
+  const el = document.getElementById('flReminderBanner');
+  if (!due.length) { el.innerHTML=''; return; }
+  const items = due.map(e => `<div class="fl-reminder-item">
+    <div><div class="fl-reminder-item-text">${e.task}</div><div class="fl-reminder-item-plant">${e.plantName}</div></div>
+    <button class="fl-reminder-done-btn" onclick="markReminderDone('${e.id}')">Mark Done</button>
+  </div>`).join('');
+  el.innerHTML = `<div class="fl-reminder-banner"><div class="fl-reminder-banner-title">📋 ${due.length} Reminder${due.length!==1?'s':''} Due</div>${items}</div>`;
+}
+
+function renderFLLog() {
+  const el = document.getElementById('flv-log');
+  let entries = [...fieldLog].sort((a,b)=>(b.date||b.dueDate||'').localeCompare(a.date||a.dueDate||''));
+  if (flFilterType !== 'all') entries = entries.filter(e=>e.type===flFilterType);
+  if (flFilterPlant !== 'all') entries = entries.filter(e=>e.plantName===flFilterPlant);
+
+  const plantNames = [...new Set(fieldLog.map(e=>e.plantName))].sort();
+  let h = `<div class="fl-filters">
+    <span class="fl-filter-label">Type:</span>
+    <select class="fl-filter-select" onchange="flFilterType=this.value;renderFLLog()">
+      <option value="all" ${flFilterType==='all'?'selected':''}>All Types</option>
+      <option value="note" ${flFilterType==='note'?'selected':''}>Notes</option>
+      <option value="harvest" ${flFilterType==='harvest'?'selected':''}>Harvests</option>
+      <option value="reminder" ${flFilterType==='reminder'?'selected':''}>Reminders</option>
+    </select>
+    <span class="fl-filter-label">Plant:</span>
+    <select class="fl-filter-select" onchange="flFilterPlant=this.value;renderFLLog()">
+      <option value="all" ${flFilterPlant==='all'?'selected':''}>All Plants</option>
+      ${plantNames.map(n=>`<option value="${n}" ${flFilterPlant===n?'selected':''}>${n}</option>`).join('')}
+    </select>
+  </div>`;
+
+  if (!entries.length) { h += `<div class="fl-empty">No entries yet. Tap + New Entry to start logging.</div>`; el.innerHTML=h; return; }
+
+  h += `<div class="fl-list">${entries.map(e => renderFLEntryCard(e)).join('')}</div>`;
+  el.innerHTML = h;
+}
+
+function renderFLReminders() {
+  const el = document.getElementById('flv-reminders');
+  const today = todayISO();
+  const active = fieldLog.filter(e=>e.type==='reminder'&&!e.done).sort((a,b)=>a.dueDate.localeCompare(b.dueDate));
+  const done = fieldLog.filter(e=>e.type==='reminder'&&e.done).sort((a,b)=>b.dueDate.localeCompare(a.dueDate));
+
+  let h = '';
+  if (!active.length && !done.length) { h=`<div class="fl-empty">No reminders yet. Add one with + New Entry.</div>`; el.innerHTML=h; return; }
+  if (active.length) h += `<div style="font-size:12px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px;">Active (${active.length})</div><div class="fl-list">${active.map(e=>renderFLEntryCard(e)).join('')}</div>`;
+  if (done.length) h += `<div style="font-size:12px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.04em;margin:16px 0 10px;">Completed (${done.length})</div><div class="fl-list">${done.map(e=>renderFLEntryCard(e)).join('')}</div>`;
+  el.innerHTML = h;
+}
+
+function renderFLHarvest() {
+  const el = document.getElementById('flv-harvest');
+  const years = [...new Set(fieldLog.filter(e=>e.type==='harvest'&&e.date).map(e=>e.date.slice(0,4)))].sort().reverse();
+  if (!years.length) { el.innerHTML=`<div class="fl-empty">No harvests logged yet.</div>`; return; }
+  if (!hsYear || !years.includes(hsYear)) hsYear = years[0];
+
+  const yearHarvests = fieldLog.filter(e=>e.type==='harvest'&&(e.date||'').startsWith(hsYear));
+  const byPlant = {};
+  yearHarvests.forEach(e=>{ if(!byPlant[e.plantName])byPlant[e.plantName]={entries:[],totals:{}}; byPlant[e.plantName].entries.push(e); const k=e.unit||''; byPlant[e.plantName].totals[k]=(byPlant[e.plantName].totals[k]||0)+(parseFloat(e.qty)||0); });
+
+  let h = `<div class="hs-year-filter">
+    ${years.map(y=>`<button class="hs-year-btn${hsYear===y?' active':''}" onclick="hsYear='${y}';renderFLHarvest()">${y}</button>`).join('')}
+    <span style="font-size:12px;color:var(--color-text-tertiary);margin-left:4px;">${yearHarvests.length} harvest${yearHarvests.length!==1?'s':''} logged</span>
+  </div>`;
+
+  if (!Object.keys(byPlant).length) { h+=`<div class="fl-empty">No harvests logged for ${hsYear}.</div>`; el.innerHTML=h; return; }
+
+  h += `<div class="hs-grid">${Object.entries(byPlant).sort((a,b)=>a[0].localeCompare(b[0])).map(([plant,data])=>{
+    const totalStr = Object.entries(data.totals).map(([u,v])=>`${v} ${u}`).join(', ');
+    return `<div class="hs-card">
+      <div class="hs-plant">${plant}</div>
+      <div class="hs-totals">${totalStr}</div>
+      <div class="hs-count">${data.entries.length} harvest${data.entries.length!==1?'s':''}</div>
+    </div>`;
+  }).join('')}</div>`;
+  el.innerHTML = h;
+}
+
+function renderFLEntryCard(e) {
+  const dateStr = flDateStr(e.date || e.dueDate);
+  let bodyHtml = '';
+  if (e.type === 'harvest') {
+    bodyHtml = `<div class="fl-entry-harvest"><span class="fl-harvest-qty">${e.qty} ${e.unit}</span><div class="fl-quality">${flStars(e.quality||0)}</div></div>`;
+  } else if (e.type === 'reminder') {
+    const st = flReminderStatus(e);
+    const stClass = {overdue:'fl-reminder-overdue',today:'fl-reminder-today',upcoming:'fl-reminder-upcoming',done:'fl-reminder-done'}[st];
+    bodyHtml = `<div style="margin-bottom:4px;"><span class="fl-reminder-due ${stClass}">${st==='done'?'Done':st==='overdue'?'Overdue':st==='today'?'Due Today':'Due '+flDateStr(e.dueDate)}</span></div>`;
+    if (e.task) bodyHtml += `<div class="fl-entry-body" style="font-weight:500;">${e.task}</div>`;
+  }
+  if (e.note) bodyHtml += `<div class="fl-entry-body">${e.note}</div>`;
+
+  let actionBtns = `<button class="fl-entry-btn" onclick="editFLEntry('${e.id}')">Edit</button>
+    <button class="fl-entry-btn danger" onclick="deleteFLEntry('${e.id}')">Delete</button>`;
+  if (e.type==='reminder' && !e.done) actionBtns += `<button class="fl-entry-btn" onclick="markReminderDone('${e.id}')" style="color:var(--color-text-success);border-color:var(--color-border-success);">Mark Done</button>`;
+
+  return `<div class="fl-entry">
+    <div class="fl-entry-header">${flTypeBadge(e.type)}<span class="fl-entry-plant">${e.plantName}</span><span class="fl-entry-date">${dateStr}</span></div>
+    ${bodyHtml}
+    <div class="fl-entry-actions">${actionBtns}</div>
+  </div>`;
+}
+
+// FL MODAL
+window.openFLModal = (editEntryId) => {
+  flEditId = editEntryId || null;
+  const entry = editEntryId ? fieldLog.find(e=>e.id===editEntryId) : null;
+  document.getElementById('flModalTitle').textContent = entry ? 'Edit Entry' : 'New Field Log Entry';
+
+  // Populate plant dropdown
+  const plantSel = document.getElementById('fl-plant');
+  plantSel.innerHTML = plants.map(p=>`<option value="${p.name}">${p.name}</option>`).join('');
+
+  // Set values
+  document.getElementById('fl-type').value = entry ? entry.type : 'note';
+  plantSel.value = entry ? entry.plantName : (plants[0]?.name||'');
+  document.getElementById('fl-date').value = entry ? (entry.date||entry.dueDate||todayISO()) : todayISO();
+  document.getElementById('fl-note').value = entry ? (entry.note||'') : '';
+
+  renderFLTypeFields(entry);
+  document.getElementById('flModalBg').classList.add('open');
+};
+
+window.openFLModalForPlant = (plantName) => {
+  openFLModal();
+  setTimeout(()=>{ document.getElementById('fl-plant').value = plantName; }, 50);
+};
+
+window.renderFLTypeFields = (entry) => {
+  const type = document.getElementById('fl-type').value;
+  const el = document.getElementById('fl-type-fields');
+  const dateLabel = document.getElementById('fl-date-label');
+  const noteLabel = document.getElementById('fl-note-label');
+  const dateWrap = document.getElementById('fl-date-wrap');
+
+  if (type === 'note') {
+    dateLabel.textContent = 'Date';
+    noteLabel.textContent = 'Note *';
+    dateWrap.style.display = '';
+    el.innerHTML = '';
+  } else if (type === 'harvest') {
+    dateLabel.textContent = 'Harvest Date';
+    noteLabel.textContent = 'Notes (optional)';
+    dateWrap.style.display = '';
+    el.innerHTML = `
+      <div class="form-field">
+        <label class="form-label">Quantity *</label>
+        <input type="number" id="fl-qty" min="0" step="0.1" placeholder="0" value="${entry?.qty||''}">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Units *</label>
+        <select id="fl-unit">${FL_UNITS.map(u=>`<option value="${u}" ${(entry?.unit||'Stems')===u?'selected':''}>${u}</option>`).join('')}</select>
+      </div>
+      <div class="form-field full">
+        <label class="form-label">Quality</label>
+        <div style="display:flex;gap:8px;align-items:center;padding:8px 0;">
+          ${[1,2,3,4,5].map(i=>`<label style="cursor:pointer;font-size:20px;"><input type="radio" name="fl-quality" value="${i}" ${(entry?.quality||0)===i?'checked':''} style="display:none;"><span id="flstar${i}">${i<=(entry?.quality||0)?'★':'☆'}</span></label>`).join('')}
+        </div>
+      </div>`;
+    // Star hover effect
+    setTimeout(()=>{
+      [1,2,3,4,5].forEach(i=>{
+        const el2 = document.querySelector(`input[name="fl-quality"][value="${i}"]`);
+        if(el2) el2.addEventListener('change',()=>{ [1,2,3,4,5].forEach(j=>{ const s=document.getElementById('flstar'+j); if(s)s.textContent=j<=i?'★':'☆'; }); });
+      });
+    },50);
+  } else if (type === 'reminder') {
+    dateLabel.textContent = 'Due Date';
+    noteLabel.textContent = 'Additional Notes (optional)';
+    dateWrap.style.display = '';
+    el.innerHTML = `<div class="form-field full"><label class="form-label">Task / What To Do *</label><input type="text" id="fl-task" placeholder="e.g. Pinch dahlias, Apply fertilizer, Check for pests…" value="${entry?.task||''}"></div>`;
+  }
+};
+
+window.closeFLModal = () => document.getElementById('flModalBg').classList.remove('open');
+
+window.saveFLEntry = async () => {
+  const type = document.getElementById('fl-type').value;
+  const plantName = document.getElementById('fl-plant').value;
+  const date = document.getElementById('fl-date').value;
+  const note = document.getElementById('fl-note').value.trim();
+
+  if (!plantName) { alert('Please select a plant.'); return; }
+
+  const entry = { id: flEditId || uid(), type, plantName };
+
+  if (type === 'note') {
+    if (!note) { alert('Please add a note.'); return; }
+    entry.date = date || todayISO();
+    entry.note = note;
+  } else if (type === 'harvest') {
+    const qty = document.getElementById('fl-qty')?.value;
+    const unit = document.getElementById('fl-unit')?.value;
+    if (!qty) { alert('Please enter a quantity.'); return; }
+    entry.date = date || todayISO();
+    entry.qty = parseFloat(qty);
+    entry.unit = unit || 'Stems';
+    const qual = document.querySelector('input[name="fl-quality"]:checked');
+    entry.quality = qual ? parseInt(qual.value) : 0;
+    entry.note = note;
+  } else if (type === 'reminder') {
+    const task = document.getElementById('fl-task')?.value.trim();
+    if (!task) { alert('Please enter a task.'); return; }
+    entry.dueDate = date || todayISO();
+    entry.task = task;
+    entry.note = note;
+    entry.done = flEditId ? (fieldLog.find(e=>e.id===flEditId)?.done||false) : false;
+  }
+
+  if (flEditId) {
+    const idx = fieldLog.findIndex(e=>e.id===flEditId);
+    if (idx>-1) fieldLog[idx] = entry;
+  } else {
+    fieldLog.push(entry);
+  }
+
+  await saveToFirebase('fieldlog');
+  closeFLModal();
+  renderFieldLog();
+};
+
+window.editFLEntry = id => { openFLModal(id); };
+
+window.deleteFLEntry = async id => {
+  if(!confirm('Delete this entry?')) return;
+  fieldLog = fieldLog.filter(e=>e.id!==id);
+  await saveToFirebase('fieldlog');
+  renderFieldLog();
+};
+
+window.markReminderDone = async id => {
+  const e = fieldLog.find(x=>x.id===id);
+  if(e) { e.done=true; e.completedDate=todayISO(); }
+  await saveToFirebase('fieldlog');
+  renderFieldLog();
+};
+
+document.getElementById('flModalBg').addEventListener('click', e => { if(e.target===document.getElementById('flModalBg')) closeFLModal(); });
 
 // ─── DEFAULT PLANT DATA ──────────────────────────────────────────
 const DEFAULT_PLANTS=[
