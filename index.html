@@ -313,6 +313,38 @@
   .fl-detail-season-total-label { font-size: 12px; color: var(--color-text-success); font-weight: 500; }
   .fl-detail-season-total-val { font-size: 13px; color: var(--color-text-success); font-weight: 500; }
 
+  /* GARDEN SUPPLIES */
+  .gs-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 10px; }
+  .gs-add-btn { background: #2d6a2d; color: #fff; border: none; border-radius: var(--border-radius-md); padding: 9px 18px; font-size: 14px; font-weight: 500; }
+  .gs-add-btn:hover { opacity: 0.88; }
+  .gs-sub-nav { display: flex; gap: 6px; margin-bottom: 1.25rem; flex-wrap: wrap; }
+  .gs-sub-btn { padding: 5px 14px; font-size: 12px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); background: transparent; color: var(--color-text-secondary); }
+  .gs-sub-btn.active { background: var(--color-background-success); color: var(--color-text-success); border-color: var(--color-border-success); font-weight: 500; }
+  .gs-cat-header { font-size: 13px; font-weight: 500; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; margin: 1.25rem 0 10px; padding-bottom: 6px; border-bottom: 0.5px solid var(--color-border-tertiary); display: flex; align-items: center; justify-content: space-between; }
+  .gs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 10px; margin-bottom: 8px; }
+  .gs-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 12px 14px; }
+  .gs-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 6px; gap: 8px; }
+  .gs-name { font-size: 14px; font-weight: 500; color: var(--color-text-primary); flex: 1; }
+  .gs-status { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 100px; white-space: nowrap; }
+  .gs-in-stock { background: var(--color-background-success); color: var(--color-text-success); }
+  .gs-low { background: var(--color-background-warning); color: var(--color-text-warning); }
+  .gs-out { background: var(--color-background-danger); color: var(--color-text-danger); }
+  .gs-detail { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 4px; }
+  .gs-notes { font-size: 12px; color: var(--color-text-tertiary); font-style: italic; }
+  .gs-card-actions { display: flex; gap: 6px; margin-top: 10px; padding-top: 8px; border-top: 0.5px solid var(--color-border-tertiary); }
+  .gs-card-btn { font-size: 11px; padding: 3px 10px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); background: transparent; color: var(--color-text-secondary); }
+  .gs-card-btn:hover { background: var(--color-background-secondary); }
+  .gs-card-btn.danger { color: var(--color-text-danger); border-color: var(--color-border-danger); }
+  .gs-card-btn.danger:hover { background: var(--color-background-danger); }
+  .gs-empty { text-align: center; padding: 2rem; color: var(--color-text-tertiary); font-size: 13px; font-style: italic; }
+  /* Shopping list */
+  .gs-shop-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); margin-bottom: 6px; gap: 10px; flex-wrap: wrap; }
+  .gs-shop-name { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+  .gs-shop-cat { font-size: 11px; color: var(--color-text-tertiary); }
+  .gs-shop-status { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 100px; }
+  /* Fert reference status badge */
+  .fert-stock-badge { font-size: 10px; font-weight: 500; padding: 1px 6px; border-radius: 100px; margin-left: 6px; vertical-align: middle; }
+
   /* SYNC INDICATOR */
   .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-text-success); display: inline-block; margin-right: 4px; }
   .sync-dot.saving { background: var(--color-text-warning); animation: pulse 1s ease-in-out infinite; }
@@ -374,6 +406,7 @@
     <button class="nav-btn" onclick="showSection('fieldlog')">Field Log</button>
     <button class="nav-btn" onclick="showSection('schedule')">Seed Schedule</button>
     <button class="nav-btn" onclick="showSection('fert')">Fertilizer Reference</button>
+    <button class="nav-btn" onclick="showSection('supplies')">Garden Supplies</button>
   </div>
 
   <!-- CATALOG -->
@@ -426,6 +459,21 @@
 
   <!-- FERT -->
   <div id="sec-fert" style="display:none"><div id="fertContent"></div></div>
+
+  <!-- SUPPLIES -->
+  <div id="sec-supplies" style="display:none">
+    <div id="gsShopBanner"></div>
+    <div class="gs-header">
+      <div style="font-size:15px;font-weight:500;color:var(--color-text-primary);">Garden Supplies</div>
+      <button class="gs-add-btn" onclick="openGSModal()">+ Add Item</button>
+    </div>
+    <div class="gs-sub-nav">
+      <button class="gs-sub-btn active" id="gssn-all" onclick="showGSView('all')">All Supplies</button>
+      <button class="gs-sub-btn" id="gssn-shopping" onclick="showGSView('shopping')">Shopping List</button>
+    </div>
+    <div id="gsv-all"></div>
+    <div id="gsv-shopping" style="display:none"></div>
+  </div>
 </div>
 
 <!-- DETAIL PANEL -->
@@ -480,6 +528,57 @@
     <div class="ci-sub" id="ciSub"></div>
     <div id="ciBody"></div>
     <div class="ci-actions"><button class="btn-cancel" onclick="closeCI()">Cancel</button><button class="btn-bloom-save" onclick="saveCheckin()">Save This Week's Blooms</button></div>
+  </div>
+</div>
+
+<!-- GARDEN SUPPLIES MODAL -->
+<div class="modal-overlay" id="gsModalBg">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
+      <h2 id="gsModalTitle" style="margin:0">Add Supply Item</h2>
+      <button class="close-btn" onclick="closeGSModal()">✕</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-field full"><label class="form-label">Item Name *</label><input type="text" id="gs-name" placeholder="e.g. Espoma RoseTone"></div>
+      <div class="form-field">
+        <label class="form-label">Category</label>
+        <select id="gs-cat" onchange="renderGSStatusField()">
+          <option value="Fertilizers">Fertilizers</option>
+          <option value="Soil & Amendments">Soil &amp; Amendments</option>
+          <option value="Pest & Disease Controls">Pest &amp; Disease Controls</option>
+          <option value="Seed Starting Supplies">Seed Starting Supplies</option>
+          <option value="Tools & Equipment">Tools &amp; Equipment</option>
+        </select>
+      </div>
+      <div id="gs-status-field" class="form-field">
+        <label class="form-label">Status</label>
+        <select id="gs-status">
+          <option value="in-stock">In Stock</option>
+          <option value="low">Running Low</option>
+          <option value="out">Out of Stock</option>
+        </select>
+      </div>
+      <div id="gs-qty-field" class="form-field" style="display:none"><label class="form-label">Quantity</label><input type="number" id="gs-qty" min="0" step="1" placeholder="0"></div>
+      <div id="gs-unit-field" class="form-field" style="display:none">
+        <label class="form-label">Unit</label>
+        <select id="gs-unit">
+          <option value="each">Each</option>
+          <option value="bags">Bags</option>
+          <option value="trays">Trays</option>
+          <option value="bottles">Bottles</option>
+          <option value="boxes">Boxes</option>
+          <option value="rolls">Rolls</option>
+          <option value="lbs">Lbs</option>
+          <option value="gallons">Gallons</option>
+          <option value="qt">Qt</option>
+        </select>
+      </div>
+      <div class="form-field full"><label class="form-label">Details / Notes</label><textarea id="gs-notes" placeholder="NPK, size, where to buy, any other notes…" style="height:60px;"></textarea></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeGSModal()">Cancel</button>
+      <button class="btn-save" onclick="saveGSItem()">Save Item</button>
+    </div>
   </div>
 </div>
 
@@ -560,11 +659,12 @@ const fbApp = initializeApp(firebaseConfig);
 const db = getFirestore(fbApp);
 
 // ─── STATE ──────────────────────────────────────────────────────
-let plants = [], bloomData = {}, freqGroups = [], fieldLog = [];
+let plants = [], bloomData = {}, freqGroups = [], fieldLog = [], supplies = [];
 let editId = null, detailId = null, expandedVars = {};
 let activeFilter = 'All', currentSection = 'catalog';
 let bloomView = 'timeline', weeklyKey = '', historyPlant = '';
 let flView = 'log', flFilterType = 'all', flFilterPlant = 'all', flEditId = null, hsYear = '';
+let gsView = 'all', gsEditId = null;
 let pendingCI = {}, ciWeekKey = '';
 let comboTimer = null, saveTimer = null;
 
@@ -590,6 +690,7 @@ async function loadFromFirebase() {
     const bloomDoc  = await getDoc(doc(db, 'ggg', 'bloom'));
     const freqDoc   = await getDoc(doc(db, 'ggg', 'freq'));
     const flDoc     = await getDoc(doc(db, 'ggg', 'fieldlog'));
+    const supDoc    = await getDoc(doc(db, 'ggg', 'supplies'));
 
     if (plantsDoc.exists() && plantsDoc.data().list) {
       plants = plantsDoc.data().list;
@@ -602,6 +703,12 @@ async function loadFromFirebase() {
     bloomData = bloomDoc.exists() ? (bloomDoc.data().data || {}) : {};
     freqGroups = freqDoc.exists() ? (freqDoc.data().list || [...DEFAULT_FREQS]) : [...DEFAULT_FREQS];
     fieldLog = flDoc.exists() ? (flDoc.data().entries || []) : [];
+    if (supDoc.exists() && supDoc.data().items) {
+      supplies = supDoc.data().items;
+    } else {
+      supplies = DEFAULT_SUPPLIES.map(s => ({...s, id: uid()}));
+      await saveToFirebase('supplies');
+    }
 
   } catch(e) {
     console.error('Firebase load error:', e);
@@ -618,6 +725,7 @@ async function saveToFirebase(which) {
     if (!which || which === 'bloom')    await setDoc(doc(db, 'ggg', 'bloom'),    { data: bloomData });
     if (!which || which === 'freq')     await setDoc(doc(db, 'ggg', 'freq'),     { list: freqGroups });
     if (!which || which === 'fieldlog') await setDoc(doc(db, 'ggg', 'fieldlog'), { entries: fieldLog });
+    if (!which || which === 'supplies') await setDoc(doc(db, 'ggg', 'supplies'), { items: supplies });
     setSyncState('synced');
   } catch(e) {
     console.error('Firebase save error:', e);
@@ -667,7 +775,7 @@ window.openBackup = () => document.getElementById('backupModal').classList.add('
 window.closeBackup = () => document.getElementById('backupModal').classList.remove('open');
 
 window.exportBackup = () => {
-  const data = { version: 1, exportedAt: new Date().toISOString(), plants, bloomData, freqGroups, fieldLog };
+  const data = { version: 1, exportedAt: new Date().toISOString(), plants, bloomData, freqGroups, fieldLog, supplies };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -688,6 +796,7 @@ window.importBackup = async (e) => {
     bloomData = data.bloomData || {};
     freqGroups = data.freqGroups || [...DEFAULT_FREQS];
     fieldLog = data.fieldLog || [];
+    supplies = data.supplies || DEFAULT_SUPPLIES.map(s=>({...s,id:uid()}));
     await saveToFirebase();
     closeBackup();
     renderGrid();
@@ -701,13 +810,14 @@ window.importBackup = async (e) => {
 // ─── SECTION ROUTING ─────────────────────────────────────────────
 window.showSection = function(s) {
   currentSection = s;
-  ['catalog','bloom','fieldlog','schedule','fert'].forEach(x => { document.getElementById('sec-'+x).style.display = x===s?'':'none'; });
+  ['catalog','bloom','fieldlog','schedule','fert','supplies'].forEach(x => { document.getElementById('sec-'+x).style.display = x===s?'':'none'; });
   document.getElementById('addPlantBtn').style.display = s==='catalog'?'':'none';
-  document.querySelectorAll('.nav-btn').forEach((b,i) => b.classList.toggle('active', ['catalog','bloom','fieldlog','schedule','fert'][i]===s));
+  document.querySelectorAll('.nav-btn').forEach((b,i) => b.classList.toggle('active', ['catalog','bloom','fieldlog','schedule','fert','supplies'][i]===s));
   if(s==='bloom') renderBloom();
   if(s==='fieldlog') renderFieldLog();
   if(s==='schedule') renderSchedule();
   if(s==='fert') renderFert();
+  if(s==='supplies') renderSupplies();
 };
 
 // ─── CATALOG ─────────────────────────────────────────────────────
@@ -1110,23 +1220,28 @@ window.renderFert = function() {
   const catNoFert=plants.filter(p=>{ const f=(p.fertFreq||'').trim().toLowerCase(); return['no fertilizer','no fertilizer needed','do not fertilize'].includes(f)&&!noFertStatic.includes(p.name.toLowerCase()); });
   const allGroups=[...freqGroups]; Object.keys(catByFreq).forEach(g=>{if(!allGroups.includes(g))allGroups.push(g);});
 
-  let h=`<div class="qr-section"><div class="qr-section-header"><div class="qr-section-title">Fertilizer Inventory</div><span class="qr-freq-badge freq-none">Keep On Hand (Organic)</span></div><div class="inv-grid">
-    <div class="inv-item"><div class="inv-name">Espoma Bonemeal</div><div class="inv-npk">4-12-0</div></div>
-    <div class="inv-item"><div class="inv-name">Espoma Bloodmeal</div><div class="inv-npk">12-0-0</div></div>
-    <div class="inv-item"><div class="inv-name">Espoma Cottonseed Meal</div><div class="inv-npk">6-2-1</div></div>
-    <div class="inv-item"><div class="inv-name">Alaska Fish Fertilizer</div><div class="inv-npk">5-1-1</div><div class="inv-have">In Stock</div></div>
-    <div class="inv-item"><div class="inv-name">Hollytone / Berrytone</div><div class="inv-npk">4-3-4 + Sulfur</div></div>
-    <div class="inv-item"><div class="inv-name">Espoma Bulb-Tone</div><div class="inv-npk">3-5-3</div></div>
-    <div class="inv-item"><div class="inv-name">Espoma FlowerTone</div><div class="inv-npk">3-4-5</div></div>
-    <div class="inv-item"><div class="inv-name">Espoma TreeTone</div><div class="inv-npk">6-3-2</div></div>
-    <div class="inv-item"><div class="inv-name">Espoma RoseTone</div><div class="inv-npk">4-3-2</div></div>
-    <div class="inv-item"><div class="inv-name">Espoma GardenTone</div><div class="inv-npk">3-4-4</div></div>
-    <div class="inv-item"><div class="inv-name">Espoma TomatoTone</div><div class="inv-npk">3-4-6</div></div>
-    <div class="inv-item"><div class="inv-name">Dr. Earth Bloom</div><div class="inv-npk">3-9-4</div></div>
-    <div class="inv-item"><div class="inv-name">Alaska More Bloom</div><div class="inv-npk">0-10-10</div></div>
-    <div class="inv-item"><div class="inv-name">Kelp</div><div class="inv-npk">—</div></div>
-    <div class="inv-item"><div class="inv-name">Soil Acidifier</div><div class="inv-npk">—</div></div>
-  </div></div><hr class="qr-divider">`;
+  // Build fertilizer inventory from supplies
+  const fertItems = supplies.filter(s => s.cat === 'Fertilizers').sort((a,b)=>a.name.localeCompare(b.name));
+  const statusBadge = s => {
+    if(s.status==='in-stock') return `<span class="gs-status gs-in-stock">In Stock</span>`;
+    if(s.status==='low') return `<span class="gs-status gs-low">Running Low</span>`;
+    return `<span class="gs-status gs-out">Out of Stock</span>`;
+  };
+
+  let invHtml = '';
+  if (fertItems.length) {
+    invHtml = fertItems.map(s => `<div class="inv-item" style="cursor:pointer;" onclick="showSection('supplies')" title="Manage in Garden Supplies">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px;">
+        <div class="inv-name">${s.name}</div>
+        ${statusBadge(s)}
+      </div>
+      ${s.notes ? `<div class="inv-npk">${s.notes}</div>` : ''}
+    </div>`).join('');
+  } else {
+    invHtml = `<div style="grid-column:1/-1;font-size:13px;color:var(--color-text-tertiary);font-style:italic;padding:8px 0;">No fertilizers in Garden Supplies yet. <button onclick="showSection('supplies')" style="background:none;border:none;color:var(--color-text-info);cursor:pointer;font-size:13px;padding:0;">Add them in Garden Supplies →</button></div>`;
+  }
+
+  let h=`<div class="qr-section"><div class="qr-section-header"><div class="qr-section-title">Fertilizer Inventory</div><span class="qr-freq-badge freq-none" style="cursor:pointer;" onclick="showSection('supplies')">Manage in Garden Supplies →</span></div><div class="inv-grid">${invHtml}</div></div><hr class="qr-divider">`;
 
   allGroups.forEach((group,gi)=>{
     if(group==='No Fertilizer')return;
@@ -1456,6 +1571,234 @@ window.markReminderDone = async id => {
 };
 
 document.getElementById('flModalBg').addEventListener('click', e => { if(e.target===document.getElementById('flModalBg')) closeFLModal(); });
+
+// ─── GARDEN SUPPLIES ─────────────────────────────────────────────
+const GS_CATS = ['Fertilizers','Soil & Amendments','Pest & Disease Controls','Seed Starting Supplies','Tools & Equipment'];
+const GS_QTY_CATS = ['Seed Starting Supplies','Tools & Equipment'];
+
+function gsStatusBadge(s) {
+  if (s.status === 'in-stock') return `<span class="gs-status gs-in-stock">In Stock</span>`;
+  if (s.status === 'low')      return `<span class="gs-status gs-low">Running Low</span>`;
+  if (s.status === 'out')      return `<span class="gs-status gs-out">Out of Stock</span>`;
+  // qty-based
+  const q = parseInt(s.qty) || 0;
+  if (q === 0) return `<span class="gs-status gs-out">Out of Stock</span>`;
+  if (q <= 2)  return `<span class="gs-status gs-low">${q} ${s.unit||'each'}</span>`;
+  return `<span class="gs-status gs-in-stock">${q} ${s.unit||'each'}</span>`;
+}
+
+function gsNeedsRestocking(s) {
+  if (GS_QTY_CATS.includes(s.cat)) return (parseInt(s.qty)||0) <= 2;
+  return s.status === 'low' || s.status === 'out';
+}
+
+function renderSupplies() {
+  renderGSShopBanner();
+  if (gsView === 'all') renderGSAll();
+  else renderGSShopping();
+}
+
+window.showGSView = v => {
+  gsView = v;
+  ['all','shopping'].forEach(x => { document.getElementById('gsv-'+x).style.display=x===v?'':'none'; document.getElementById('gssn-'+x).classList.toggle('active',x===v); });
+  renderSupplies();
+};
+
+function renderGSShopBanner() {
+  const el = document.getElementById('gsShopBanner');
+  const needed = supplies.filter(gsNeedsRestocking);
+  if (!needed.length) { el.innerHTML=''; return; }
+  el.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--color-background-warning);border:0.5px solid #e8c870;border-radius:var(--border-radius-md);margin-bottom:1.25rem;gap:10px;flex-wrap:wrap;">
+    <span style="font-size:13px;color:var(--color-text-warning);font-weight:500;">${needed.length} item${needed.length!==1?'s':''} need restocking</span>
+    <button class="gs-sub-btn" onclick="showGSView('shopping')" style="font-size:12px;">View Shopping List</button>
+  </div>`;
+}
+
+function renderGSAll() {
+  const el = document.getElementById('gsv-all');
+  let h = '';
+  GS_CATS.forEach(cat => {
+    const items = supplies.filter(s=>s.cat===cat).sort((a,b)=>a.name.localeCompare(b.name));
+    h += `<div class="gs-cat-header">${cat} <button class="gs-card-btn" onclick="openGSModal(null,'${cat}')">+ Add</button></div>`;
+    if (!items.length) { h += `<div class="gs-empty">No items yet.</div>`; return; }
+    h += `<div class="gs-grid">${items.map(s => renderGSCard(s)).join('')}</div>`;
+  });
+  el.innerHTML = h;
+}
+
+function renderGSCard(s) {
+  const isQty = GS_QTY_CATS.includes(s.cat);
+  return `<div class="gs-card">
+    <div class="gs-card-top">
+      <div class="gs-name">${s.name}</div>
+      ${gsStatusBadge(s)}
+    </div>
+    ${s.notes ? `<div class="gs-notes">${s.notes}</div>` : ''}
+    <div class="gs-card-actions">
+      <button class="gs-card-btn" onclick="editGSItem('${s.id}')">Edit</button>
+      ${isQty ? `
+        <button class="gs-card-btn" onclick="adjustGSQty('${s.id}',-1)">−</button>
+        <button class="gs-card-btn" onclick="adjustGSQty('${s.id}',1)">+</button>
+      ` : `
+        <button class="gs-card-btn" onclick="cycleGSStatus('${s.id}')">Change Status</button>
+      `}
+      <button class="gs-card-btn danger" onclick="deleteGSItem('${s.id}')">Delete</button>
+    </div>
+  </div>`;
+}
+
+function renderGSShopping() {
+  const el = document.getElementById('gsv-shopping');
+  const needed = supplies.filter(gsNeedsRestocking).sort((a,b)=>a.cat.localeCompare(b.cat)||a.name.localeCompare(b.name));
+  if (!needed.length) { el.innerHTML=`<div class="gs-empty">Nothing needs restocking right now.</div>`; return; }
+
+  let h = `<div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:14px;">${needed.length} item${needed.length!==1?'s':''} to pick up</div>`;
+  let lastCat = '';
+  needed.forEach(s => {
+    if (s.cat !== lastCat) {
+      if (lastCat) h += `</div>`;
+      h += `<div style="font-size:11px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.04em;margin:12px 0 6px;">${s.cat}</div><div>`;
+      lastCat = s.cat;
+    }
+    const isQty = GS_QTY_CATS.includes(s.cat);
+    const stLabel = isQty ? `${parseInt(s.qty)||0} ${s.unit||'each'} left` : (s.status==='out'?'Out of Stock':'Running Low');
+    h += `<div class="gs-shop-item">
+      <div>
+        <div class="gs-shop-name">${s.name}</div>
+        ${s.notes ? `<div class="gs-shop-cat">${s.notes}</div>` : ''}
+      </div>
+      <span class="gs-shop-status ${s.status==='out'||(isQty&&(parseInt(s.qty)||0)===0)?'gs-out':'gs-low'}">${stLabel}</span>
+    </div>`;
+  });
+  if (lastCat) h += '</div>';
+  el.innerHTML = h;
+}
+
+// GS MODAL
+window.openGSModal = (id, defaultCat) => {
+  gsEditId = id || null;
+  const s = id ? supplies.find(x=>x.id===id) : null;
+  document.getElementById('gsModalTitle').textContent = s ? 'Edit Supply Item' : 'Add Supply Item';
+  document.getElementById('gs-name').value = s ? s.name : '';
+  document.getElementById('gs-cat').value = s ? s.cat : (defaultCat || 'Fertilizers');
+  document.getElementById('gs-notes').value = s ? (s.notes||'') : '';
+  document.getElementById('gs-status').value = s ? (s.status||'in-stock') : 'in-stock';
+  document.getElementById('gs-qty').value = s ? (s.qty||0) : 0;
+  document.getElementById('gs-unit').value = s ? (s.unit||'each') : 'each';
+  renderGSStatusField();
+  document.getElementById('gsModalBg').classList.add('open');
+};
+
+window.renderGSStatusField = () => {
+  const cat = document.getElementById('gs-cat').value;
+  const isQty = GS_QTY_CATS.includes(cat);
+  document.getElementById('gs-status-field').style.display = isQty ? 'none' : '';
+  document.getElementById('gs-qty-field').style.display = isQty ? '' : 'none';
+  document.getElementById('gs-unit-field').style.display = isQty ? '' : 'none';
+};
+
+window.closeGSModal = () => document.getElementById('gsModalBg').classList.remove('open');
+
+window.saveGSItem = async () => {
+  const name = document.getElementById('gs-name').value.trim();
+  if (!name) { alert('Please enter an item name.'); return; }
+  const cat = document.getElementById('gs-cat').value;
+  const isQty = GS_QTY_CATS.includes(cat);
+  const item = {
+    id: gsEditId || uid(), name, cat,
+    notes: document.getElementById('gs-notes').value.trim(),
+  };
+  if (isQty) {
+    item.qty = parseInt(document.getElementById('gs-qty').value) || 0;
+    item.unit = document.getElementById('gs-unit').value;
+  } else {
+    item.status = document.getElementById('gs-status').value;
+  }
+  if (gsEditId) {
+    const i = supplies.findIndex(x=>x.id===gsEditId); if(i>-1) supplies[i]=item;
+  } else {
+    supplies.push(item);
+  }
+  await saveToFirebase('supplies');
+  closeGSModal();
+  renderSupplies();
+  if (currentSection === 'fert') renderFert();
+};
+
+window.editGSItem = id => openGSModal(id);
+
+window.deleteGSItem = async id => {
+  if (!confirm('Delete this item?')) return;
+  supplies = supplies.filter(s=>s.id!==id);
+  await saveToFirebase('supplies');
+  renderSupplies();
+  if (currentSection === 'fert') renderFert();
+};
+
+window.cycleGSStatus = async id => {
+  const s = supplies.find(x=>x.id===id); if(!s) return;
+  const cycle = {'in-stock':'low','low':'out','out':'in-stock'};
+  s.status = cycle[s.status] || 'in-stock';
+  await saveToFirebase('supplies');
+  renderSupplies();
+  if (currentSection === 'fert') renderFert();
+};
+
+window.adjustGSQty = async (id, delta) => {
+  const s = supplies.find(x=>x.id===id); if(!s) return;
+  s.qty = Math.max(0, (parseInt(s.qty)||0) + delta);
+  await saveToFirebase('supplies');
+  renderSupplies();
+};
+
+document.getElementById('gsModalBg').addEventListener('click', e => { if(e.target===document.getElementById('gsModalBg')) closeGSModal(); });
+
+// ─── DEFAULT SUPPLIES DATA ───────────────────────────────────────
+const DEFAULT_SUPPLIES = [
+  // Fertilizers (3-state status)
+  {name:'Espoma Bonemeal',cat:'Fertilizers',status:'in-stock',notes:'4-12-0'},
+  {name:'Espoma Bloodmeal',cat:'Fertilizers',status:'in-stock',notes:'12-0-0'},
+  {name:'Espoma Cottonseed Meal',cat:'Fertilizers',status:'in-stock',notes:'6-2-1'},
+  {name:'Alaska Fish Fertilizer',cat:'Fertilizers',status:'in-stock',notes:'5-1-1'},
+  {name:'Espoma Hollytone / Berrytone',cat:'Fertilizers',status:'in-stock',notes:'4-3-4 + Sulfur'},
+  {name:'Espoma Bulb-Tone',cat:'Fertilizers',status:'in-stock',notes:'3-5-3'},
+  {name:'Espoma FlowerTone',cat:'Fertilizers',status:'in-stock',notes:'3-4-5'},
+  {name:'Espoma TreeTone',cat:'Fertilizers',status:'in-stock',notes:'6-3-2'},
+  {name:'Espoma RoseTone',cat:'Fertilizers',status:'in-stock',notes:'4-3-2'},
+  {name:'Espoma GardenTone',cat:'Fertilizers',status:'in-stock',notes:'3-4-4'},
+  {name:'Espoma TomatoTone',cat:'Fertilizers',status:'in-stock',notes:'3-4-6'},
+  {name:'Dr. Earth Bloom',cat:'Fertilizers',status:'in-stock',notes:'3-9-4'},
+  {name:'Alaska More Bloom',cat:'Fertilizers',status:'in-stock',notes:'0-10-10'},
+  {name:'Kelp Fertilizer',cat:'Fertilizers',status:'in-stock',notes:''},
+  {name:'Soil Acidifier',cat:'Fertilizers',status:'in-stock',notes:''},
+  // Soil & Amendments (3-state)
+  {name:'Seed Starting Mix',cat:'Soil & Amendments',status:'in-stock',notes:''},
+  {name:'Potting Soil',cat:'Soil & Amendments',status:'in-stock',notes:''},
+  {name:'Compost',cat:'Soil & Amendments',status:'in-stock',notes:''},
+  {name:'Perlite',cat:'Soil & Amendments',status:'in-stock',notes:''},
+  {name:'Bark / Mulch',cat:'Soil & Amendments',status:'in-stock',notes:''},
+  // Pest & Disease Controls (3-state)
+  {name:'Copper Fungicide',cat:'Pest & Disease Controls',status:'in-stock',notes:'Dormancy spray + growing season'},
+  {name:'Mancozeb Fungicide',cat:'Pest & Disease Controls',status:'in-stock',notes:'Snapdragon rust prevention — every 2 weeks'},
+  {name:'Castile Soap Spray',cat:'Pest & Disease Controls',status:'in-stock',notes:'Aphid control on kale'},
+  {name:'Sulfur Fungicide',cat:'Pest & Disease Controls',status:'in-stock',notes:'Alternates with copper for fruit'},
+  {name:'Root Shield (Trichoderma)',cat:'Pest & Disease Controls',status:'in-stock',notes:'Lisianthus fusarium wilt prevention'},
+  {name:'Horticultural Oil',cat:'Pest & Disease Controls',status:'in-stock',notes:'Dormancy spray for cherry trees'},
+  {name:'Fruit Tree & Plant Guard',cat:'Pest & Disease Controls',status:'in-stock',notes:'Alternates with sulfur every 7-14 days'},
+  // Seed Starting Supplies (qty-based)
+  {name:'72-Cell Seed Trays',cat:'Seed Starting Supplies',qty:0,unit:'trays',notes:'Lisianthus'},
+  {name:'Standard Seed Trays',cat:'Seed Starting Supplies',qty:0,unit:'trays',notes:'General use'},
+  {name:'Humidity Domes',cat:'Seed Starting Supplies',qty:0,unit:'each',notes:''},
+  {name:'Heat Mats',cat:'Seed Starting Supplies',qty:0,unit:'each',notes:''},
+  {name:'Grow Lights',cat:'Seed Starting Supplies',qty:0,unit:'each',notes:'16-hr cycle for lisianthus'},
+  {name:'Peat Pots',cat:'Seed Starting Supplies',qty:0,unit:'each',notes:'Milkweed, pumpkin — no root disturbance'},
+  {name:'Zip-Lock Bags (Large)',cat:'Seed Starting Supplies',qty:0,unit:'each',notes:'Dahlia tuber wake-up'},
+  // Tools & Equipment (qty-based)
+  {name:'Peony Cages',cat:'Tools & Equipment',qty:0,unit:'each',notes:'Peonies + delphinium support'},
+  {name:'Tomato Cages (Square)',cat:'Tools & Equipment',qty:0,unit:'each',notes:'Squash / zucchini support'},
+  {name:'Stakes',cat:'Tools & Equipment',qty:0,unit:'each',notes:'Dahlia staking at transplant'},
+  {name:'Chicken Wire',cat:'Tools & Equipment',qty:0,unit:'rolls',notes:'Tulip bulb protection'},
+];
 
 // ─── DEFAULT PLANT DATA ──────────────────────────────────────────
 const DEFAULT_PLANTS=[
