@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Green Gate Gardens</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --color-text-primary: #1a1a1a;
+    --color-text-secondary: #555;
+    --color-text-tertiary: #888;
+    --color-background-primary: #fff;
+    --color-background-secondary: #f5f5f5;
+    --color-border-tertiary: #e5e5e5;
+    --color-border-secondary: #d0d0d0;
+    --color-text-success: #2d6a2d;
+    --color-background-success: #eaf3de;
+    --color-border-success: #b3d48e;
+    --color-text-info: #185FA5;
+    --color-background-info: #e6f1fb;
+    --color-border-info: #90bce8;
+    --color-text-warning: #854F0B;
+    --color-background-warning: #faeeda;
+    --color-text-danger: #a02020;
+    --color-background-danger: #fdeaea;
+    --color-border-danger: #e0a0a0;
+    --border-radius-md: 8px;
+    --border-radius-lg: 12px;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fafafa; color: var(--color-text-primary); min-height: 100vh; }
+  input, select, textarea, button { font-family: inherit; font-size: 13px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); padding: 7px 10px; outline: none; background: var(--color-background-primary); color: var(--color-text-primary); }
+  input:focus, select:focus, textarea:focus { border-color: var(--color-text-info); }
+  button { cursor: pointer; }
+
+  /* LOADING */
+  .loading-screen { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #fafafa; gap: 16px; z-index: 1000; }
+  .loading-logo { width: 48px; height: 48px; background: var(--color-background-success); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+  .loading-title { font-size: 20px; font-weight: 500; color: var(--color-text-primary); }
+  .loading-sub { font-size: 13px; color: var(--color-text-tertiary); }
+  .loading-spinner { width: 24px; height: 24px; border: 2px solid var(--color-border-tertiary); border-top-color: var(--color-text-success); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* LAYOUT */
+  .app { padding: 1.5rem 1rem; max-width: 1000px; margin: 0 auto; }
+  .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 12px; }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-icon { width: 36px; height: 36px; background: var(--color-background-success); border-radius: var(--border-radius-md); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .logo-text h1 { font-size: 18px; font-weight: 500; }
+  .logo-text p { font-size: 12px; color: var(--color-text-secondary); }
+  .header-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .nav { display: flex; gap: 6px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .nav-btn { padding: 7px 16px; font-size: 13px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); background: transparent; color: var(--color-text-secondary); }
+  .nav-btn.active { background: var(--color-background-success); color: var(--color-text-success); border-color: var(--color-border-success); font-weight: 500; }
+  .add-btn { background: var(--color-background-success); color: var(--color-text-success); border: 0.5px solid var(--color-border-success); border-radius: var(--border-radius-md); padding: 7px 14px; font-size: 13px; font-weight: 500; }
+  .backup-btn { background: transparent; color: var(--color-text-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 7px 14px; font-size: 13px; }
+  .backup-btn:hover { background: var(--color-background-secondary); }
+
+  /* STATS */
+  .stats { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 10px; margin-bottom: 1.25rem; }
+  .stat { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px; }
+  .stat-label { font-size: 11px; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
+  .stat-val { font-size: 22px; font-weight: 500; }
+
+  /* CONTROLS */
+  .controls { display: flex; gap: 10px; margin-bottom: 1.25rem; flex-wrap: wrap; }
+  .search-wrap { flex: 1; min-width: 180px; position: relative; }
+  .search-wrap input { width: 100%; padding-left: 32px; }
+  .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: var(--color-text-tertiary); pointer-events: none; }
+  .filter-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tab { border: 0.5px solid var(--color-border-tertiary); background: transparent; color: var(--color-text-secondary); border-radius: var(--border-radius-md); padding: 6px 14px; font-size: 13px; }
+  .tab.active { background: var(--color-background-success); color: var(--color-text-success); border-color: var(--color-border-success); font-weight: 500; }
+
+  /* PLANT GRID */
+  .plant-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 12px; }
+  .plant-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; cursor: pointer; transition: border-color 0.15s; }
+  .plant-card:hover { border-color: var(--color-border-secondary); }
+  .card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 4px; }
+  .cat-badge { font-size: 11px; font-weight: 500; padding: 3px 8px; border-radius: 100px; }
+  .cat-flower { background: #FBEAF0; color: #723e5c; }
+  .cat-perennial { background: #EEEDFE; color: #3C3489; }
+  .cat-veg { background: #EAF3DE; color: #3B6D11; }
+  .cat-fruit { background: #FAEEDA; color: #633806; }
+  .cat-herb { background: #E1F5EE; color: #085041; }
+  .bloom-tag { font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 100px; background: #FBEAF0; color: #723e5c; }
+  .status-pill { font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 100px; }
+  .s-active { background: var(--color-background-success); color: var(--color-text-success); }
+  .s-dormant { background: var(--color-background-secondary); color: var(--color-text-secondary); }
+  .s-new { background: var(--color-background-info); color: var(--color-text-info); }
+  .s-harvested { background: var(--color-background-warning); color: var(--color-text-warning); }
+  .plant-name { font-size: 15px; font-weight: 500; margin-bottom: 2px; }
+  .plant-meta { font-size: 12px; color: var(--color-text-tertiary); display: flex; flex-direction: column; gap: 3px; margin-top: 6px; }
+  .variety-preview { font-size: 12px; color: var(--color-text-secondary); margin-top: 4px; }
+  .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 10px; border-top: 0.5px solid var(--color-border-tertiary); }
+  .card-footer-left { font-size: 11px; color: var(--color-text-tertiary); }
+  .view-btn { font-size: 11px; padding: 3px 10px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); background: transparent; color: var(--color-text-secondary); }
+  .view-btn:hover { background: var(--color-background-secondary); }
+  .empty { text-align: center; padding: 3rem; color: var(--color-text-tertiary); font-size: 14px; }
+
+  /* DETAIL PANEL */
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 100; align-items: flex-start; justify-content: center; padding: 2rem 1rem; overflow-y: auto; }
+  .overlay.open { display: flex; }
+  .detail-panel { background: var(--color-background-primary); border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-tertiary); width: 100%; max-width: 640px; padding: 1.5rem; margin: auto; }
+  .detail-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+  .detail-badges { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .detail-name { font-size: 22px; font-weight: 500; margin: 10px 0 16px; }
+  .close-btn { font-size: 18px; background: none; border: none; cursor: pointer; color: var(--color-text-tertiary); padding: 2px 6px; }
+  .detail-section { margin-bottom: 1.5rem; }
+  .detail-section-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-tertiary); margin-bottom: 12px; padding-bottom: 6px; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .df { }
+  .df.full { grid-column: 1 / -1; }
+  .df-label { font-size: 11px; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
+  .df-val { font-size: 13px; line-height: 1.6; }
+  .df-val.empty { color: var(--color-text-tertiary); font-style: italic; }
+  .df-val.note { color: var(--color-text-secondary); font-style: italic; }
+  .bloom-toggle-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); margin-bottom: 1.25rem; }
+  .bloom-toggle-label { font-size: 13px; flex: 1; cursor: pointer; }
+  .bloom-toggle-label span { font-size: 12px; color: var(--color-text-secondary); display: block; }
+  .bloom-toggle-row input[type=checkbox] { width: 18px; height: 18px; accent-color: #D4537E; cursor: pointer; flex-shrink: 0; }
+  .vtable { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  .vtable th { font-size: 11px; color: var(--color-text-tertiary); font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; padding: 0 8px 8px 0; text-align: left; }
+  .vtable th.th-qty { text-align: right; width: 44px; padding-right: 0; }
+  .vtable th.th-status { width: 96px; }
+  .vtable th.th-exp { width: 28px; }
+  .vrow td { padding: 7px 8px 7px 0; border-top: 0.5px solid var(--color-border-tertiary); font-size: 13px; vertical-align: middle; }
+  .vrow td.td-qty { text-align: right; font-weight: 500; padding-right: 0; }
+  .vrow td.td-exp { text-align: right; padding-right: 0; }
+  .loc-shared { font-size: 12px; color: var(--color-text-tertiary); font-style: italic; }
+  .loc-override { font-size: 12px; color: var(--color-text-secondary); }
+  .new-tag { font-size: 10px; color: var(--color-text-info); margin-left: 5px; }
+  .expand-btn { background: none; border: none; cursor: pointer; color: var(--color-text-tertiary); font-size: 12px; padding: 2px 5px; border-radius: 4px; }
+  .expand-btn:hover { background: var(--color-background-secondary); }
+  .ov-inner { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; padding: 10px 12px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); }
+  .ov-field { display: flex; flex-direction: column; gap: 3px; }
+  .ov-label { font-size: 10px; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.04em; }
+  .ov-input { font-size: 12px; padding: 4px 6px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); }
+  .ov-select { font-size: 12px; padding: 4px 6px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); }
+  .vtotal { display: flex; justify-content: flex-end; margin-top: 8px; font-size: 12px; color: var(--color-text-secondary); gap: 6px; }
+  .vtotal span { font-weight: 500; color: var(--color-text-primary); }
+  .add-variety-btn { width: 100%; margin-top: 8px; font-size: 12px; color: var(--color-text-secondary); background: none; border: 0.5px dashed var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 7px; }
+  .add-variety-btn:hover { background: var(--color-background-secondary); }
+  .detail-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1.25rem; padding-top: 1rem; border-top: 0.5px solid var(--color-border-tertiary); }
+  .btn-edit { background: var(--color-background-success); color: var(--color-text-success); border: 0.5px solid var(--color-border-success); border-radius: var(--border-radius-md); padding: 8px 16px; font-size: 13px; font-weight: 500; }
+  .btn-del { border: 0.5px solid var(--color-border-danger); background: transparent; color: var(--color-text-danger); border-radius: var(--border-radius-md); padding: 8px 16px; font-size: 13px; }
+  .btn-del:hover { background: var(--color-background-danger); }
+
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 200; align-items: flex-start; justify-content: center; padding: 2rem 1rem; overflow-y: auto; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--color-background-primary); border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-tertiary); width: 100%; max-width: 540px; padding: 1.5rem; margin: auto; }
+  .modal h2 { font-size: 16px; font-weight: 500; margin-bottom: 1.25rem; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-field { display: flex; flex-direction: column; gap: 4px; }
+  .form-field.full { grid-column: 1 / -1; }
+  .form-label { font-size: 12px; color: var(--color-text-secondary); }
+  .form-field input[type=text], .form-field input[type=date], .form-field select, .form-field textarea { width: 100%; }
+  .form-field textarea { height: 68px; resize: vertical; }
+  .form-section { grid-column: 1 / -1; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-tertiary); padding: 10px 0 6px; border-bottom: 0.5px solid var(--color-border-tertiary); margin-top: 4px; }
+  .bloom-form-row { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); margin-top: 4px; }
+  .bloom-form-row label { font-size: 13px; cursor: pointer; flex: 1; }
+  .bloom-form-row label span { font-size: 11px; color: var(--color-text-secondary); display: block; }
+  .bloom-form-row input[type=checkbox] { width: 18px; height: 18px; accent-color: #D4537E; cursor: pointer; flex-shrink: 0; }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1.25rem; }
+  .btn-cancel { border: 0.5px solid var(--color-border-secondary); background: transparent; color: var(--color-text-secondary); border-radius: var(--border-radius-md); padding: 8px 16px; font-size: 13px; }
+  .btn-save { background: var(--color-background-success); color: var(--color-text-success); border: 0.5px solid var(--color-border-success); border-radius: var(--border-radius-md); padding: 8px 16px; font-size: 13px; font-weight: 500; }
+  .combo-wrap { position: relative; width: 100%; }
+  .combo-dropdown { display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--color-background-primary); border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); z-index: 300; max-height: 200px; overflow-y: auto; margin-top: 2px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+  .combo-dropdown.open { display: block; }
+  .combo-option { padding: 8px 12px; font-size: 13px; cursor: pointer; }
+  .combo-option:hover { background: var(--color-background-secondary); }
+  .combo-option.create { color: var(--color-text-info); font-style: italic; }
+
+  /* BLOOM TRACKER */
+  .sub-nav { display: flex; gap: 6px; margin-bottom: 1.25rem; flex-wrap: wrap; }
+  .sub-nav-btn { padding: 5px 14px; font-size: 12px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); background: transparent; color: var(--color-text-secondary); }
+  .sub-nav-btn.active { background: #FBEAF0; color: #723e5c; border-color: #D4537E; font-weight: 500; }
+  .checkin-banner { background: var(--color-background-info); border: 0.5px solid var(--color-border-info); border-radius: var(--border-radius-lg); padding: 1.25rem; margin-bottom: 1.25rem; }
+  .checkin-banner-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .checkin-title { font-size: 15px; font-weight: 500; color: var(--color-text-info); margin-bottom: 2px; }
+  .checkin-sub { font-size: 12px; color: var(--color-text-info); opacity: 0.8; }
+  .open-checkin-btn { background: var(--color-text-info); color: #fff; border: none; border-radius: var(--border-radius-md); padding: 7px 16px; font-size: 13px; font-weight: 500; }
+  .week-selector { display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem; flex-wrap: wrap; }
+  .week-nav { background: none; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 5px 12px; font-size: 13px; color: var(--color-text-secondary); }
+  .week-nav:hover { background: var(--color-background-secondary); }
+  .week-label { font-size: 14px; font-weight: 500; }
+  .bloom-pill { display: inline-block; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 100px; background: #FBEAF0; color: #723e5c; margin: 2px; }
+  .weekly-table { width: 100%; border-collapse: collapse; }
+  .weekly-table th { font-size: 11px; color: var(--color-text-tertiary); font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; padding: 0 0 8px; text-align: left; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .weekly-table td { padding: 8px 0; border-top: 0.5px solid var(--color-border-tertiary); font-size: 13px; vertical-align: middle; }
+  .tl-wrap { overflow-x: auto; padding-bottom: 8px; }
+  .tl-table { border-collapse: collapse; min-width: 600px; width: 100%; }
+  .tl-th { font-size: 10px; color: var(--color-text-tertiary); font-weight: 500; text-transform: uppercase; padding: 0 0 8px; text-align: left; }
+  .tl-th-wk { font-size: 9px; color: var(--color-text-tertiary); text-align: center; padding: 0 1px 8px; }
+  .tl-row td { padding: 3px 0; border-top: 0.5px solid var(--color-border-tertiary); }
+  .tl-plant { font-size: 12px; font-weight: 500; padding-right: 8px !important; white-space: nowrap; max-width: 140px; overflow: hidden; text-overflow: ellipsis; }
+  .tl-variety { font-size: 11px; color: var(--color-text-secondary); padding-right: 8px !important; white-space: nowrap; max-width: 150px; overflow: hidden; text-overflow: ellipsis; }
+  .tl-dot { width: 12px; height: 12px; border-radius: 50%; margin: 0 auto; }
+  .tl-dot.on { background: #D4537E; }
+  .tl-dot.off { border: 0.5px solid var(--color-border-tertiary); }
+  .tl-dot.cur { outline: 2px solid var(--color-text-info); outline-offset: 1px; }
+  .tl-cell { text-align: center; }
+  .tl-cell.cur { background: var(--color-background-info); }
+  .no-log { font-size: 13px; color: var(--color-text-tertiary); font-style: italic; padding: 2rem; text-align: center; }
+  .vh-filter { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.25rem; }
+  .vh-btn { border: 0.5px solid var(--color-border-tertiary); background: transparent; color: var(--color-text-secondary); border-radius: var(--border-radius-md); padding: 4px 10px; font-size: 12px; }
+  .vh-btn.active { background: #FBEAF0; color: #723e5c; border-color: #D4537E; font-weight: 500; }
+  .vh-table { width: 100%; border-collapse: collapse; }
+  .vh-table th { font-size: 11px; color: var(--color-text-tertiary); font-weight: 500; text-transform: uppercase; padding: 0 0 8px; text-align: left; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .vh-table td { padding: 8px 0; border-top: 0.5px solid var(--color-border-tertiary); font-size: 13px; }
+
+  /* CHECKIN MODAL */
+  .ci-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 300; align-items: flex-start; justify-content: center; padding: 2rem 1rem; overflow-y: auto; }
+  .ci-overlay.open { display: flex; }
+  .ci-modal { background: var(--color-background-primary); border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-tertiary); width: 100%; max-width: 560px; padding: 1.5rem; margin: auto; }
+  .ci-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+  .ci-title { font-size: 16px; font-weight: 500; }
+  .ci-sub { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 1.25rem; }
+  .plant-group { margin-bottom: 1.25rem; }
+  .plant-group-label { font-size: 13px; font-weight: 500; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 0.5px solid var(--color-border-tertiary); display: flex; align-items: center; justify-content: space-between; }
+  .pg-toggle { font-size: 11px; color: var(--color-text-tertiary); font-weight: 400; cursor: pointer; }
+  .pg-toggle:hover { color: var(--color-text-secondary); }
+  .variety-list { display: flex; flex-direction: column; gap: 2px; }
+  .vcheck-row { display: flex; align-items: center; gap: 10px; padding: 6px 10px; border-radius: var(--border-radius-md); cursor: pointer; }
+  .vcheck-row:hover { background: var(--color-background-secondary); }
+  .vcheck-row input[type=checkbox] { width: 16px; height: 16px; flex-shrink: 0; cursor: pointer; accent-color: #D4537E; }
+  .vcheck-name { font-size: 13px; }
+  .ci-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1.25rem; padding-top: 1rem; border-top: 0.5px solid var(--color-border-tertiary); }
+  .btn-bloom-save { background: #D4537E; color: white; border: none; border-radius: var(--border-radius-md); padding: 8px 16px; font-size: 13px; font-weight: 500; }
+
+  /* SEED SCHEDULE */
+  .sched-legend { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1.25rem; }
+  .leg-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--color-text-secondary); }
+  .leg-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+  .sched-month { margin-bottom: 1.75rem; }
+  .sched-month-header { font-size: 16px; font-weight: 500; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .sched-month-note { font-size: 13px; color: var(--color-text-secondary); background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 10px 14px; margin-bottom: 10px; }
+  .sched-week { margin-bottom: 12px; }
+  .sched-week-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-tertiary); margin-bottom: 8px; }
+  .sched-actions { display: flex; flex-direction: column; gap: 6px; }
+  .sched-action { display: flex; align-items: flex-start; gap: 10px; padding: 8px 12px; border-radius: var(--border-radius-md); }
+  .action-type { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 100px; white-space: nowrap; flex-shrink: 0; margin-top: 1px; }
+  .action-plants { font-size: 13px; line-height: 1.5; }
+  .action-note { font-size: 12px; color: var(--color-text-secondary); font-style: italic; margin-top: 2px; }
+  .t-start{background:#EAF3DE;color:#3B6D11}.t-fridge{background:#E6F1FB;color:#185FA5}.t-freeze{background:#EEEDFE;color:#3C3489}.t-harden{background:#FAEEDA;color:#854F0B}.t-transplant{background:#FBEAF0;color:#723e5c}.t-directsow{background:#E1F5EE;color:#085041}.t-purchase{background:#F1EFE8;color:#5F5E5A}.t-wakeup{background:#FAEEDA;color:#633806}.t-order{background:var(--color-background-secondary);color:var(--color-text-secondary)}.t-note{background:var(--color-background-secondary);color:var(--color-text-tertiary)}
+  .row-start{background:#EAF3DE22}.row-fridge{background:#E6F1FB22}.row-freeze{background:#EEEDFE22}.row-harden{background:#FAEEDA22}.row-transplant{background:#FBEAF022}.row-directsow{background:#E1F5EE22}.row-purchase{background:#F1EFE822}.row-wakeup{background:#FAEEDA22}.row-order{background:var(--color-background-secondary)}.row-note{background:var(--color-background-secondary)}
+
+  /* FERTILIZER */
+  .qr-section{margin-bottom:1.75rem}.qr-section-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}.qr-section-title{font-size:14px;font-weight:500}.qr-freq-badge{font-size:11px;font-weight:500;padding:3px 10px;border-radius:100px}
+  .freq-spring{background:#EAF3DE;color:#3B6D11}.freq-planting{background:#FAEEDA;color:#633806}.freq-season{background:#EEEDFE;color:#3C3489}.freq-weeks{background:#E1F5EE;color:#085041}.freq-monthly{background:#FBEAF0;color:#723e5c}.freq-biweekly{background:#E6F1FB;color:#185FA5}.freq-weekly{background:#FAEEDA;color:#854F0B}.freq-none{background:var(--color-background-secondary);color:var(--color-text-secondary)}.freq-custom{background:#F1EFE8;color:#5F5E5A}
+  .qr-table{width:100%;border-collapse:collapse}.qr-table th{font-size:11px;color:var(--color-text-tertiary);font-weight:500;text-transform:uppercase;letter-spacing:.04em;padding:0 0 8px;text-align:left;border-bottom:.5px solid var(--color-border-tertiary)}.qr-table th.th-fert{width:220px}.qr-table td{padding:8px 12px 8px 0;border-top:.5px solid var(--color-border-tertiary);font-size:13px;vertical-align:top}.qr-table td.td-plant{font-weight:500;width:160px}.qr-table td.td-fert{color:var(--color-text-secondary)}.qr-table td.td-notes{color:var(--color-text-tertiary);font-style:italic;font-size:12px}
+  .qr-divider{border:none;border-top:.5px solid var(--color-border-tertiary);margin:1.5rem 0}
+  .no-fert-pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}.no-fert-pill{font-size:13px;background:var(--color-background-secondary);padding:4px 12px;border-radius:100px;color:var(--color-text-secondary)}
+  .inv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-top:12px}.inv-item{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 12px}.inv-name{font-size:13px;font-weight:500}.inv-npk{font-size:11px;color:var(--color-text-tertiary);margin-top:2px}.inv-have{font-size:10px;color:var(--color-text-success);margin-top:2px}
+
+  /* SYNC INDICATOR */
+  .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-text-success); display: inline-block; margin-right: 4px; }
+  .sync-dot.saving { background: var(--color-text-warning); animation: pulse 1s ease-in-out infinite; }
+  .sync-dot.error { background: var(--color-text-danger); }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .sync-label { font-size: 11px; color: var(--color-text-tertiary); display: flex; align-items: center; }
+
+  /* BACKUP MODAL */
+  .backup-section { margin-bottom: 1.25rem; }
+  .backup-section h3 { font-size: 14px; font-weight: 500; margin-bottom: 8px; }
+  .backup-section p { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 12px; line-height: 1.6; }
+  .backup-section .btn-backup-action { width: 100%; padding: 10px; font-size: 13px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); cursor: pointer; font-weight: 500; }
+  .backup-section .btn-backup-action:hover { background: var(--color-border-tertiary); }
+  .backup-section .btn-backup-action.primary { background: var(--color-background-success); color: var(--color-text-success); border-color: var(--color-border-success); }
+  .backup-divider { border: none; border-top: 0.5px solid var(--color-border-tertiary); margin: 1.25rem 0; }
+  #importFileInput { display: none; }
+</style>
+</head>
+<body>
+
+<!-- LOADING SCREEN -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="loading-logo">
+    <svg viewBox="0 0 20 20" fill="none" width="24" height="24">
+      <path d="M10 2C10 2 4 6 4 11a6 6 0 0012 0C16 6 10 2 10 2z" fill="#2d6a2d" opacity="0.7"/>
+      <path d="M10 8v8M10 12c0 0-2-2-3.5-1.5" stroke="#2d6a2d" stroke-width="1.2" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <div class="loading-title">Green Gate Gardens</div>
+  <div class="loading-spinner"></div>
+  <div class="loading-sub">Connecting to database…</div>
+</div>
+
+<!-- MAIN APP -->
+<div class="app" id="mainApp" style="display:none">
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 20 20" fill="none" width="20" height="20">
+          <path d="M10 2C10 2 4 6 4 11a6 6 0 0012 0C16 6 10 2 10 2z" fill="#2d6a2d" opacity="0.7"/>
+          <path d="M10 8v8M10 12c0 0-2-2-3.5-1.5" stroke="#2d6a2d" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <h1>Green Gate Gardens</h1>
+        <p>Plant Inventory &amp; Catalog</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="sync-label"><span class="sync-dot" id="syncDot"></span><span id="syncLabel">Synced</span></div>
+      <button class="backup-btn" onclick="openBackup()">⬇ Backup / Restore</button>
+      <button class="add-btn" id="addPlantBtn" onclick="openModal()" style="display:none">+ Add Plant</button>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="nav-btn active" onclick="showSection('catalog')">Plant Catalog</button>
+    <button class="nav-btn" onclick="showSection('bloom')">Bloom Tracker</button>
+    <button class="nav-btn" onclick="showSection('schedule')">Seed Schedule</button>
+    <button class="nav-btn" onclick="showSection('fert')">Fertilizer Reference</button>
+  </div>
+
+  <!-- CATALOG -->
+  <div id="sec-catalog">
+    <div class="stats" id="stats"></div>
+    <div class="controls">
+      <div class="search-wrap">
+        <svg class="search-icon" viewBox="0 0 16 16" fill="none"><circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.2"/><path d="M10 10l3 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        <input type="text" placeholder="Search plants, varieties, locations…" id="search" oninput="renderGrid()">
+      </div>
+      <div class="filter-tabs" id="tabs"></div>
+    </div>
+    <div class="plant-grid" id="grid"></div>
+    <div class="empty" id="empty" style="display:none">No plants found.</div>
+  </div>
+
+  <!-- BLOOM -->
+  <div id="sec-bloom" style="display:none">
+    <div id="bloomBanner"></div>
+    <div class="sub-nav">
+      <button class="sub-nav-btn active" id="bsn-timeline" onclick="showBloomView('timeline')">Season Timeline</button>
+      <button class="sub-nav-btn" id="bsn-weekly" onclick="showBloomView('weekly')">Weekly Log</button>
+      <button class="sub-nav-btn" id="bsn-history" onclick="showBloomView('history')">Variety History</button>
+    </div>
+    <div id="bv-timeline"></div>
+    <div id="bv-weekly" style="display:none"></div>
+    <div id="bv-history" style="display:none"></div>
+  </div>
+
+  <!-- SCHEDULE -->
+  <div id="sec-schedule" style="display:none"><div id="schedContent"></div></div>
+
+  <!-- FERT -->
+  <div id="sec-fert" style="display:none"><div id="fertContent"></div></div>
+</div>
+
+<!-- DETAIL PANEL -->
+<div class="overlay" id="detailBg"><div class="detail-panel" id="detailPanel"></div></div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="modalBg">
+  <div class="modal">
+    <h2 id="modalTitle">Add Plant</h2>
+    <div class="form-grid">
+      <div class="form-section">Identity &amp; Location</div>
+      <div class="form-field full"><label class="form-label">Plant Name *</label><input type="text" id="f-name"></div>
+      <div class="form-field"><label class="form-label">Category</label><select id="f-cat"><option value="Cut Flower">Cut Flower</option><option value="Perennial">Perennial</option><option value="Vegetable">Vegetable</option><option value="Fruit">Fruit</option><option value="Herb">Herb</option></select></div>
+      <div class="form-field"><label class="form-label">Plant Type</label><select id="f-type"><option value="">Unknown</option><option value="Annual">Annual</option><option value="Biennial">Biennial</option><option value="Perennial">Perennial</option><option value="Tender Perennial">Tender Perennial</option><option value="Bulb">Bulb</option></select></div>
+      <div class="form-field"><label class="form-label">Sun Requirements</label><select id="f-sun"><option value="">Unknown</option><option value="Full Sun">Full Sun</option><option value="Partial Shade">Partial Shade</option><option value="Full Shade">Full Shade</option><option value="Full Sun / Partial Shade">Full Sun / Partial Shade</option></select></div>
+      <div class="form-field"><label class="form-label">Shared Status</label><select id="f-status"><option value="active">Active / Growing</option><option value="dormant">Dormant</option><option value="new">New 2026</option><option value="harvested">Harvested</option></select></div>
+      <div class="form-field full"><label class="form-label">Shared Location</label><input type="text" id="f-loc"></div>
+      <div class="bloom-form-row"><input type="checkbox" id="f-bloom"><label for="f-bloom">Include In Bloom Tracker<span>Check for any plant with trackable blooms.</span></label></div>
+      <div class="form-section">Season Timing</div>
+      <div class="form-field full"><label class="form-label">Seed Start / Schedule Summary</label><textarea id="f-seedstart"></textarea></div>
+      <div class="form-field full"><label class="form-label">Hardening Schedule</label><textarea id="f-hardsched"></textarea></div>
+      <div class="form-field full"><label class="form-label">Transplant / Plant-Out Schedule</label><textarea id="f-transched"></textarea></div>
+      <div class="form-field full"><label class="form-label">Direct Sow Schedule</label><textarea id="f-directsow"></textarea></div>
+      <div class="form-field"><label class="form-label">Expected First Bloom / Harvest</label><input type="text" id="f-harvest"></div>
+      <div class="form-field"><label class="form-label">Last Harvested</label><input type="date" id="f-lastharvest"></div>
+      <div class="form-section">Seed Starting &amp; Transplanting</div>
+      <div class="form-field full"><label class="form-label">Seed Starting Instructions</label><textarea id="f-seedinstr"></textarea></div>
+      <div class="form-field full"><label class="form-label">Germination Requirements</label><textarea id="f-germination"></textarea></div>
+      <div class="form-field full"><label class="form-label">Hardening Off Notes</label><textarea id="f-hardening"></textarea></div>
+      <div class="form-field full"><label class="form-label">Transplanting Tips</label><textarea id="f-transplanting"></textarea></div>
+      <div class="form-section">Care</div>
+      <div class="form-field full"><label class="form-label">Fertilizer</label><input type="text" id="f-fert"></div>
+      <div class="form-field full"><label class="form-label">Fertilizer Frequency</label><div class="combo-wrap"><input type="text" id="f-fertfreq" autocomplete="off" placeholder="Select or type a new group…" oninput="filterCombo(this.value)" onfocus="openCombo()" onblur="schedCloseCombo()"><div class="combo-dropdown" id="comboDD"></div></div></div>
+      <div class="form-field full"><label class="form-label">Fertilizer Notes</label><textarea id="f-fertnotes"></textarea></div>
+      <div class="form-field full"><label class="form-label">Pruning / Winter Care</label><textarea id="f-pruning"></textarea></div>
+      <div class="form-field full"><label class="form-label">Disease &amp; Pest Notes</label><textarea id="f-disease"></textarea></div>
+      <div class="form-section">Storage &amp; Overwintering</div>
+      <div class="form-field"><label class="form-label">Winter Storage Method</label><input type="text" id="f-storage"></div>
+      <div class="form-field"><label class="form-label">Storage Location</label><input type="text" id="f-storageloc"></div>
+      <div class="form-section">History &amp; Notes</div>
+      <div class="form-field full"><label class="form-label">Season Notes</label><textarea id="f-season"></textarea></div>
+      <div class="form-field full"><label class="form-label">Wishlist / To-Do</label><textarea id="f-wishlist"></textarea></div>
+      <div class="form-field full"><label class="form-label">General Notes</label><textarea id="f-notes"></textarea></div>
+    </div>
+    <div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">Cancel</button><button class="btn-save" onclick="savePlant()">Save Plant</button></div>
+  </div>
+</div>
+
+<!-- BLOOM CHECKIN MODAL -->
+<div class="ci-overlay" id="ciOverlay">
+  <div class="ci-modal">
+    <div class="ci-header"><div class="ci-title">Weekly Bloom Check-In</div><button class="close-btn" onclick="closeCI()">✕</button></div>
+    <div class="ci-sub" id="ciSub"></div>
+    <div id="ciBody"></div>
+    <div class="ci-actions"><button class="btn-cancel" onclick="closeCI()">Cancel</button><button class="btn-bloom-save" onclick="saveCheckin()">Save This Week's Blooms</button></div>
+  </div>
+</div>
+
+<!-- BACKUP MODAL -->
+<div class="modal-overlay" id="backupModal">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
+      <h2 style="margin:0">Backup &amp; Restore</h2>
+      <button class="close-btn" onclick="closeBackup()">✕</button>
+    </div>
+    <div class="backup-section">
+      <h3>Export Backup</h3>
+      <p>Download all your plant data, bloom logs, and fertilizer groups as a JSON file. Save this somewhere safe — your desktop, Google Drive, or iCloud. If anything ever goes wrong, you can restore from this file.</p>
+      <button class="btn-backup-action primary" onclick="exportBackup()">⬇ Download Backup File</button>
+    </div>
+    <hr class="backup-divider">
+    <div class="backup-section">
+      <h3>Import / Restore</h3>
+      <p>Restore from a previously exported backup file. <strong>This will overwrite all current data.</strong> Only use this if you need to recover from a backup.</p>
+      <button class="btn-backup-action" onclick="document.getElementById('importFileInput').click()">⬆ Choose Backup File to Import</button>
+      <input type="file" id="importFileInput" accept=".json" onchange="importBackup(event)">
+    </div>
+  </div>
+</div>
+
+<script type="module">
+// ─── FIREBASE ───────────────────────────────────────────────────
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getFirestore, doc, getDoc, setDoc, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCyTGXCFUGq3mtgAOxlOz9CpwiTobYa63o",
+  authDomain: "green-gate-gardens.firebaseapp.com",
+  projectId: "green-gate-gardens",
+  storageBucket: "green-gate-gardens.firebasestorage.app",
+  messagingSenderId: "264474951376",
+  appId: "1:264474951376:web:83de7e8931ecdb07df68d5"
+};
+
+const fbApp = initializeApp(firebaseConfig);
+const db = getFirestore(fbApp);
+
+// ─── STATE ──────────────────────────────────────────────────────
+let plants = [], bloomData = {}, freqGroups = [];
+let editId = null, detailId = null, expandedVars = {};
+let activeFilter = 'All', currentSection = 'catalog';
+let bloomView = 'timeline', weeklyKey = '', historyPlant = '';
+let pendingCI = {}, ciWeekKey = '';
+let comboTimer = null, saveTimer = null;
+
+const CATS = ['All','Cut Flower','Perennial','Vegetable','Fruit','Herb'];
+const DEFAULT_FREQS = ['Once Per Season (Spring)','Once Per Planting','2–3 Times Per Season','Every 6–8 Weeks','Monthly','Every 2 Weeks','Weekly','No Fertilizer'];
+const BLOOM_OPT_IN = ['Calendula','Chocolate Cosmos','Cosmos','Coneflower','Coreopsis','Dahlia','Delphinium','Eucalyptus','Feverfew','Lisianthus','Marigold','Milkweed','Nasturtium','Pansy','Poppy','Ranunculus','Anemone','Rudbeckia','Scabiosa','Snapdragon','Stock','Sunflower','Sweet Pea','Zinnia','Daffodil','Tulip','Peony','Lavender','Rose','Helleborus','Lavender (Herb)'];
+
+const FIELDS = ['cat','type','sun','status','loc','seedStart','hardeningSched','transplantSched','directSow','harvest','lastHarvest','seedInstructions','germination','hardening','transplanting','fert','fertFreq','fertNotes','pruning','disease','storage','storageLoc','season','wishlist','notes'];
+const FIDS   = ['f-cat','f-type','f-sun','f-status','f-loc','f-seedstart','f-hardsched','f-transched','f-directsow','f-harvest','f-lastharvest','f-seedinstr','f-germination','f-hardening','f-transplanting','f-fert','f-fertfreq','f-fertnotes','f-pruning','f-disease','f-storage','f-storageloc','f-season','f-wishlist','f-notes'];
+
+// ─── SYNC INDICATOR ─────────────────────────────────────────────
+function setSyncState(state) {
+  const dot = document.getElementById('syncDot');
+  const label = document.getElementById('syncLabel');
+  dot.className = 'sync-dot' + (state === 'saving' ? ' saving' : state === 'error' ? ' error' : '');
+  label.textContent = state === 'saving' ? 'Saving…' : state === 'error' ? 'Error saving' : 'Synced';
+}
+
+// ─── FIREBASE LOAD / SAVE ────────────────────────────────────────
+async function loadFromFirebase() {
+  try {
+    const plantsDoc = await getDoc(doc(db, 'ggg', 'plants'));
+    const bloomDoc  = await getDoc(doc(db, 'ggg', 'bloom'));
+    const freqDoc   = await getDoc(doc(db, 'ggg', 'freq'));
+
+    if (plantsDoc.exists() && plantsDoc.data().list) {
+      plants = plantsDoc.data().list;
+    } else {
+      plants = DEFAULT_PLANTS.map(p => ({...p, id: uid(), inBloom: BLOOM_OPT_IN.includes(p.name), varieties: (p.varieties||[]).map(v=>({...v}))}));
+      await saveToFirebase('plants');
+    }
+    plants.forEach(p => { if (p.inBloom === undefined) p.inBloom = BLOOM_OPT_IN.includes(p.name); });
+
+    bloomData = bloomDoc.exists() ? (bloomDoc.data().data || {}) : {};
+    freqGroups = freqDoc.exists() ? (freqDoc.data().list || [...DEFAULT_FREQS]) : [...DEFAULT_FREQS];
+
+  } catch(e) {
+    console.error('Firebase load error:', e);
+    setSyncState('error');
+    // Fall back to defaults so app is still usable
+    if (!plants.length) plants = DEFAULT_PLANTS.map(p => ({...p, id: uid(), inBloom: BLOOM_OPT_IN.includes(p.name), varieties: (p.varieties||[]).map(v=>({...v}))}));
+    if (!freqGroups.length) freqGroups = [...DEFAULT_FREQS];
+  }
+}
+
+async function saveToFirebase(which) {
+  setSyncState('saving');
+  try {
+    if (!which || which === 'plants') await setDoc(doc(db, 'ggg', 'plants'), { list: plants });
+    if (!which || which === 'bloom')  await setDoc(doc(db, 'ggg', 'bloom'),  { data: bloomData });
+    if (!which || which === 'freq')   await setDoc(doc(db, 'ggg', 'freq'),   { list: freqGroups });
+    setSyncState('synced');
+  } catch(e) {
+    console.error('Firebase save error:', e);
+    setSyncState('error');
+  }
+}
+
+function debouncedSave(which) {
+  if (saveTimer) clearTimeout(saveTimer);
+  setSyncState('saving');
+  saveTimer = setTimeout(() => saveToFirebase(which), 1200);
+}
+
+// ─── UTILITIES ──────────────────────────────────────────────────
+const uid = () => Math.random().toString(36).slice(2,9);
+const fmtDate = d => { if(!d) return ''; try { return new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); } catch(e){ return d; }};
+const catClass = c => ({'Cut Flower':'cat-flower','Perennial':'cat-perennial','Vegetable':'cat-veg','Fruit':'cat-fruit','Herb':'cat-herb'}[c]||'cat-veg');
+const sPill = s => { const m={active:['s-active','Active'],dormant:['s-dormant','Dormant'],new:['s-new','New 2026'],harvested:['s-harvested','Harvested']}; const [c,l]=m[s]||m['active']; return `<span class="status-pill ${c}">${l}</span>`; };
+const totQty = p => (p.varieties||[]).reduce((s,v)=>s+(parseInt(v.qty)||0),0);
+const hasLocOv = p => (p.varieties||[]).some(v=>v.loc&&v.loc.trim());
+const sharedLoc = p => hasLocOv(p)?'Multiple':(p.loc||'');
+const bloomPs = () => plants.filter(p=>p.inBloom);
+
+// Week utilities
+const getWK = d => { const x=new Date(d); x.setHours(0,0,0,0); x.setDate(x.getDate()+3-(x.getDay()+6)%7); const w1=new Date(x.getFullYear(),0,4); const n=1+Math.round(((x-w1)/86400000-3+(w1.getDay()+6)%7)/7); return `${x.getFullYear()}-W${String(n).padStart(2,'0')}`; };
+const wkStart = wk => { const [yr,w]=wk.split('-W').map(Number); const j=new Date(yr,0,4); const d=(j.getDay()+6)%7; const s=new Date(j); s.setDate(j.getDate()-d+(w-1)*7); return s; };
+const fmtWK = wk => { const d=wkStart(wk),e=new Date(d); e.setDate(d.getDate()+6); const f=x=>x.toLocaleDateString('en-US',{month:'short',day:'numeric'}); return `${f(d)} – ${f(e)}`; };
+const curWK = () => getWK(new Date());
+const prevWK = wk => { const d=wkStart(wk); d.setDate(d.getDate()-7); return getWK(d); };
+const nextWK = wk => { const d=wkStart(wk); d.setDate(d.getDate()+7); return getWK(d); };
+const allWKs = () => { const ks=Object.keys(bloomData).sort(); if(!ks.length) return []; let c=ks[0]; const l=ks[ks.length-1]; const r=[]; while(c<=l){r.push(c);c=nextWK(c);} return r; };
+
+// ─── INIT ────────────────────────────────────────────────────────
+async function init() {
+  await loadFromFirebase();
+  weeklyKey = curWK();
+  historyPlant = bloomPs()[0]?.name || '';
+  document.getElementById('loadingScreen').style.display = 'none';
+  document.getElementById('mainApp').style.display = '';
+  renderGrid();
+}
+init();
+
+// ─── BACKUP / RESTORE ────────────────────────────────────────────
+window.openBackup = () => document.getElementById('backupModal').classList.add('open');
+window.closeBackup = () => document.getElementById('backupModal').classList.remove('open');
+
+window.exportBackup = () => {
+  const data = { version: 1, exportedAt: new Date().toISOString(), plants, bloomData, freqGroups };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `green-gate-gardens-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
+window.importBackup = async (e) => {
+  const file = e.target.files[0]; if (!file) return;
+  const text = await file.text();
+  try {
+    const data = JSON.parse(text);
+    if (!data.plants || !Array.isArray(data.plants)) { alert('Invalid backup file.'); return; }
+    if (!confirm('This will overwrite all current data with the backup. Are you sure?')) return;
+    plants = data.plants;
+    bloomData = data.bloomData || {};
+    freqGroups = data.freqGroups || [...DEFAULT_FREQS];
+    await saveToFirebase();
+    closeBackup();
+    renderGrid();
+    alert('Backup restored successfully.');
+  } catch(err) {
+    alert('Could not read backup file. Make sure it is a valid Green Gate Gardens backup.');
+  }
+  e.target.value = '';
+};
+
+// ─── SECTION ROUTING ─────────────────────────────────────────────
+window.showSection = function(s) {
+  currentSection = s;
+  ['catalog','bloom','schedule','fert'].forEach(x => { document.getElementById('sec-'+x).style.display = x===s?'':'none'; });
+  document.getElementById('addPlantBtn').style.display = s==='catalog'?'':'none';
+  document.querySelectorAll('.nav-btn').forEach((b,i) => b.classList.toggle('active', ['catalog','bloom','schedule','fert'][i]===s));
+  if(s==='bloom') renderBloom();
+  if(s==='schedule') renderSchedule();
+  if(s==='fert') renderFert();
+};
+
+// ─── CATALOG ─────────────────────────────────────────────────────
+window.renderGrid = function() {
+  const q = document.getElementById('search').value.toLowerCase();
+  const filtered = plants.filter(p => {
+    const mc = activeFilter==='All' || p.cat===activeFilter;
+    const mq = !q || p.name.toLowerCase().includes(q) || (p.varieties||[]).some(v=>v.name.toLowerCase().includes(q)) || (p.loc||'').toLowerCase().includes(q) || (p.season||'').toLowerCase().includes(q);
+    return mc && mq;
+  });
+  renderStats(); renderTabs();
+  const grid = document.getElementById('grid'), empty = document.getElementById('empty');
+  if (!filtered.length) { grid.innerHTML=''; empty.style.display=''; return; }
+  empty.style.display = 'none';
+  grid.innerHTML = filtered.map(p => {
+    const qty = totQty(p);
+    const vn = (p.varieties||[]).map(v=>v.name).slice(0,3).join(', ') + ((p.varieties||[]).length>3 ? ` +${(p.varieties||[]).length-3} more` : '');
+    return `<div class="plant-card" onclick="openDetail('${p.id}')">
+      <div class="card-top">
+        <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;">
+          <span class="cat-badge ${catClass(p.cat)}">${p.cat}</span>
+          ${p.inBloom ? '<span class="bloom-tag">Bloom Tracker</span>' : ''}
+        </div>
+        ${sPill(p.status)}
+      </div>
+      <div class="plant-name">${p.name}</div>
+      ${vn ? `<div class="variety-preview">${vn}</div>` : ''}
+      <div class="plant-meta">
+        ${sharedLoc(p) ? `<span>${sharedLoc(p)}</span>` : ''}
+        ${p.seedStart ? `<span>${p.seedStart.length>35 ? p.seedStart.slice(0,35)+'…' : p.seedStart}</span>` : ''}
+      </div>
+      <div class="card-footer">
+        <span class="card-footer-left">${(p.varieties||[]).length} variet${(p.varieties||[]).length===1?'y':'ies'}${qty>0?' · '+qty+' plants':''}</span>
+        <button class="view-btn" onclick="event.stopPropagation();openDetail('${p.id}')">View</button>
+      </div>
+    </div>`;
+  }).join('');
+};
+
+function renderStats() {
+  const t=plants.length, f=plants.filter(p=>p.cat==='Cut Flower').length, pe=plants.filter(p=>p.cat==='Perennial').length, v=plants.filter(p=>p.cat==='Vegetable').length, fr=plants.filter(p=>p.cat==='Fruit').length;
+  document.getElementById('stats').innerHTML = `<div class="stat"><div class="stat-label">Total Plants</div><div class="stat-val">${t}</div></div><div class="stat"><div class="stat-label">Cut Flowers</div><div class="stat-val">${f}</div></div><div class="stat"><div class="stat-label">Perennials</div><div class="stat-val">${pe}</div></div><div class="stat"><div class="stat-label">Vegetables</div><div class="stat-val">${v}</div></div><div class="stat"><div class="stat-label">Fruits</div><div class="stat-val">${fr}</div></div>`;
+}
+function renderTabs() {
+  const counts = {}; CATS.slice(1).forEach(c => counts[c] = plants.filter(p=>p.cat===c).length);
+  document.getElementById('tabs').innerHTML = CATS.map(c => `<button class="tab ${activeFilter===c?'active':''}" onclick="setFilter('${c}')">${c}${c!=='All'?` (${counts[c]})`:''}</button>`).join('');
+}
+window.setFilter = c => { activeFilter=c; renderGrid(); };
+
+// ─── DETAIL ──────────────────────────────────────────────────────
+window.openDetail = id => { detailId=id; expandedVars={}; renderDetail(); document.getElementById('detailBg').classList.add('open'); };
+window.closeDetail = () => document.getElementById('detailBg').classList.remove('open');
+
+function dF(label, val, full, note) {
+  const c = `df${full?' full':''}`;
+  const vc = `df-val${!val?' empty':note?' note':''}`;
+  return `<div class="${c}"><div class="df-label">${label}</div><div class="${vc}">${val||'—'}</div></div>`;
+}
+
+function renderDetail() {
+  const p = plants.find(x=>x.id===detailId); if (!p) return;
+  const sl = sharedLoc(p);
+  const varRows = (p.varieties||[]).map((v,i) => {
+    const isE = expandedVars[i];
+    const lc = v.loc&&v.loc.trim() ? `<span class="loc-override">${v.loc}</span>` : `<span class="loc-shared">${p.loc||'—'}</span>`;
+    return `<tr class="vrow">
+      <td>${v.name}${v.isNew?'<span class="new-tag">new</span>':''}</td>
+      <td class="td-status">${sPill(v.status||p.status)}</td>
+      <td>${lc}</td>
+      <td class="td-qty">${v.qty||0}</td>
+      <td class="td-exp"><button class="expand-btn" onclick="toggleVar(${i})">${isE?'▲':'▼'}</button></td>
+    </tr>
+    ${isE ? `<tr><td colspan="5" style="padding:4px 0 10px 0;"><div class="ov-inner">
+      <div class="ov-field"><div class="ov-label">Qty</div><input class="ov-input" style="width:60px;" type="number" min="0" value="${v.qty||0}" onchange="updVar(${i},'qty',this.value)"></div>
+      <div class="ov-field"><div class="ov-label">Location Override</div><input class="ov-input" style="width:130px;" type="text" placeholder="Leave blank for shared" value="${v.loc||''}" oninput="updVar(${i},'loc',this.value)"></div>
+      <div class="ov-field"><div class="ov-label">Status Override</div><select class="ov-select" onchange="updVar(${i},'status',this.value)">
+        <option value="" ${!v.status?'selected':''}>Use Shared</option>
+        <option value="active" ${v.status==='active'?'selected':''}>Active</option>
+        <option value="dormant" ${v.status==='dormant'?'selected':''}>Dormant</option>
+        <option value="new" ${v.status==='new'?'selected':''}>New 2026</option>
+        <option value="harvested" ${v.status==='harvested'?'selected':''}>Harvested</option>
+      </select></div>
+      <button class="btn-del" style="padding:4px 10px;font-size:11px;" onclick="delVar(${i})">Remove</button>
+    </div></td></tr>` : ''}`;
+  }).join('');
+
+  document.getElementById('detailPanel').innerHTML = `
+    <div class="detail-header">
+      <div class="detail-badges">
+        <span class="cat-badge ${catClass(p.cat)}">${p.cat}</span>
+        ${sPill(p.status)}
+        ${p.type ? `<span style="font-size:11px;color:var(--color-text-tertiary);">${p.type}</span>` : ''}
+        ${p.inBloom ? '<span class="bloom-tag">Bloom Tracker</span>' : ''}
+      </div>
+      <button class="close-btn" onclick="closeDetail()">✕</button>
+    </div>
+    <div class="detail-name">${p.name}</div>
+    <div class="bloom-toggle-row">
+      <input type="checkbox" id="dt-bloom" ${p.inBloom?'checked':''} onchange="toggleBloom('${p.id}',this.checked)" style="width:18px;height:18px;accent-color:#D4537E;cursor:pointer;flex-shrink:0;">
+      <label for="dt-bloom" class="bloom-toggle-label">Include In Bloom Tracker<span>${p.inBloom?'Appears in bloom tracker check-in and timeline.':'Not currently tracked in bloom tracker.'}</span></label>
+    </div>
+    <div class="detail-section"><div class="detail-section-label">Identity &amp; Location</div><div class="detail-grid">
+      ${dF('Shared Location', sl==='Multiple'?'<span style="color:var(--color-text-tertiary);font-style:italic;">Multiple (See Varieties)</span>':sl)}
+      ${dF('Shared Status', sPill(p.status))}
+      ${dF('Plant Type', p.type)}
+      ${dF('Sun Requirements', p.sun)}
+    </div></div>
+    <div class="detail-section"><div class="detail-section-label">Season Timing</div><div class="detail-grid">
+      ${dF('Seed Start / Schedule', p.seedStart, true, true)}
+      ${dF('Hardening Schedule', p.hardeningSched, true, true)}
+      ${dF('Transplant / Plant-Out Schedule', p.transplantSched, true, true)}
+      ${dF('Direct Sow Schedule', p.directSow, true, true)}
+      ${dF('Expected First Bloom / Harvest', p.harvest)}
+      ${dF('Last Harvested', fmtDate(p.lastHarvest))}
+    </div></div>
+    <div class="detail-section"><div class="detail-section-label">Seed Starting &amp; Transplanting</div><div class="detail-grid">
+      ${dF('Seed Starting Instructions', p.seedInstructions, true, true)}
+      ${dF('Germination Requirements', p.germination, true, true)}
+      ${dF('Hardening Off Notes', p.hardening, true, true)}
+      ${dF('Transplanting Tips', p.transplanting, true, true)}
+    </div></div>
+    <div class="detail-section"><div class="detail-section-label">Varieties &amp; Quantities</div>
+      <table class="vtable"><thead><tr><th>Variety</th><th class="th-status">Status</th><th>Location</th><th class="th-qty">Qty</th><th class="th-exp"></th></tr></thead>
+      <tbody>${varRows}</tbody></table>
+      <button class="add-variety-btn" onclick="addVar()">+ Add Variety</button>
+      <div class="vtotal">Total: <span>${totQty(p)}</span></div>
+    </div>
+    <div class="detail-section"><div class="detail-section-label">Care</div><div class="detail-grid">
+      ${dF('Fertilizer', p.fert)}
+      ${dF('Fertilizer Frequency', p.fertFreq)}
+      ${dF('Fertilizer Notes', p.fertNotes, true, true)}
+      ${dF('Pruning / Winter Care', p.pruning, true, true)}
+      ${dF('Disease &amp; Pest Notes', p.disease, true, true)}
+    </div></div>
+    <div class="detail-section"><div class="detail-section-label">Storage &amp; Overwintering</div><div class="detail-grid">
+      ${dF('Winter Storage Method', p.storage, true, true)}
+      ${dF('Storage Location', p.storageLoc)}
+    </div></div>
+    <div class="detail-section"><div class="detail-section-label">History &amp; Notes</div><div class="detail-grid">
+      ${dF('Season Notes', p.season, true, true)}
+      ${dF('Wishlist / To-Do', p.wishlist, true, true)}
+      ${dF('General Notes', p.notes, true, true)}
+    </div></div>
+    <div class="detail-actions">
+      <button class="btn-del" onclick="delPlant('${p.id}')">Remove Plant</button>
+      <button class="btn-edit" onclick="closeDetail();openModal('${p.id}')">Edit Plant</button>
+    </div>`;
+}
+
+window.toggleVar = i => { expandedVars[i]=!expandedVars[i]; renderDetail(); };
+window.updVar = async (i,k,v) => { const p=plants.find(x=>x.id===detailId); if(!p)return; if(k==='qty')p.varieties[i].qty=parseInt(v)||0; else p.varieties[i][k]=v; debouncedSave('plants'); renderDetail(); renderGrid(); };
+window.delVar = async i => { const p=plants.find(x=>x.id===detailId); if(!p)return; p.varieties.splice(i,1); delete expandedVars[i]; await saveToFirebase('plants'); renderDetail(); renderGrid(); };
+window.addVar = async () => { const p=plants.find(x=>x.id===detailId); if(!p)return; p.varieties.push({name:'New Variety',qty:0,loc:'',status:''}); expandedVars[p.varieties.length-1]=true; await saveToFirebase('plants'); renderDetail(); renderGrid(); };
+window.toggleBloom = async (id,v) => { const p=plants.find(x=>x.id===id); if(!p)return; p.inBloom=v; await saveToFirebase('plants'); renderGrid(); renderDetail(); };
+
+// ─── MODAL ───────────────────────────────────────────────────────
+window.openModal = id => { editId=id||null; const p=id?plants.find(x=>x.id===id):null; document.getElementById('modalTitle').textContent=p?'Edit Plant':'Add Plant'; FIELDS.forEach((f,i)=>{ const el=document.getElementById(FIDS[i]); if(el)el.value=p?(p[f]||''):''; }); document.getElementById('f-bloom').checked=p?!!p.inBloom:false; document.getElementById('modalBg').classList.add('open'); };
+window.closeModal = () => document.getElementById('modalBg').classList.remove('open');
+window.savePlant = async () => {
+  const name = document.getElementById('f-name').value.trim(); if(!name){alert('Please enter a Plant Name.');return;}
+  const plant = {name, inBloom: document.getElementById('f-bloom').checked};
+  FIELDS.forEach((f,i) => { plant[f] = document.getElementById(FIDS[i]).value; });
+  const freq = plant.fertFreq?.trim();
+  if (freq && !freqGroups.includes(freq)) { freqGroups.push(freq); await saveToFirebase('freq'); }
+  if (editId) { const i=plants.findIndex(x=>x.id===editId); if(i>-1){plant.id=editId;plant.varieties=plants[i].varieties||[];plants[i]=plant;} }
+  else { plant.id=uid(); plant.varieties=[]; plants.push(plant); }
+  await saveToFirebase('plants'); closeModal(); renderGrid();
+};
+window.delPlant = async id => { if(!confirm('Remove this plant?'))return; plants=plants.filter(p=>p.id!==id); await saveToFirebase('plants'); closeDetail(); renderGrid(); };
+
+document.getElementById('detailBg').addEventListener('click', e => { if(e.target===document.getElementById('detailBg')) closeDetail(); });
+document.getElementById('modalBg').addEventListener('click', e => { if(e.target===document.getElementById('modalBg')) closeModal(); });
+document.getElementById('backupModal').addEventListener('click', e => { if(e.target===document.getElementById('backupModal')) closeBackup(); });
+
+// ─── COMBOBOX ────────────────────────────────────────────────────
+window.openCombo = () => { if(comboTimer)clearTimeout(comboTimer); filterCombo(document.getElementById('f-fertfreq').value); document.getElementById('comboDD').classList.add('open'); };
+window.schedCloseCombo = () => { comboTimer=setTimeout(()=>document.getElementById('comboDD').classList.remove('open'),200); };
+window.filterCombo = v => { const q=v.toLowerCase(); const m=freqGroups.filter(g=>g.toLowerCase().includes(q)); const dd=document.getElementById('comboDD'); let h=m.map(g=>`<div class="combo-option" onmousedown="selCombo('${g.replace(/'/g,"\\'")}')"> ${g}</div>`).join(''); if(v.trim()&&!freqGroups.some(g=>g.toLowerCase()===v.toLowerCase())) h+=`<div class="combo-option create" onmousedown="newCombo('${v.replace(/'/g,"\\'")}')">+ Create "${v}"</div>`; dd.innerHTML=h||`<div class="combo-option" style="color:var(--color-text-tertiary);cursor:default;">No matches</div>`; };
+window.selCombo = v => { document.getElementById('f-fertfreq').value=v; document.getElementById('comboDD').classList.remove('open'); };
+window.newCombo = async v => { if(!freqGroups.includes(v))freqGroups.push(v); await saveToFirebase('freq'); selCombo(v); };
+
+// ─── BLOOM TRACKER ───────────────────────────────────────────────
+function renderBloom() { renderBloomBanner(); if(bloomView==='timeline')renderBTimeline(); else if(bloomView==='weekly')renderBWeekly(); else renderBHistory(); }
+window.showBloomView = v => { bloomView=v; ['timeline','weekly','history'].forEach(x=>{ document.getElementById('bv-'+x).style.display=x===v?'':'none'; document.getElementById('bsn-'+x).classList.toggle('active',x===v); }); renderBloom(); };
+
+function renderBloomBanner() {
+  const wk=curWK(); const el=document.getElementById('bloomBanner');
+  if (!bloomData[wk]) {
+    el.innerHTML=`<div class="checkin-banner"><div class="checkin-banner-top"><div><div class="checkin-title">What's blooming this week?</div><div class="checkin-sub">${fmtWK(wk)} — log this week's blooms</div></div><button class="open-checkin-btn" onclick="openCI('${wk}')">Check In</button></div></div>`;
+  } else {
+    const tot=Object.values(bloomData[wk]).reduce((s,a)=>s+a.length,0);
+    el.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);margin-bottom:1.25rem;gap:10px;flex-wrap:wrap;"><span style="font-size:13px;color:var(--color-text-secondary);">${fmtWK(wk)} · <strong style="color:var(--color-text-primary);">${tot} variet${tot!==1?'ies':'y'}</strong> in bloom this week</span><button class="week-nav" onclick="openCI('${wk}')">Edit This Week</button></div>`;
+  }
+}
+
+function renderBTimeline() {
+  const el=document.getElementById('bv-timeline'); const wks=allWKs(); const cw=curWK(); const tracked=bloomPs();
+  if (!wks.length) { el.innerHTML=`<div style="font-size:14px;font-weight:500;margin-bottom:12px;">Season Timeline</div><div class="no-log">No bloom data yet — log your first week to start building the timeline.</div>`; return; }
+  const wkl=wks.map(wk=>{ const d=wkStart(wk); return d.toLocaleDateString('en-US',{month:'short',day:'numeric'}); });
+  let h=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;"><div style="font-size:14px;font-weight:500;">Season Timeline</div><div style="font-size:12px;color:var(--color-text-tertiary);">${wks.length} week${wks.length!==1?'s':''} logged · ${tracked.length} plants tracked</div></div>
+  <div class="tl-wrap"><table class="tl-table"><thead><tr>
+    <th class="tl-th" style="width:140px;">Plant</th>
+    <th class="tl-th" style="width:150px;">Variety</th>
+    ${wks.map((wk,i)=>`<th class="tl-th-wk tl-cell${wk===cw?' cur':''}" title="${fmtWK(wk)}">${wkl[i]}</th>`).join('')}
+  </tr></thead><tbody>`;
+  tracked.forEach(p => {
+    (p.varieties||[{name:p.name}]).forEach((v,vi) => {
+      h+=`<tr class="tl-row">
+        <td class="tl-plant">${vi===0?p.name:''}</td>
+        <td class="tl-variety">${v.name}</td>
+        ${wks.map(wk=>{ const on=(bloomData[wk]?.[p.name]||[]).includes(v.name); return `<td class="tl-cell${wk===cw?' cur':''}"><div class="tl-dot${on?' on':' off'}${wk===cw?' cur':''}"></div></td>`; }).join('')}
+      </tr>`;
+    });
+  });
+  h+=`</tbody></table></div>
+  <div style="display:flex;gap:16px;margin-top:12px;flex-wrap:wrap;">
+    <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--color-text-secondary);"><div style="width:12px;height:12px;border-radius:50%;background:#D4537E;"></div>In Bloom</div>
+    <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--color-text-secondary);"><div style="width:12px;height:12px;border-radius:50%;border:0.5px solid var(--color-border-tertiary);"></div>Not In Bloom</div>
+    <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--color-text-secondary);"><div style="width:12px;height:12px;border-radius:50%;border:0.5px solid var(--color-border-tertiary);outline:2px solid var(--color-text-info);outline-offset:1px;"></div>Current Week</div>
+  </div>`;
+  el.innerHTML = h;
+}
+
+function renderBWeekly() {
+  const el=document.getElementById('bv-weekly'); const wk=weeklyKey; const cw=curWK(); const data=bloomData[wk];
+  let h=`<div class="week-selector">
+    <button class="week-nav" onclick="weeklyKey=prevWK(weeklyKey);renderBWeekly()">← Previous</button>
+    <div><div class="week-label">${fmtWK(wk)}</div><div style="font-size:12px;color:var(--color-text-tertiary);">${wk===cw?'Current week':''}</div></div>
+    <button class="week-nav" onclick="weeklyKey=nextWK(weeklyKey);renderBWeekly()">Next →</button>
+    ${wk!==cw?`<button class="week-nav" onclick="weeklyKey=curWK();renderBWeekly()">This Week</button>`:''}
+    <button class="week-nav" style="margin-left:auto;" onclick="openCI('${wk}')">Edit This Week</button>
+  </div>`;
+  if (!data||!Object.keys(data).length) { h+=`<div class="no-log">No blooms logged for this week.</div>`; }
+  else {
+    const tot=Object.values(data).reduce((s,a)=>s+a.length,0);
+    h+=`<table class="weekly-table"><thead><tr><th>Plant</th><th>Varieties In Bloom</th></tr></thead><tbody>`;
+    bloomPs().forEach(p=>{ const bl=data[p.name]||[]; if(bl.length) h+=`<tr><td style="font-weight:500;padding-right:12px;white-space:nowrap;">${p.name}</td><td>${bl.map(v=>`<span class="bloom-pill">${v}</span>`).join('')}</td></tr>`; });
+    h+=`</tbody></table><div style="margin-top:12px;font-size:12px;color:var(--color-text-tertiary);">${tot} variet${tot!==1?'ies':'y'} in bloom this week</div>`;
+  }
+  el.innerHTML = h;
+}
+
+function renderBHistory() {
+  const el=document.getElementById('bv-history'); const tracked=bloomPs(); const wks=allWKs();
+  if (!historyPlant||!tracked.find(p=>p.name===historyPlant)) historyPlant=tracked[0]?.name||'';
+  let h=`<div class="vh-filter">${tracked.map(p=>`<button class="vh-btn${historyPlant===p.name?' active':''}" onclick="historyPlant='${p.name.replace(/'/g,"\\'")}';renderBHistory()">${p.name}</button>`).join('')}</div>`;
+  if (!wks.length) { h+=`<div class="no-log">No bloom data yet.</div>`; el.innerHTML=h; return; }
+  const p=tracked.find(x=>x.name===historyPlant); if(!p){el.innerHTML=h;return;}
+  h+=`<table class="vh-table"><thead><tr><th>Variety</th><th>Weeks In Bloom</th><th>Timeline</th></tr></thead><tbody>`;
+  (p.varieties||[{name:p.name}]).forEach(v=>{
+    const bwks=wks.filter(wk=>(bloomData[wk]?.[p.name]||[]).includes(v.name));
+    const dots=wks.map(wk=>{ const on=(bloomData[wk]?.[p.name]||[]).includes(v.name); return `<span title="${fmtWK(wk)}" style="display:inline-block;width:10px;height:10px;border-radius:50%;margin:0 1px;background:${on?'#D4537E':'transparent'};border:0.5px solid ${on?'#D4537E':'var(--color-border-tertiary)'};"></span>`; }).join('');
+    h+=`<tr><td style="font-weight:500;padding-right:16px;white-space:nowrap;">${v.name}</td><td style="white-space:nowrap;padding-right:16px;">${bwks.length>0?`${bwks.length} wk${bwks.length!==1?'s':''}`:'<span style="color:var(--color-text-tertiary);font-style:italic;">None logged</span>'}</td><td><div style="display:flex;align-items:center;flex-wrap:wrap;">${dots}</div></td></tr>`;
+  });
+  h+=`</tbody></table>`; el.innerHTML=h;
+}
+
+// Expose helpers for inline onclick
+window.prevWK = prevWK;
+window.nextWK = nextWK;
+window.curWK = curWK;
+window.weeklyKey = weeklyKey;
+window.renderBWeekly = renderBWeekly;
+window.renderBHistory = renderBHistory;
+window.historyPlant = historyPlant;
+
+window.openCI = wk => {
+  ciWeekKey=wk; const pw=prevWK(wk); const pd=bloomData[pw]||{}; const cd=bloomData[wk]||null;
+  pendingCI={};
+  bloomPs().forEach(p=>{ if(cd&&cd[p.name]) pendingCI[p.name]=[...cd[p.name]]; else if(!cd&&pd[p.name]) pendingCI[p.name]=[...pd[p.name]]; else pendingCI[p.name]=[]; });
+  document.getElementById('ciSub').textContent = fmtWK(wk)+(cd?' — editing existing entry':' — carried forward from last week, uncheck anything that stopped blooming');
+  renderCIBody();
+  document.getElementById('ciOverlay').classList.add('open');
+};
+
+function renderCIBody() {
+  document.getElementById('ciBody').innerHTML = bloomPs().map(p => {
+    const chk=pendingCI[p.name]||[]; const vars=p.varieties||[{name:p.name}]; const allC=vars.every(v=>chk.includes(v.name));
+    return `<div class="plant-group">
+      <div class="plant-group-label">${p.name}<span class="pg-toggle" onclick="toggleAllCI('${p.name.replace(/'/g,"\\'")}',${!allC})">${allC?'Uncheck all':'Check all'}</span></div>
+      <div class="variety-list">${vars.map(v=>`<div class="vcheck-row" onclick="toggleCI('${p.name.replace(/'/g,"\\'")}','${v.name.replace(/'/g,"\\'")}')"><input type="checkbox" ${chk.includes(v.name)?'checked':''} onclick="event.stopPropagation();toggleCI('${p.name.replace(/'/g,"\\'")}','${v.name.replace(/'/g,"\\'")}')"><span class="vcheck-name">${v.name}</span></div>`).join('')}</div>
+    </div>`;
+  }).join('');
+}
+
+window.toggleCI = (plant,variety) => { if(!pendingCI[plant])pendingCI[plant]=[]; const i=pendingCI[plant].indexOf(variety); if(i>-1)pendingCI[plant].splice(i,1); else pendingCI[plant].push(variety); renderCIBody(); };
+window.toggleAllCI = (plant,on) => { const p=bloomPs().find(x=>x.name===plant); if(!p)return; const vars=p.varieties||[{name:p.name}]; pendingCI[plant]=on?vars.map(v=>v.name):[]; renderCIBody(); };
+window.saveCheckin = async () => { const entry={}; bloomPs().forEach(p=>{ const c=pendingCI[p.name]||[]; if(c.length)entry[p.name]=c; }); bloomData[ciWeekKey]=entry; await saveToFirebase('bloom'); closeCI(); weeklyKey=ciWeekKey; renderBloom(); };
+window.closeCI = () => document.getElementById('ciOverlay').classList.remove('open');
+document.getElementById('ciOverlay').addEventListener('click', e => { if(e.target===document.getElementById('ciOverlay')) closeCI(); });
+
+// ─── SEED SCHEDULE ───────────────────────────────────────────────
+const SCHEDULE=[
+  {month:'December',note:'Order seeds for Dec/Jan starts: Snapdragon, Stock, Lisianthus, Pansy, Poppies, Artichoke, Sweet Pea, Onion, Snap Pea, Habanero',weeks:[
+    {week:'Week 1',actions:[{type:'start',label:'Start Indoor',plants:'Snapdragon Round 1'}]},
+    {week:'Week 2',actions:[{type:'fridge',label:'Fridge',plants:'Pansies (in soil)',note:'Needs darkness to germinate'}]},
+    {week:'Week 3',actions:[{type:'start',label:'Start Indoor',plants:'Lisianthus Round 1, Snapdragon Round 2, Stock Round 1'},{type:'freeze',label:'Freeze',plants:'Poppies with soil',note:'Extremely effective for germination'}]},
+    {week:'Week 4',actions:[{type:'start',label:'Start Indoor',plants:'Pansies — move out of fridge and start'}]},
+  ]},
+  {month:'January',weeks:[
+    {week:'Week 1',actions:[{type:'fridge',label:'Fridge',plants:'Artichokes in paper towel'},{type:'start',label:'Start Indoor',plants:'Stock Round 2'},{type:'wakeup',label:'Remove From Freezer',plants:'Poppies'}]},
+    {week:'Week 2',actions:[{type:'start',label:'Start Indoor',plants:'Sweet Peas',note:'Soak seeds 24 hours first, then start next day'}]},
+    {week:'Week 3',actions:[{type:'start',label:'Start Indoor',plants:'Snapdragon Round 3, Lisianthus Round 2, Artichoke seeds, Stock Round 3, Snap Peas, Onion',note:'Habanero: soak 24 hours in chamomile tea first'}]},
+  ]},
+  {month:'February',weeks:[
+    {week:'Week 1',actions:[{type:'fridge',label:'Fridge',plants:'Rudbeckia, Echinacea, Coneflower in damp towels',note:'Cold stratification'},{type:'start',label:'Start Indoor',plants:'Stock Round 4'},{type:'harden',label:'Harden',plants:'Snapdragon Round 1, Pansies, Sweet Peas, Snap Peas, Poppies'}]},
+    {week:'Week 2',actions:[{type:'start',label:'Start Indoor',plants:'Tomatoes (not cherry), Jalapeño, Mirasol, Arbol, Shishito, Ranunculus + Anemone, Dahlia (from seed)',note:'All peppers: soak 24 hours in chamomile tea first'},{type:'wakeup',label:'Wake Up',plants:'Dahlias and Cosmos',note:'Move to dirt-filled zip-lock bags to sprout'},{type:'harden',label:'Harden',plants:'Stock Round 1'},{type:'directsow',label:'Direct Sow',plants:'Beets',note:'For early May harvest'}]},
+    {week:'Week 3',actions:[{type:'start',label:'Start Indoor',plants:'Scabiosa, Cauliflower, Feverfew, Stock Round 5'},{type:'transplant',label:'Transplant',plants:'Snapdragon Round 1, Pansies, Sweet Peas, Snap Peas, Poppies'}]},
+    {week:'Week 4',actions:[{type:'start',label:'Start Indoor',plants:'Nasturtium, Cherry Tomato, Echinacea, Rudbeckia, Coneflower, Coreopsis'},{type:'harden',label:'Harden',plants:'Stock Round 2'},{type:'transplant',label:'Transplant',plants:'Stock Round 1'}]},
+  ]},
+  {month:'March',weeks:[
+    {week:'Week 1',actions:[{type:'start',label:'Start Indoor',plants:'Giant Marigold, Mini Marigold, Stock Round 6, Lettuce Round 1, Kale Round 1'},{type:'harden',label:'Harden',plants:'Snapdragon Round 2, Artichokes'}]},
+    {week:'Week 2',actions:[{type:'harden',label:'Harden',plants:'Stock Round 3'}]},
+    {week:'Week 3',actions:[{type:'start',label:'Start Indoor',plants:'Calendula, Zinnia Round 1, Corn Round 1, Pumpkin, Yarrow'},{type:'transplant',label:'Transplant',plants:'Snapdragon Round 2, Artichokes'},{type:'harden',label:'Harden',plants:'Lisianthus Round 1'}]},
+    {week:'Week 4',actions:[{type:'directsow',label:'Direct Sow',plants:'Radish Round 1, Carrot Round 1, Arugula Round 1',note:'Every two weeks until beginning of May'},{type:'harden',label:'Harden',plants:'Stock Round 4'},{type:'transplant',label:'Transplant',plants:'Stock Round 3'}]},
+  ]},
+  {month:'April',weeks:[
+    {week:'Week 1',actions:[{type:'transplant',label:'Transplant',plants:'Lisianthus Round 1',note:"Assuming temps won't dip below 20s"},{type:'harden',label:'Harden',plants:'Calendula, Scabiosa, Cauliflower, Feverfew, Onion'},{type:'directsow',label:'Direct Sow',plants:'Cilantro Round 1, Dill Round 1'}]},
+    {week:'Week 2',actions:[{type:'start',label:'Start Indoor',plants:'Zinnia Round 2, Corn Round 2, Lettuce Round 2'},{type:'harden',label:'Harden',plants:'Stock Round 5, Ranunculus + Anemone'},{type:'transplant',label:'Transplant',plants:'Stock Round 4',note:"No cover needed if temps won't dip below mid 20s"},{type:'directsow',label:'Direct Sow',plants:'Radish Round 2, Carrot Round 2, Arugula Round 2'}]},
+    {week:'Week 3',actions:[{type:'transplant',label:'Transplant',plants:'Calendula, Scabiosa, Cauliflower, Feverfew, Onion',note:'If six inches tall'},{type:'harden',label:'Harden',plants:'Lisianthus Round 2, Kale Round 1'},{type:'directsow',label:'Direct Sow',plants:'Dill Round 2, Cilantro Round 2'}]},
+    {week:'Week 4',actions:[{type:'harden',label:'Harden',plants:'Dahlias, Cosmos, Zinnia Round 1, Corn Round 1, Tomatoes, Peppers, Echinacea, Coneflower, Rudbeckia, Nasturtium, Snapdragon Round 3, Coreopsis, Yarrow'},{type:'transplant',label:'Transplant',plants:'Stock Round 5, Ranunculus + Anemone',note:"No cover needed if temps won't dip below mid 20s"},{type:'directsow',label:'Direct Sow',plants:'Radish Round 3, Carrot Round 3, Arugula Round 3'}]},
+  ]},
+  {month:'May',weeks:[
+    {week:'Week 1',actions:[{type:'transplant',label:'Transplant',plants:'Lisianthus Round 2, Kale Round 1'},{type:'harden',label:'Harden',plants:'Giant Marigold, Mini Marigold'},{type:'directsow',label:'Direct Sow',plants:'Dill Round 3, Cilantro Round 3'}]},
+    {week:'Week 2 (Or After Last Frost Date)',actions:[{type:'start',label:'Start Indoor',plants:'Zinnia Round 3, Lettuce Round 3'},{type:'harden',label:'Harden',plants:'Corn Round 2, Pumpkin'},{type:'transplant',label:'Transplant',plants:'Nasturtium, Dahlia, Cosmos, Echinacea, Coneflower, Rudbeckia, Snapdragon Round 3, Zinnia Round 1, Corn Round 1, Tomatoes, Peppers, Coreopsis, Yarrow'},{type:'directsow',label:'Direct Sow',plants:'Bush Beans Round 1'}]},
+    {week:'Week 3',actions:[{type:'transplant',label:'Transplant',plants:'Giant Marigold, Mini Marigold'},{type:'purchase',label:'Purchase From Nursery',plants:'Cucumber, Zucchini / Squash, Basil, Parsley'},{type:'start',label:'Start Indoor',plants:'Sunflower Round 1'}]},
+    {week:'Week 4',actions:[{type:'transplant',label:'Transplant',plants:'Corn Round 2, Pumpkin'},{type:'directsow',label:'Direct Sow',plants:'Pole Beans (around Corn Round 1), Catgrass (for Maeve)'}]},
+  ]},
+  {month:'June',weeks:[
+    {week:'Week 1',actions:[{type:'directsow',label:'Direct Sow',plants:'Bush Beans Round 2'}]},
+    {week:'Week 2',actions:[{type:'start',label:'Start Indoor',plants:'Sunflower Round 2, Lettuce Round 4'},{type:'directsow',label:'Direct Sow',plants:'Pole Beans (around Corn Round 2)'}]},
+    {week:'Week 4',actions:[{type:'directsow',label:'Direct Sow',plants:'Bush Beans Round 3'},{type:'note',label:'Reminder',plants:'Plan fall garden'}]},
+  ]},
+  {month:'July',weeks:[
+    {week:'Week 1',actions:[{type:'start',label:'Start Indoor',plants:'Sunflower Round 3, Lettuce Round 5, Kale Round 2'},{type:'harden',label:'Harden',plants:'Sunflower Round 1'}]},
+    {week:'Week 2',actions:[{type:'harden',label:'Harden',plants:'Sunflower Round 2'},{type:'order',label:'Order',plants:'Fall bulbs (tulips, daffodils, ranunculus, anemone)'}]},
+    {week:'Week 3',actions:[{type:'transplant',label:'Transplant',plants:'Sunflower Round 1'},{type:'directsow',label:'Direct Sow',plants:'Bush Beans Round 4 (last round)'}]},
+    {week:'Week 4',actions:[{type:'transplant',label:'Transplant',plants:'Sunflower Round 2'},{type:'directsow',label:'Direct Sow',plants:'Beets (after garlic pulled, for fall harvest)'}]},
+  ]},
+  {month:'August',weeks:[
+    {week:'Week 1',actions:[{type:'harden',label:'Harden',plants:'Sunflower Round 3, Kale Round 2'},{type:'directsow',label:'Direct Sow',plants:'Radish Round 4, Carrot Round 4, Arugula Round 4'}]},
+    {week:'Week 3',actions:[{type:'transplant',label:'Transplant',plants:'Sunflower Round 3, Kale Round 2'},{type:'directsow',label:'Direct Sow',plants:'Radish Round 5, Arugula Round 5, Carrot Round 5'}]},
+  ]},
+  {month:'September',weeks:[{week:'Week 2',actions:[{type:'directsow',label:'Direct Sow',plants:'Radish Round 6, Arugula Round 6, Carrot Round 6'}]}]},
+  {month:'October',note:'Order seeds for December/January starts: Snapdragon, Stock, Lisianthus, Pansy, Poppies, Artichoke, Sweet Pea, Onion, Snap Pea, Habanero',weeks:[
+    {week:'Halloween',actions:[{type:'directsow',label:'Direct Sow',plants:'Garlic'}]},
+    {week:'Ongoing',actions:[{type:'note',label:'Note',plants:'Can restart Cilantro'}]},
+  ]},
+  {month:'November',weeks:[{week:'General',actions:[{type:'transplant',label:'Plant Fall Bulbs',plants:'Tulips, Daffodils, Ranunculus, Anemone'},{type:'note',label:'Annual Task',plants:'Review and update seed starting schedule for coming year'}]}]},
+];
+const TC={start:'t-start',fridge:'t-fridge',freeze:'t-freeze',harden:'t-harden',transplant:'t-transplant',directsow:'t-directsow',purchase:'t-purchase',wakeup:'t-wakeup',order:'t-order',note:'t-note'};
+const RC={start:'row-start',fridge:'row-fridge',freeze:'row-freeze',harden:'row-harden',transplant:'row-transplant',directsow:'row-directsow',purchase:'row-purchase',wakeup:'row-wakeup',order:'row-order',note:'row-note'};
+
+window.renderSchedule = function() {
+  let h=`<div class="sched-legend">
+    <div class="leg-item"><div class="leg-dot" style="background:#639922"></div>Start Indoor</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#185FA5"></div>Fridge / Cold Stratify</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#534AB7"></div>Freeze</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#854F0B"></div>Harden</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#723e5c"></div>Transplant / Plant</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#085041"></div>Direct Sow</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#5F5E5A"></div>Purchase / Order</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#633806"></div>Wake Up / Remove</div>
+  </div>`;
+  SCHEDULE.forEach(m=>{
+    h+=`<div class="sched-month"><div class="sched-month-header">${m.month}</div>`;
+    if(m.note) h+=`<div class="sched-month-note">${m.note}</div>`;
+    m.weeks.forEach(w=>{
+      h+=`<div class="sched-week"><div class="sched-week-label">${w.week}</div><div class="sched-actions">`;
+      w.actions.forEach(a=>{ h+=`<div class="sched-action ${RC[a.type]||''}"><span class="action-type ${TC[a.type]||''}">${a.label}</span><div><div class="action-plants">${a.plants}</div>${a.note?`<div class="action-note">${a.note}</div>`:''}</div></div>`; });
+      h+=`</div></div>`;
+    });
+    h+=`</div>`;
+  });
+  document.getElementById('schedContent').innerHTML=h;
+};
+
+// ─── FERTILIZER REFERENCE ────────────────────────────────────────
+const STATIC_QR={
+  'Once Per Season (Spring)':[{plant:'Bush Bean',fert:'Fish Fertilizer',notes:''},{plant:'Catmint',fert:'GardenTone',notes:''},{plant:'Cherry Laurel',fert:'HollyTone',notes:''},{plant:'Daffodil / Tulip',fert:'BulbTone',notes:'When shoots emerge, before flowering'},{plant:'Echinacea',fert:'FlowerTone',notes:'When new leaves appear'},{plant:'Grapes',fert:'GardenTone',notes:'Once they break ground. Only a little for young plants. Skip year 1.'},{plant:'Helleborus',fert:'GardenTone',notes:'After blooms fade'},{plant:'Jasmine',fert:'TreeTone',notes:''},{plant:'Lilac',fert:'GardenTone',notes:'As new leaves appear'},{plant:'Ninebark',fert:'TreeTone',notes:''},{plant:'Peonies',fert:'FlowerTone',notes:'As shoots emerge — avoid contact with shoots'},{plant:'Rhubarb',fert:'GardenTone',notes:'When new growth emerges'},{plant:'Rudbeckia',fert:'FlowerTone',notes:''},{plant:'Salvia',fert:'GardenTone',notes:''},{plant:'Snap Pea',fert:'TomatoTone',notes:"When plants are 6\" tall. Prone to over-fertilization."},{plant:"St. John's Wort",fert:'GardenTone',notes:''},{plant:'Yarrow',fert:'GardenTone',notes:''}],
+  'Once Per Planting':[{plant:'Beets',fert:'Bonemeal',notes:''},{plant:'Carrots',fert:'Bonemeal',notes:''},{plant:'Corn',fert:'Bloodmeal',notes:'At planting'},{plant:'Cosmos',fert:'GardenTone',notes:''},{plant:'Garlic',fert:'Bloodmeal',notes:'At planting; lightly again early May'},{plant:'Onion',fert:'GardenTone',notes:'At planting (also fertilized throughout season)'}],
+  '2–3 Times Per Season':[{plant:'Blackberry / Raspberry / Goldenberry',fert:'BerryTone',notes:'When emerging, late spring, fall before first frost'},{plant:'Blueberry',fert:'Soil Acidifier + Cottonseed Meal',notes:'Acidifier as needed (prefer pH 4–5.5). Cottonseed meal: once spring, once September.'},{plant:'Currant',fert:'GardenTone',notes:'Once early spring, once early summer'},{plant:'Gooseberry',fert:'GardenTone',notes:'Once early spring as new leaves emerge, once early summer'},{plant:'Hydrangea',fert:'HollyTone + Soil Acidifier',notes:'HollyTone: once early spring, once early summer. Soil acidifier as needed (prefer pH 4–6.5).'},{plant:'Onion',fert:'Bloodmeal + GardenTone',notes:'Bloodmeal at planting. GardenTone every 3 weeks once established. Stop fertilizing once bulbing.'}],
+  'Every 6–8 Weeks':[{plant:'Chives',fert:'Fish Fertilizer',notes:'Every 6 weeks'},{plant:'Dahlia (Vegetative Stage)',fert:'Dr. Earth Bloom (3-9-4) → Alaska More Bloom (0-10-10)',notes:'Every 6-8 weeks vegetative; switch to Alaska More Bloom every 3 weeks once flowering'},{plant:'Dill',fert:'Fish Fertilizer',notes:'Every 6 weeks'},{plant:'Scabiosa',fert:'GardenTone',notes:'Every 8 weeks'},{plant:'Stock',fert:'GardenTone',notes:'Every 8 weeks if at all'}],
+  'Monthly':[{plant:'Artichokes',fert:'Bloodmeal',notes:'Begin 4 weeks after transplanting'},{plant:'Basil',fert:'Fish Fertilizer',notes:''},{plant:'Cauliflower',fert:'Fish Fertilizer',notes:''},{plant:'Cilantro',fert:'Fish Fertilizer',notes:'After established'},{plant:'Cucumber',fert:'GardenTone',notes:''},{plant:'Delphinium',fert:'Bonemeal (spring) + Fish Fertilizer (summer)',notes:'Bonemeal once in spring. Fish fertilizer every 3 weeks over summer.'},{plant:'Eucalyptus',fert:'GardenTone',notes:''},{plant:'Figs',fert:'GardenTone',notes:'Do not fertilize within 3 months of planting'},{plant:'Lisianthus',fert:'FlowerTone',notes:'If at all'},{plant:'Marigold',fert:'GardenTone',notes:''},{plant:'Pansy',fert:'FlowerTone',notes:''},{plant:'Ranunculus / Anemone',fert:'GardenTone',notes:''},{plant:'Roses',fert:'RoseTone',notes:''},{plant:'Snapdragons',fert:'GardenTone',notes:'Once blooming only — not heavy feeders'},{plant:'Strawberries',fert:'TomatoTone',notes:'1x spring, 1x fall (everbearing)'},{plant:'Sunflowers',fert:'GardenTone',notes:''},{plant:'Zinnia',fert:'GardenTone (5-5-5)',notes:'Every 3 weeks'}],
+  'Every 2 Weeks':[{plant:'Corn',fert:'Fish Fertilizer → TomatoTone',notes:'Fish fertilizer every 2 weeks once 10-12" tall. Switch to TomatoTone every 2 weeks once producing cobs.'},{plant:'Kale / Lettuce / Arugula',fert:'Fish Fertilizer',notes:'Once seedlings have 4 sets of true leaves. Do not fertilize within 7 days of picking.'},{plant:'Poppies',fert:'Fish Fertilizer + FlowerTone',notes:'Fish fertilizer every 2 weeks. FlowerTone once after begins flowering.'}],
+  'Weekly':[{plant:'Sweet Peas',fert:'Fish Fertilizer + Kelp',notes:'Weekly. Switch to TomatoTone once or twice when flowering.'}],
+  'No Fertilizer':[{plant:'Calendula',fert:'',notes:''},{plant:'Catmint',fert:'',notes:''},{plant:'Feverfew',fert:'',notes:''},{plant:'Lavender',fert:'',notes:''},{plant:'Lemon Balm',fert:'',notes:''},{plant:'Milkweed',fert:'',notes:''},{plant:'Nasturtium',fert:'',notes:''},{plant:'Oregano',fert:'',notes:''},{plant:'Radish',fert:'',notes:''},{plant:'Sage',fert:'',notes:''},{plant:'Tarragon',fert:'',notes:''},{plant:'Thyme',fert:'',notes:''}],
+};
+const FBC={'Once Per Season (Spring)':'freq-spring','Once Per Planting':'freq-planting','2–3 Times Per Season':'freq-season','Every 6–8 Weeks':'freq-weeks','Monthly':'freq-monthly','Every 2 Weeks':'freq-biweekly','Weekly':'freq-weekly','No Fertilizer':'freq-none'};
+
+window.renderFert = function() {
+  const catByFreq={};
+  plants.forEach(p=>{
+    if(!p.fertFreq||['','No Fertilizer','No Fertilizer Needed','Do NOT Fertilize'].includes(p.fertFreq.trim()))return;
+    const freq=p.fertFreq.trim(); if(!catByFreq[freq])catByFreq[freq]=[];
+    const sn=(STATIC_QR[freq]||[]).map(e=>e.plant.toLowerCase());
+    if(!sn.includes(p.name.toLowerCase()))catByFreq[freq].push({plant:p.name,fert:p.fert||'',notes:p.fertNotes||''});
+  });
+  const noFertStatic=(STATIC_QR['No Fertilizer']||[]).map(e=>e.plant.toLowerCase());
+  const catNoFert=plants.filter(p=>{ const f=(p.fertFreq||'').trim().toLowerCase(); return['no fertilizer','no fertilizer needed','do not fertilize'].includes(f)&&!noFertStatic.includes(p.name.toLowerCase()); });
+  const allGroups=[...freqGroups]; Object.keys(catByFreq).forEach(g=>{if(!allGroups.includes(g))allGroups.push(g);});
+
+  let h=`<div class="qr-section"><div class="qr-section-header"><div class="qr-section-title">Fertilizer Inventory</div><span class="qr-freq-badge freq-none">Keep On Hand (Organic)</span></div><div class="inv-grid">
+    <div class="inv-item"><div class="inv-name">Espoma Bonemeal</div><div class="inv-npk">4-12-0</div></div>
+    <div class="inv-item"><div class="inv-name">Espoma Bloodmeal</div><div class="inv-npk">12-0-0</div></div>
+    <div class="inv-item"><div class="inv-name">Espoma Cottonseed Meal</div><div class="inv-npk">6-2-1</div></div>
+    <div class="inv-item"><div class="inv-name">Alaska Fish Fertilizer</div><div class="inv-npk">5-1-1</div><div class="inv-have">In Stock</div></div>
+    <div class="inv-item"><div class="inv-name">Hollytone / Berrytone</div><div class="inv-npk">4-3-4 + Sulfur</div></div>
+    <div class="inv-item"><div class="inv-name">Espoma Bulb-Tone</div><div class="inv-npk">3-5-3</div></div>
+    <div class="inv-item"><div class="inv-name">Espoma FlowerTone</div><div class="inv-npk">3-4-5</div></div>
+    <div class="inv-item"><div class="inv-name">Espoma TreeTone</div><div class="inv-npk">6-3-2</div></div>
+    <div class="inv-item"><div class="inv-name">Espoma RoseTone</div><div class="inv-npk">4-3-2</div></div>
+    <div class="inv-item"><div class="inv-name">Espoma GardenTone</div><div class="inv-npk">3-4-4</div></div>
+    <div class="inv-item"><div class="inv-name">Espoma TomatoTone</div><div class="inv-npk">3-4-6</div></div>
+    <div class="inv-item"><div class="inv-name">Dr. Earth Bloom</div><div class="inv-npk">3-9-4</div></div>
+    <div class="inv-item"><div class="inv-name">Alaska More Bloom</div><div class="inv-npk">0-10-10</div></div>
+    <div class="inv-item"><div class="inv-name">Kelp</div><div class="inv-npk">—</div></div>
+    <div class="inv-item"><div class="inv-name">Soil Acidifier</div><div class="inv-npk">—</div></div>
+  </div></div><hr class="qr-divider">`;
+
+  allGroups.forEach((group,gi)=>{
+    if(group==='No Fertilizer')return;
+    const se=STATIC_QR[group]||[]; const ce=catByFreq[group]||[]; const all=[...se,...ce];
+    if(!all.length)return;
+    const bc=FBC[group]||'freq-custom';
+    if(gi>0) h+='<hr class="qr-divider">';
+    h+=`<div class="qr-section"><div class="qr-section-header"><div class="qr-section-title">${group}</div><span class="qr-freq-badge ${bc}">${group}</span></div>
+    <table class="qr-table"><thead><tr><th>Plant</th><th class="th-fert">Fertilizer</th><th>Notes</th></tr></thead><tbody>
+    ${all.map(e=>`<tr><td class="td-plant">${e.plant}</td><td class="td-fert">${e.fert||''}</td><td class="td-notes">${e.notes||''}</td></tr>`).join('')}
+    </tbody></table></div>`;
+  });
+  const allNF=[...(STATIC_QR['No Fertilizer']||[]).map(e=>e.plant),...catNoFert.map(p=>p.name)];
+  if(allNF.length) h+=`<hr class="qr-divider"><div class="qr-section"><div class="qr-section-header"><div class="qr-section-title">No Fertilizer</div><span class="qr-freq-badge freq-none">None Needed</span></div><div class="no-fert-pills">${allNF.map(n=>`<span class="no-fert-pill">${n}</span>`).join('')}</div></div>`;
+  document.getElementById('fertContent').innerHTML=h;
+};
+
+// ─── DEFAULT PLANT DATA ──────────────────────────────────────────
+const DEFAULT_PLANTS=[
+  {name:'Calendula',cat:'Cut Flower',type:'Annual',sun:'Full Sun',status:'active',loc:'',seedStart:'Mar Wk 3',hardeningSched:'Apr Wk 1',transplantSched:'Apr Wk 3',directSow:'',harvest:'Summer',lastHarvest:'',seedInstructions:'Start indoors 3-4 weeks before final frost.',germination:'Plant ½" deep — needs dark. Germination within a week.',hardening:'',transplanting:'',fert:'None',fertFreq:'No Fertilizer',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Flashback Mix',qty:0,loc:'',status:''},{name:'Orange Flash',qty:0,loc:'',status:'',isNew:true}]},
+  {name:'Chocolate Cosmos',cat:'Cut Flower',type:'Tender Perennial',sun:'Full Sun',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'Summer',lastHarvest:'',seedInstructions:'Wake up tubers Feb Wk 2 in dirt-filled zip-lock bags.',germination:'',hardening:'',transplanting:'',fert:'Hollytone (4-3-4)',fertFreq:'Once Per Season (Spring)',fertNotes:'',pruning:'',disease:'',storage:'Peat moss crates failed — molded. In-ground did well in mild winter.',storageLoc:'In-Ground',season:'',wishlist:'',notes:'',varieties:[{name:'Chocolate Cosmos',qty:18,loc:'',status:''}]},
+  {name:'Cosmos',cat:'Cut Flower',type:'Annual',sun:'Full Sun',status:'active',loc:'',seedStart:'',hardeningSched:'Apr Wk 4',transplantSched:'May Wk 2',directSow:'',harvest:'Summer–Fall',lastHarvest:'',seedInstructions:'Wake up alongside dahlias Feb Wk 2.',germination:'',hardening:'Apr Wk 4.',transplanting:'Transplant May Wk 2 after last frost.',fert:'Espoma GardenTone (3-4-4)',fertFreq:'Once Per Planting',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Cosmos',qty:0,loc:'',status:''}]},
+  {name:'Coneflower',cat:'Perennial',type:'Perennial',sun:'Full Sun',status:'active',loc:'',seedStart:'Feb Wk 4',hardeningSched:'Apr Wk 4',transplantSched:'May Wk 2',directSow:'',harvest:'Summer',lastHarvest:'',seedInstructions:'Fridge Feb Wk 1 in damp towels. Start Feb Wk 4.',germination:'Cold stratify Feb Wk 1.',hardening:'Harden Apr Wk 4.',transplanting:'Transplant May Wk 2.',fert:'Espoma FlowerTone (3-4-5)',fertFreq:'Once Per Season (Spring)',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'In-Ground',season:'',wishlist:'',notes:'',varieties:[{name:'Coneflower',qty:0,loc:'',status:''}]},
+  {name:'Coreopsis',cat:'Cut Flower',type:'Perennial',sun:'Full Sun',status:'active',loc:'',seedStart:'Feb Wk 4',hardeningSched:'Apr Wk 4',transplantSched:'May Wk 2',directSow:'',harvest:'Summer–Fall',lastHarvest:'',seedInstructions:'Start indoors Feb Wk 4.',germination:'',hardening:'Harden Apr Wk 4.',transplanting:'Transplant May Wk 2.',fert:'Espoma GardenTone (3-4-4)',fertFreq:'Monthly',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'In-Ground',season:'',wishlist:'',notes:'',varieties:[{name:'Coreopsis',qty:0,loc:'',status:''}]},
+  {name:'Dahlia',cat:'Cut Flower',type:'Tender Perennial',sun:'Full Sun',status:'active',loc:'Back Yard',seedStart:'Feb Wk 2 (from seed)',hardeningSched:'Apr Wk 4',transplantSched:'May Wk 2',directSow:'',harvest:'Summer–Fall',lastHarvest:'',seedInstructions:'Wake up tubers Feb Wk 2 in zip-lock bags. Seeds also Feb Wk 2.',germination:'Multiple seeds per cell.',hardening:'Harden Apr Wk 4.',transplanting:'DO NOT PINCH BEFORE PLANTING. Bury deeply. Bonemeal in hole. Stake at transplant. Then pinch.',fert:'Dr. Earth Bloom (3-9-4) → Alaska More Bloom (0-10-10)',fertFreq:'Every 6–8 Weeks',fertNotes:'Vegetative: Dr. Earth Bloom every 6-8 weeks. Bloom: Alaska More Bloom every 3 weeks.',pruning:'Do NOT divide before winter storage. Divide in spring.',disease:'Susceptible to botrytis in extended heat.',storage:'Cleaned and divided 2/14/2026.',storageLoc:'Garage',season:'2026: Wake up Feb Wk 2, harden Apr Wk 4, transplant May Wk 2.',wishlist:'',notes:'',varieties:[{name:'Apple Blossom',qty:0,loc:'',status:''},{name:'Baron Katie',qty:0,loc:'',status:''},{name:'Black Satin',qty:0,loc:'',status:'',isNew:true},{name:'Brown Sugar',qty:0,loc:'',status:'',isNew:true},{name:'Cafe au Lait',qty:0,loc:'',status:''},{name:'Camano Zoe',qty:0,loc:'',status:'',isNew:true},{name:'Coralie',qty:0,loc:'',status:'',isNew:true},{name:'Cornel',qty:0,loc:'',status:'',isNew:true},{name:'Creamy',qty:0,loc:'',status:''},{name:'Creme de Cognac',qty:0,loc:'',status:''},{name:'Darcy',qty:0,loc:'',status:''},{name:'Ferncliffe Spice',qty:0,loc:'',status:'',isNew:true},{name:'Hollyhill Ice Orange',qty:0,loc:'',status:''},{name:'Jowey Winnie',qty:0,loc:'',status:'',isNew:true},{name:'KA Pearl',qty:0,loc:'',status:'',isNew:true},{name:'La Recoleta',qty:0,loc:'',status:'',isNew:true},{name:'Lupine',qty:0,loc:'',status:''},{name:'Manoa',qty:0,loc:'',status:'',isNew:true},{name:'Night Silence',qty:0,loc:'',status:''},{name:'Platinum Blonde',qty:0,loc:'',status:'',isNew:true},{name:'Pride',qty:0,loc:'',status:''},{name:'Pooh',qty:0,loc:'',status:''},{name:'Rip City',qty:0,loc:'',status:''},{name:'Rock Run Ashley',qty:0,loc:'',status:'',isNew:true},{name:'Rogue Starburst',qty:0,loc:'',status:''},{name:'Senior Hope',qty:0,loc:'',status:''},{name:'Sweet Nathalie',qty:0,loc:'',status:''},{name:'White Polverton',qty:0,loc:'',status:''},{name:"Wyn's New Pastel",qty:0,loc:'',status:''}]},
+  {name:'Delphinium',cat:'Cut Flower',type:'Annual',sun:'Full Sun / Partial Shade',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'Summer',lastHarvest:'',seedInstructions:'Start 8 weeks before final frost. Cold stratify 1-2 weeks in fridge first.',germination:'Needs heat mat (70-75°F) and darkness. Plant ⅛" deep.',hardening:'Start hardening after two sets of true leaves.',transplanting:'Very difficult to transplant. Use peony cages.',fert:'Bonemeal (Spring) + Fish Fertilizer (Summer)',fertFreq:'Monthly',fertNotes:'Bonemeal once spring. Fish fertilizer every 3 weeks over summer.',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Delphinium',qty:0,loc:'',status:''}]},
+  {name:'Eucalyptus',cat:'Cut Flower',type:'Annual',sun:'Full Sun',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'Summer',lastHarvest:'',seedInstructions:'Start indoors 10-12 weeks before final frost on heat mat.',germination:'Remove heat and humidity dome once germinated. Prone to dampening off.',hardening:'',transplanting:'Transplant when nights consistently above 50°F.',fert:'Espoma GardenTone (3-4-4)',fertFreq:'Monthly',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Silver Dollar',qty:0,loc:'',status:''},{name:'Silver Plate',qty:0,loc:'',status:''}]},
+  {name:'Feverfew',cat:'Cut Flower',type:'Perennial',sun:'Full Sun',status:'active',loc:'',seedStart:'Feb Wk 3',hardeningSched:'Apr Wk 1',transplantSched:'Apr Wk 3',directSow:'',harvest:'Summer',lastHarvest:'',seedInstructions:'Start indoors Feb Wk 3.',germination:'Surface sow — light needed.',hardening:'Harden Apr Wk 1.',transplanting:'Transplant Apr Wk 3.',fert:'None',fertFreq:'No Fertilizer',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'DO NOT LET GO TO SEED.',notes:'',varieties:[{name:'Golden Feverfew',qty:12,loc:'',status:''}]},
+  {name:'Lisianthus',cat:'Cut Flower',type:'Annual',sun:'Full Sun',status:'active',loc:'Cut Flower Rows',seedStart:'Dec Wk 3 Round 1; Jan Wk 3 Round 2',hardeningSched:'Mar Wk 3 (Round 1); Apr Wk 3 (Round 2)',transplantSched:'Apr Wk 1 Round 1; May Wk 1 Round 2',directSow:'',harvest:'Summer',lastHarvest:'',seedInstructions:'Two rounds: Dec Wk 3 and Jan Wk 3. 72-cell trays. Surface sow.',germination:'Heat mats 24/7. 16-hr lights. Humidity domes.',hardening:'Round 1: Mar Wk 3. Round 2: Apr Wk 3.',transplanting:'Plant on overcast day. Dip in mycorrhizal solution.',fert:'Espoma FlowerTone (3-4-5)',fertFreq:'Monthly',fertNotes:'If at all.',pruning:'',disease:'Very susceptible to fusarium wilt — use Root Shield.',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Arena III Gold',qty:12,loc:'',status:'',isNew:true},{name:'Corelli III Light Pink',qty:12,loc:'',status:''},{name:'Rosanne 2 Terracotta',qty:12,loc:'',status:''},{name:'Rosanne 3 Brown',qty:0,loc:'',status:''},{name:'Rosanne Green',qty:0,loc:'',status:''},{name:'Voyage 2 Champagne',qty:12,loc:'',status:'',isNew:true},{name:'Voyage 2 First Love',qty:12,loc:'',status:''},{name:'Voyage 2 White Improved',qty:12,loc:'',status:'',isNew:true}]},
+  {name:'Marigold',cat:'Cut Flower',type:'Annual',sun:'Full Sun',status:'active',loc:'Along Shed',seedStart:'Mar Wk 1',hardeningSched:'May Wk 1',transplantSched:'May Wk 3',directSow:'',harvest:'Summer–Fall',lastHarvest:'',seedInstructions:'Start Giant and Mini Marigold indoors Mar Wk 1.',germination:'Seeds ¼" deep — needs dark.',hardening:'Harden May Wk 1.',transplanting:'Transplant May Wk 3.',fert:'Espoma GardenTone (3-4-4)',fertFreq:'Monthly',fertNotes:'',pruning:'',disease:'Giant varieties died suddenly early October both 2024 and 2025.',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Giant Marigold',qty:0,loc:'',status:''},{name:'Mini Marigold',qty:0,loc:'',status:''},{name:'Coco Gold',qty:0,loc:'',status:''}]},
+  {name:'Milkweed',cat:'Cut Flower',type:'Perennial',sun:'Full Sun',status:'active',loc:'Parking Strip',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'June–August',lastHarvest:'',seedInstructions:'4-week stratification 12 weeks before final frost. Start seeds 8 weeks before.',germination:'Need dark — plant ¼" deep. Use heat mat. Start in peat pots.',hardening:'',transplanting:'',fert:'None',fertFreq:'No Fertilizer',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Showy Milkweed',qty:0,loc:'',status:''}]},
+  {name:'Nasturtium',cat:'Cut Flower',type:'Annual',sun:'Full Sun',status:'active',loc:'',seedStart:'Feb Wk 4',hardeningSched:'Apr Wk 4',transplantSched:'May Wk 2',directSow:'',harvest:'Summer',lastHarvest:'',seedInstructions:'Start indoors Feb Wk 4.',germination:'',hardening:'Harden Apr Wk 4.',transplanting:'Transplant May Wk 2.',fert:'None',fertFreq:'No Fertilizer',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Black Velvet',qty:0,loc:'',status:''}]},
+  {name:'Pansy',cat:'Cut Flower',type:'Annual',sun:'Full Sun / Partial Shade',status:'active',loc:'',seedStart:'Dec Wk 2 (fridge); Dec Wk 4 (start)',hardeningSched:'Feb Wk 1',transplantSched:'Feb Wk 3',directSow:'',harvest:'Spring',lastHarvest:'',seedInstructions:'Dec Wk 2: fridge in soil. Dec Wk 4: move out and start.',germination:'60-70°F with humidity dome.',hardening:'Harden Feb Wk 1.',transplanting:'Transplant Feb Wk 3. Space ½" apart for longer stems.',fert:'Espoma FlowerTone (3-4-5)',fertFreq:'Monthly',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Aalsmeer King Size Mix',qty:100,loc:'',status:''},{name:'Brush Strokes',qty:100,loc:'',status:''},{name:'Frizzle Sizzle Mini Tapestry',qty:100,loc:'',status:''},{name:'Frizzle Sizzle Yellow-Blue Swirl',qty:100,loc:'',status:''},{name:'Imperial Antique Shades',qty:100,loc:'',status:''},{name:'Penny Marina',qty:50,loc:'',status:''},{name:'Penny Rose Blotch',qty:50,loc:'',status:''}]},
+  {name:'Poppy',cat:'Cut Flower',type:'Annual',sun:'Full Sun',status:'active',loc:'',seedStart:'Dec Wk 3 (freeze); Jan Wk 1 (remove)',hardeningSched:'Feb Wk 1',transplantSched:'Feb Wk 3',directSow:'',harvest:'May',lastHarvest:'',seedInstructions:'Dec Wk 3: freeze seeds with soil. Jan Wk 1: remove from freezer and start.',germination:'Cold stratification in freezer highly effective.',hardening:'Harden Feb Wk 1.',transplanting:'Transplant Feb Wk 3. Space 9-12".',fert:'Fish Fertilizer → Espoma FlowerTone (3-4-5)',fertFreq:'Every 2 Weeks',fertNotes:'Fish fertilizer every 2 weeks. FlowerTone once after flowering begins.',pruning:'',disease:'Preventative anti-fungal for grey mold. Good airflow is key.',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Amazing Grey',qty:0,loc:'',status:''},{name:'Bridal Silk',qty:0,loc:'',status:''},{name:'Champagne Bubbles Orange',qty:100,loc:'',status:'',isNew:true},{name:'Champagne Bubbles Pink',qty:100,loc:'',status:''},{name:'Champagne Bubbles White',qty:100,loc:'',status:'',isNew:true},{name:'Pandora',qty:0,loc:'',status:''},{name:'Pizzicato Mix',qty:0,loc:'',status:''},{name:'Red Corn',qty:0,loc:'',status:''},{name:'Tangerine Gem',qty:0,loc:'',status:''}]},
+  {name:'Ranunculus',cat:'Cut Flower',type:'Bulb',sun:'Full Sun',status:'active',loc:'Multiple',seedStart:'Feb Wk 2 (pre-sprout)',hardeningSched:'Apr Wk 2',transplantSched:'Apr Wk 4; Nov (fall direct plant)',directSow:'',harvest:'Spring',lastHarvest:'',seedInstructions:'Pre-sprout corms Feb Wk 2. Majority direct planted Oct/Nov.',germination:'Soak corms at least 1 hour.',hardening:'Harden Apr Wk 2.',transplanting:'Transplant Apr Wk 4.',fert:'Espoma GardenTone (3-4-4)',fertFreq:'Monthly',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'Multiple Beds',season:'',wishlist:'',notes:'',varieties:[{name:'Black',qty:20,loc:'Right Border',status:''},{name:'Bordeaux',qty:20,loc:'Right Border',status:''},{name:'Chamallow',qty:20,loc:'Back Covered Bed',status:''},{name:'Chocolate',qty:20,loc:'',status:''},{name:'Elegance Salmone',qty:10,loc:'Front Covered Bed',status:''},{name:'Happy Mix',qty:20,loc:'',status:''},{name:'Reinette Cream',qty:10,loc:'Front Covered Bed',status:''},{name:'White',qty:20,loc:'Back Covered Bed',status:''}]},
+  {name:'Anemone',cat:'Cut Flower',type:'Bulb',sun:'Full Sun / Partial Shade',status:'active',loc:'Multiple',seedStart:'Feb Wk 2 (pre-sprout)',hardeningSched:'Apr Wk 2',transplantSched:'Apr Wk 4; Nov (fall direct plant)',directSow:'',harvest:'Spring',lastHarvest:'',seedInstructions:'Pre-sprout corms Feb Wk 2.',germination:'Soak corms before planting.',hardening:'Harden Apr Wk 2.',transplanting:'Transplant Apr Wk 4.',fert:'Espoma GardenTone (3-4-4)',fertFreq:'Monthly',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Bordeaux',qty:20,loc:'Back Covered Bed',status:''},{name:'Mistral Rarity',qty:10,loc:'Back Covered Bed',status:''},{name:'White Caen',qty:20,loc:'Multiple',status:''}]},
+  {name:'Rudbeckia',cat:'Cut Flower',type:'Perennial',sun:'Full Sun',status:'active',loc:'',seedStart:'Feb Wk 4',hardeningSched:'Apr Wk 4',transplantSched:'May Wk 2',directSow:'',harvest:'Summer–Fall',lastHarvest:'',seedInstructions:'Fridge Feb Wk 1 in damp towels. Start Feb Wk 4.',germination:'Cover with ⅛" soil.',hardening:'Harden Apr Wk 4.',transplanting:'Transplant May Wk 2.',fert:'Espoma FlowerTone (3-4-4)',fertFreq:'Once Per Season (Spring)',fertNotes:'',pruning:'Leave seed heads for winter interest.',disease:'',storage:'',storageLoc:'In-Ground',season:'',wishlist:'',notes:'',varieties:[{name:'Cherry Brandy',qty:0,loc:'',status:''}]},
+  {name:'Scabiosa',cat:'Cut Flower',type:'Annual',sun:'Full Sun',status:'active',loc:'',seedStart:'Feb Wk 3',hardeningSched:'Apr Wk 1',transplantSched:'Apr Wk 3',directSow:'',harvest:'Summer–Fall',lastHarvest:'',seedInstructions:'Start indoors Feb Wk 3.',germination:'Barely cover seeds — needs light.',hardening:'Harden Apr Wk 1.',transplanting:'Transplant Apr Wk 3.',fert:'Espoma GardenTone (3-4-4)',fertFreq:'Every 6–8 Weeks',fertNotes:'Every 8 weeks.',pruning:'',disease:'Black Knight can overwinter and get very large.',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Black Beauty',qty:6,loc:'',status:'',isNew:true},{name:'Black Knight',qty:12,loc:'',status:''},{name:'Fama Deep Blue',qty:12,loc:'',status:'',isNew:true},{name:'Fama White',qty:60,loc:'',status:'',isNew:true},{name:'Fata Morgana',qty:6,loc:'',status:''},{name:'Fire King',qty:6,loc:'',status:'',isNew:true},{name:'Oxford Blue',qty:6,loc:'',status:''},{name:'Salmon Rose',qty:6,loc:'',status:''},{name:'Snowmaiden',qty:6,loc:'',status:''},{name:'Starflower',qty:12,loc:'',status:''}]},
+  {name:'Snapdragon',cat:'Cut Flower',type:'Annual',sun:'Full Sun',status:'active',loc:'',seedStart:'Dec Wk 1 R1; Dec Wk 3 R2; Jan Wk 3 R3',hardeningSched:'Feb Wk 1 (R1); Mar Wk 1 (R2); Apr Wk 4 (R3)',transplantSched:'Feb Wk 3 R1; Mar Wk 3 R2; May Wk 2 R3',directSow:'',harvest:'Spring–Summer',lastHarvest:'',seedInstructions:'3 rounds: Dec Wk 1, Dec Wk 3, Jan Wk 3. Buy fresh seeds each year.',germination:'No special requirements.',hardening:'14 days minimum per round.',transplanting:'Plant at 2" tall.',fert:'Espoma GardenTone (3-4-4)',fertFreq:'Monthly',fertNotes:'Once blooming only.',pruning:'',disease:'Mancozeb fungicide every 2 weeks. Rust mid-summer 2025.',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Avignon Apricot II',qty:12,loc:'',status:''},{name:'Costa Velvet I-II',qty:12,loc:'',status:''},{name:'Double Frappe Light Pink 2',qty:12,loc:'',status:''},{name:'Madame Butterfly Bronze',qty:12,loc:'',status:''},{name:'Madame Butterfly Ivory',qty:12,loc:'',status:''},{name:'Madame Butterfly Pink',qty:0,loc:'',status:''},{name:'Madame Butterfly Red',qty:0,loc:'',status:''},{name:'Potomac Ivory',qty:12,loc:'',status:''},{name:'Potomac Plumblossom',qty:12,loc:'',status:''},{name:'Potomac Orange',qty:6,loc:'',status:''},{name:'Potomac Yellow',qty:12,loc:'',status:''}]},
+  {name:'Stock',cat:'Cut Flower',type:'Annual',sun:'Full Sun',status:'active',loc:'',seedStart:'Dec Wk 3 R1 thru Mar Wk 1 R6',hardeningSched:'Staggered by round',transplantSched:'Staggered by round',directSow:'',harvest:'Spring',lastHarvest:'',seedInstructions:'6 succession rounds starting Dec Wk 3.',germination:'Start indoors 8 weeks before final frost.',hardening:'Each round hardens ~2 weeks after starting.',transplanting:'Plant at 2" tall. First batch Feb Wk 4.',fert:'Espoma GardenTone (3-4-4)',fertFreq:'Every 6–8 Weeks',fertNotes:'Every 8 weeks if at all.',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Katz Apricot',qty:12,loc:'',status:''},{name:'Katz Cherry Blossom',qty:12,loc:'',status:''},{name:'Double White',qty:12,loc:'',status:''},{name:'Stox Champagne',qty:12,loc:'',status:''},{name:'Vintage Brown',qty:12,loc:'',status:''}]},
+  {name:'Sunflower',cat:'Cut Flower',type:'Annual',sun:'Full Sun',status:'active',loc:'',seedStart:'May Wk 3 R1; Jun Wk 2 R2; Jul Wk 1 R3',hardeningSched:'Jul Wk 1 (R1); Jul Wk 2 (R2); Aug Wk 1 (R3)',transplantSched:'Jul Wk 3 R1; Jul Wk 4 R2; Aug Wk 3 R3',directSow:'',harvest:'Summer–Fall',lastHarvest:'',seedInstructions:'3 rounds starting May Wk 3.',germination:'',hardening:'Staggered by round.',transplanting:'Staggered by round.',fert:'GardenTone (Balanced High-Phosphorus)',fertFreq:'Monthly',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Sunflower (Mix)',qty:0,loc:'',status:''}]},
+  {name:'Sweet Pea',cat:'Cut Flower',type:'Annual',sun:'Full Sun',status:'active',loc:'Arch Trellis, Blue Shed Trellis',seedStart:'Jan Wk 2',hardeningSched:'Feb Wk 1',transplantSched:'Feb Wk 3',directSow:'',harvest:'Spring',lastHarvest:'',seedInstructions:'Jan Wk 2: soak seeds 24 hours, then start.',germination:'',hardening:'Harden Feb Wk 1.',transplanting:'Transplant Feb Wk 3. Pinch at 6-8".',fert:'Fish Fertilizer + Kelp',fertFreq:'Weekly',fertNotes:'Weekly Fish + Kelp. TomatoTone once or twice when flowering.',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'4-5 day vase life.',varieties:[{name:'Royal Maroon',qty:15,loc:'',status:''},{name:'Nimbus',qty:12,loc:'',status:''},{name:'Alisha',qty:6,loc:'',status:''},{name:'Old Time',qty:15,loc:'',status:''},{name:'Probably High Scent',qty:12,loc:'',status:''},{name:'Royal Lavender',qty:6,loc:'',status:''},{name:'Royal Wedding',qty:6,loc:'',status:''},{name:'Juliet',qty:6,loc:'',status:''},{name:'Spencer Ice Cream',qty:12,loc:'',status:''},{name:'Clotted Cream',qty:6,loc:'',status:''},{name:'High Scent',qty:12,loc:'',status:''}]},
+  {name:'Zinnia',cat:'Cut Flower',type:'Annual',sun:'Full Sun',status:'active',loc:'Throughout Yard',seedStart:'Mar Wk 3 R1; Apr Wk 2 R2; May Wk 2 R3',hardeningSched:'Apr Wk 4 (R1)',transplantSched:'May Wk 2 R1',directSow:'',harvest:'Summer–Fall',lastHarvest:'',seedInstructions:'3 rounds: Mar Wk 3, Apr Wk 2, May Wk 2.',germination:'',hardening:'R1: harden Apr Wk 4.',transplanting:'R1: transplant May Wk 2.',fert:'5-5-5',fertFreq:'Monthly',fertNotes:'Every 3 weeks.',pruning:'',disease:'Susceptible to mildew.',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Zinnia (Mix)',qty:0,loc:'',status:''}]},
+  {name:'Catmint',cat:'Perennial',type:'Perennial',sun:'Full Sun',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'',fert:'None',fertFreq:'No Fertilizer',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Catmint',qty:0,loc:'',status:''}]},
+  {name:'Cherry Laurel',cat:'Perennial',type:'Perennial',sun:'Full Sun / Partial Shade',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'',fert:'HollyTone',fertFreq:'Once Per Season (Spring)',fertNotes:'',pruning:'Prune late winter/early spring or late spring after flowering.',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Cherry Laurel',qty:1,loc:'',status:''}]},
+  {name:'Daffodil',cat:'Perennial',type:'Bulb',sun:'Full Sun',status:'dormant',loc:'Multiple',seedStart:'',hardeningSched:'',transplantSched:'Nov (plant fall bulbs)',directSow:'',harvest:'Spring',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'Plant 6" deep. First weekend of November.',fert:'Espoma Bulb-Tone (3-5-3)',fertFreq:'Once Per Season (Spring)',fertNotes:'When shoots emerge, before flowering.',pruning:'',disease:'',storage:'',storageLoc:'In-Ground',season:'2026: 300 bulbs planted fall 2025.',wishlist:'Lingerie (wish list).',notes:'',varieties:[{name:'Art Design',qty:50,loc:'Front Yard',status:'dormant',isNew:true},{name:'Dutch Master',qty:50,loc:'',status:'dormant'},{name:'Erlicheer',qty:50,loc:'',status:'dormant',isNew:true},{name:'Ice King',qty:50,loc:'',status:'dormant',isNew:true},{name:'Pink Champagne',qty:50,loc:'Back Yard',status:'dormant',isNew:true},{name:'Sir Winston Churchill',qty:10,loc:'',status:'dormant',isNew:true},{name:'White Explosion',qty:40,loc:'',status:'dormant',isNew:true}]},
+  {name:'Echinacea',cat:'Perennial',type:'Perennial',sun:'Full Sun',status:'active',loc:'',seedStart:'Feb Wk 4',hardeningSched:'Apr Wk 4',transplantSched:'May Wk 2',directSow:'',harvest:'Summer',lastHarvest:'',seedInstructions:'Fridge Feb Wk 1 in damp towels. Start Feb Wk 4.',germination:'Cold stratify Feb Wk 1.',hardening:'Harden Apr Wk 4.',transplanting:'Transplant May Wk 2.',fert:'Espoma FlowerTone (3-4-5)',fertFreq:'Once Per Season (Spring)',fertNotes:'When new leaves appear.',pruning:'',disease:'',storage:'',storageLoc:'In-Ground',season:'',wishlist:'',notes:'',varieties:[{name:'Echinacea',qty:0,loc:'',status:''}]},
+  {name:'Helleborus',cat:'Perennial',type:'Perennial',sun:'Partial Shade',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'Winter–Spring',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'',fert:'Espoma GardenTone (3-4-4)',fertFreq:'Once Per Season (Spring)',fertNotes:'After blooms fade.',pruning:"Remove last year's leaves as new buds emerge.",disease:'',storage:'',storageLoc:'In-Ground',season:'',wishlist:'',notes:'',varieties:[{name:"Ice N' Roses Red",qty:1,loc:'',status:''},{name:"Ice N' Roses Merlot",qty:1,loc:'',status:''},{name:'Monte Cristo',qty:1,loc:'',status:''},{name:'Wedding Party Maid of Honor',qty:1,loc:'',status:''},{name:'Wedding Party Wedding Bells',qty:1,loc:'',status:''}]},
+  {name:'Hydrangea',cat:'Perennial',type:'Perennial',sun:'Partial Shade',status:'active',loc:'Multiple',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'Summer',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'',fert:'Espoma HollyTone (4-3-4) + Soil Acidifier',fertFreq:'2–3 Times Per Season',fertNotes:'HollyTone: once early spring, once early summer. Soil acidifier as needed.',pruning:'Macrophylla: prune late summer. Arborescens: hard prune to 12" in March.',disease:'Spray copper fungicide early spring.',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Blushing Bride',qty:1,loc:'Front Yard',status:''},{name:'Endless Summer Blue',qty:1,loc:'Front Yard',status:''},{name:'Incrediball',qty:1,loc:'Back Yard',status:''},{name:'Zebra',qty:1,loc:'Front Yard',status:''}]},
+  {name:'Jasmine',cat:'Perennial',type:'Perennial',sun:'Full Sun',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'Spring–Summer',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'',fert:'Espoma TreeTone (6-3-2)',fertFreq:'Once Per Season (Spring)',fertNotes:'',pruning:'Prune very early spring.',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Star Jasmine',qty:1,loc:'',status:''}]},
+  {name:'Lavender',cat:'Perennial',type:'Perennial',sun:'Full Sun',status:'active',loc:'Multiple',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'Summer',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'',fert:'None',fertFreq:'No Fertilizer',fertNotes:'',pruning:'Lightly prune early spring.',disease:'',storage:'',storageLoc:'In-Ground',season:'',wishlist:'',notes:'',varieties:[{name:'English Lavender',qty:0,loc:'Back Fence Bed',status:''},{name:'French Lavender',qty:0,loc:'Front Flower Beds',status:''}]},
+  {name:'Lilac',cat:'Perennial',type:'Perennial',sun:'Full Sun',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'Spring',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'',fert:'Espoma GardenTone (3-4-4)',fertFreq:'Once Per Season (Spring)',fertNotes:'',pruning:'Blooms on old wood. Prune late spring/early summer after flowering.',disease:'',storage:'',storageLoc:'In-Ground',season:'',wishlist:'',notes:'',varieties:[{name:'Miss Kim Dwarf Lilac',qty:1,loc:'',status:''}]},
+  {name:'Ninebark',cat:'Perennial',type:'Perennial',sun:'Full Sun / Partial Shade',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'',fert:'Espoma TreeTone (6-3-2)',fertFreq:'Once Per Season (Spring)',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Ninebark',qty:0,loc:'',status:''}]},
+  {name:'Peony',cat:'Perennial',type:'Perennial',sun:'Full Sun',status:'dormant',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'Late Spring',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'DO NOT COVER WITH MULCH.',fert:'Espoma FlowerTone (3-4-5)',fertFreq:'Once Per Season (Spring)',fertNotes:'As shoots emerge.',pruning:'Cut back to 1" in fall. DO NOT COVER WITH MULCH.',disease:'',storage:'',storageLoc:'In-Ground',season:'',wishlist:'',notes:'',varieties:[{name:'Bowl of Cream',qty:1,loc:'',status:''},{name:'Duchess de Nemours',qty:1,loc:'',status:''},{name:'Festiva Maxima',qty:1,loc:'',status:''},{name:'Itoh All That Jazz',qty:1,loc:'',status:''},{name:'Scrumdidliumptious',qty:1,loc:'',status:''},{name:'Shirley Temple',qty:1,loc:'',status:''}]},
+  {name:'Rose',cat:'Perennial',type:'Perennial',sun:'Full Sun',status:'active',loc:'Multiple',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'Summer–Fall',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'',fert:'Espoma RoseTone (4-3-2)',fertFreq:'Monthly',fertNotes:'',pruning:'Prune February. Strip all foliage and dispose off property.',disease:'Black spot on Honey Dijon and Koko Loco.',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Desdemona',qty:2,loc:'Walkway Entrance',status:''},{name:'Gentle Gardener Climber',qty:1,loc:'Front Corner House Trellis',status:''},{name:'Gentle Hermione',qty:6,loc:'Front Corner Bed',status:''},{name:'Harlow Carr',qty:9,loc:'Front Corner Bed',status:''},{name:'Honey Dijon',qty:3,loc:'Back Bed, Middle',status:''},{name:'Koko Loco',qty:3,loc:'Back Bed, Middle',status:''},{name:'Lady of Shalott',qty:3,loc:'Behind House & Side House',status:''},{name:"Poet's Wife",qty:1,loc:'Behind House, Next To Patio',status:''},{name:'Sally Holmes',qty:1,loc:'Side House, Next To Fence',status:''},{name:'Thomas Graham Climber',qty:1,loc:'Behind House, Next To Patio',status:''},{name:'Top Cream',qty:2,loc:'Start Of Walkway Near Driveway',status:''},{name:'Queen of Sweden',qty:3,loc:'Back Bed, Right Side Near Shed',status:''}]},
+  {name:'Salvia',cat:'Perennial',type:'Perennial',sun:'Full Sun',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'Summer',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'',fert:'Espoma GardenTone (3-4-4)',fertFreq:'Once Per Season (Spring)',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Salvia',qty:0,loc:'',status:''}]},
+  {name:"St. John's Wort",cat:'Perennial',type:'Perennial',sun:'Full Sun',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'Summer',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'',fert:'Espoma GardenTone (3-4-4)',fertFreq:'Once Per Season (Spring)',fertNotes:'',pruning:'Prune 50-75% in spring.',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:"St. John's Wort",qty:0,loc:'',status:''}]},
+  {name:'Tulip',cat:'Perennial',type:'Bulb',sun:'Full Sun',status:'dormant',loc:'Multiple',seedStart:'',hardeningSched:'',transplantSched:'Nov (plant fall bulbs)',directSow:'',harvest:'Spring',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'Plant 1-2" deeper than recommended without chicken wire.',fert:'Espoma Bulb-Tone',fertFreq:'Once Per Season (Spring)',fertNotes:'When shoots emerge.',pruning:'',disease:'',storage:'',storageLoc:'In-Ground',season:'2026: 610 bulbs planted November 2025.',wishlist:'',notes:'',varieties:[{name:'Apricot Giant',qty:50,loc:'Front Yard',status:'dormant'},{name:'Black Hero',qty:100,loc:'',status:'dormant'},{name:'Danceline',qty:100,loc:'',status:'dormant'},{name:'La Belle Epoque',qty:100,loc:'',status:'dormant'},{name:'Mystery Dream',qty:100,loc:'Back Yard',status:'dormant'},{name:'Picture Perfect',qty:60,loc:'',status:'dormant'},{name:'Salmon Impression',qty:50,loc:'Front Yard',status:'dormant'},{name:'Wyndham',qty:100,loc:'',status:'dormant'}]},
+  {name:'Viburnum',cat:'Perennial',type:'Perennial',sun:'Full Sun / Partial Shade',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'',fert:'',fertFreq:'',fertNotes:'',pruning:'Prune after blooming.',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Viburnum',qty:0,loc:'',status:''}]},
+  {name:'Yarrow',cat:'Perennial',type:'Perennial',sun:'Full Sun',status:'active',loc:'',seedStart:'Mar Wk 3',hardeningSched:'Apr Wk 4',transplantSched:'May Wk 2',directSow:'',harvest:'Summer',lastHarvest:'',seedInstructions:'Start indoors Mar Wk 3.',germination:'',hardening:'Harden Apr Wk 4.',transplanting:'Transplant May Wk 2.',fert:'Espoma GardenTone (3-4-4)',fertFreq:'Once Per Season (Spring)',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Yarrow',qty:0,loc:'',status:''}]},
+  {name:'Blueberry',cat:'Fruit',type:'Perennial',sun:'Full Sun',status:'active',loc:'Barrels A And B',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'Summer',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'',fert:'Soil Acidifier + Cottonseed Meal',fertFreq:'2–3 Times Per Season',fertNotes:'',pruning:'Prune Jan to early March.',disease:'',storage:'',storageLoc:'Barrels',season:'',wishlist:'',notes:'',varieties:[{name:'Jersey Northern Highbush',qty:1,loc:'Barrel A',status:''},{name:'Earliblue',qty:1,loc:'Barrel B',status:''}]},
+  {name:'Blackberry',cat:'Fruit',type:'Perennial',sun:'Full Sun',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'July–August',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'',fert:'BerryTone',fertFreq:'2–3 Times Per Season',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'In-Ground',season:'',wishlist:'',notes:'',varieties:[{name:'Marionberry',qty:1,loc:'',status:''},{name:'Snowbank',qty:1,loc:'',status:''}]},
+  {name:'Cherry',cat:'Fruit',type:'Perennial',sun:'Full Sun',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'Summer',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'',fert:'Low-Nitrogen Fertilizer',fertFreq:'Once Per Season (Spring)',fertNotes:'2-3 weeks before blooming, only after trees begin bearing fruit.',pruning:'Do not prune until 2027.',disease:'',storage:'',storageLoc:'In-Ground',season:'',wishlist:'',notes:'',varieties:[{name:'Bing',qty:1,loc:'',status:''},{name:'Rainier',qty:1,loc:'',status:''}]},
+  {name:'Currant',cat:'Fruit',type:'Perennial',sun:'Partial Shade',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'Summer',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'',fert:'GardenTone',fertFreq:'2–3 Times Per Season',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'In-Ground',season:'',wishlist:'',notes:'',varieties:[{name:'Red Currant',qty:1,loc:'',status:''}]},
+  {name:'Fig',cat:'Fruit',type:'Perennial',sun:'Full Sun',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'Late Summer',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'',fert:'Blood Meal (Spring) + High Phosphorus (Oct)',fertFreq:'Monthly',fertNotes:'Do not fertilize within 3 months of planting.',pruning:'',disease:'',storage:'',storageLoc:'In-Ground',season:'2026: Planted 2/1/2026.',wishlist:'',notes:'',varieties:[{name:'Violette de Bourdeaux',qty:2,loc:'',status:'',isNew:true}]},
+  {name:'Gooseberry',cat:'Fruit',type:'Perennial',sun:'Partial Shade',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'Summer',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'',fert:'GardenTone',fertFreq:'2–3 Times Per Season',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'In-Ground',season:'',wishlist:'',notes:'',varieties:[{name:'Gooseberry',qty:0,loc:'',status:''}]},
+  {name:'Grape',cat:'Fruit',type:'Perennial',sun:'Full Sun',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'Late Summer–Fall',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'',fert:'GardenTone',fertFreq:'Once Per Season (Spring)',fertNotes:'Young plants only. Skip year 1.',pruning:'',disease:'',storage:'',storageLoc:'In-Ground',season:'',wishlist:'',notes:'',varieties:[{name:'Interlaken',qty:1,loc:'',status:''},{name:'Red Flame',qty:1,loc:'',status:''}]},
+  {name:'Pomegranate',cat:'Fruit',type:'Perennial',sun:'Full Sun',status:'new',loc:'Multiple',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'Fall',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'',fert:'',fertFreq:'',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'In-Ground',season:'2026: Planted 2/14/2026.',wishlist:'',notes:'',varieties:[{name:'Wonderful',qty:1,loc:'Corner Of Property',status:'new'},{name:'Red Angel',qty:1,loc:'Joint Of Front Walkways',status:'new'}]},
+  {name:'Raspberry',cat:'Fruit',type:'Perennial',sun:'Full Sun',status:'active',loc:'Along Back Fence',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'June–October',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'',fert:'BerryTone',fertFreq:'2–3 Times Per Season',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'In-Ground',season:'',wishlist:'',notes:'',varieties:[{name:'Willamette',qty:1,loc:'Closest To Woodshed',status:''},{name:'Polka',qty:1,loc:'Middle',status:''},{name:'Double Gold',qty:1,loc:'Closest To Gate',status:''}]},
+  {name:'Strawberry',cat:'Fruit',type:'Perennial',sun:'Full Sun',status:'active',loc:'Multiple',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'Summer',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'',fert:'TomatoTone',fertFreq:'Monthly',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'In-Ground / Containers',season:'',wishlist:'',notes:'',varieties:[{name:'Seascape',qty:0,loc:'Barrel A',status:''},{name:'Tristar',qty:0,loc:'Barrel B',status:''},{name:'Sweet Sunrise',qty:0,loc:'Barrel B',status:''},{name:'Quinault',qty:0,loc:'Strawberry Tower',status:''},{name:'Shuksan',qty:0,loc:'Strawberry Tower',status:''},{name:'White Soul Alpine',qty:0,loc:'Strawberry Tower',status:''}]},
+  {name:'Artichoke',cat:'Vegetable',type:'Perennial',sun:'Full Sun',status:'active',loc:'',seedStart:'Jan Wk 1 (fridge); Jan Wk 3 (start)',hardeningSched:'Mar Wk 1',transplantSched:'Mar Wk 3',directSow:'',harvest:'Summer',lastHarvest:'',seedInstructions:'Fridge Jan Wk 1. Start seeds Jan Wk 3.',germination:'70-80°F.',hardening:'Harden Mar Wk 1.',transplanting:'Transplant Mar Wk 3.',fert:'Bloodmeal',fertFreq:'Monthly',fertNotes:'Begin 4 weeks after transplanting.',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Green Globe',qty:6,loc:'',status:''}]},
+  {name:'Arugula',cat:'Vegetable',type:'Annual',sun:'Partial Shade',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'Mar Wk 4 R1 thru Sep Wk 2 R6',harvest:'Spring, Fall',lastHarvest:'',seedInstructions:'Direct sow only.',germination:'',hardening:'',transplanting:'',fert:'Fish Fertilizer',fertFreq:'Every 2 Weeks',fertNotes:'4 sets of true leaves. No fertilizer 7 days before picking.',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Arugula',qty:0,loc:'',status:''}]},
+  {name:'Basil',cat:'Vegetable',type:'Annual',sun:'Full Sun',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'May Wk 3 (purchase nursery)',directSow:'',harvest:'Summer',lastHarvest:'',seedInstructions:'Purchase from nursery May Wk 3.',germination:'',hardening:'',transplanting:'',fert:'Fish Fertilizer',fertFreq:'Monthly',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Basil',qty:0,loc:'',status:''}]},
+  {name:'Bean',cat:'Vegetable',type:'Annual',sun:'Full Sun',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'May Wk 2 Bush R1; Jun Wk 1 R2; Jun Wk 4 R3; Jul Wk 3 R4; May Wk 4 Pole (Corn R1); Jun Wk 2 Pole (Corn R2)',harvest:'Summer',lastHarvest:'',seedInstructions:'Direct sow only.',germination:'',hardening:'',transplanting:'',fert:'Fish Fertilizer',fertFreq:'Once Per Planting',fertNotes:'Once only when seedling breaks ground.',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'Must harvest ALL beans.',varieties:[{name:'Contender (Bush)',qty:0,loc:'',status:''},{name:'Harvester (Bush)',qty:0,loc:'',status:''},{name:'Provider (Bush)',qty:0,loc:'',status:''},{name:'Blue Lake (Pole)',qty:0,loc:'',status:''}]},
+  {name:'Beet',cat:'Vegetable',type:'Annual',sun:'Full Sun',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'Feb Wk 2 (May harvest); Jul Wk 4 (fall harvest)',harvest:'May, Fall',lastHarvest:'2025-09-30',seedInstructions:'Direct sow only.',germination:'',hardening:'',transplanting:'',fert:'Bonemeal',fertFreq:'Once Per Planting',fertNotes:'At planting only.',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Detroit Red',qty:0,loc:'',status:''},{name:'Golden Detroit',qty:0,loc:'',status:''}]},
+  {name:'Carrot',cat:'Vegetable',type:'Annual',sun:'Full Sun',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'Mar Wk 4 R1 thru Sep Wk 2 R6',harvest:'Summer, Fall',lastHarvest:'',seedInstructions:'Direct sow only.',germination:'Cedar board on top after sowing.',hardening:'',transplanting:'',fert:'Bonemeal + High P/K',fertFreq:'Once Per Planting',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Tendersweet',qty:0,loc:'',status:''}]},
+  {name:'Cauliflower',cat:'Vegetable',type:'Annual',sun:'Full Sun',status:'active',loc:'',seedStart:'Feb Wk 3',hardeningSched:'Apr Wk 1',transplantSched:'Apr Wk 3',directSow:'',harvest:'June–July',lastHarvest:'',seedInstructions:'Start Feb Wk 3.',germination:'',hardening:'Harden Apr Wk 1.',transplanting:'Transplant Apr Wk 3 if six inches tall.',fert:'Fish Fertilizer',fertFreq:'Monthly',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Amazing White',qty:6,loc:'',status:''},{name:'Amethyst',qty:6,loc:'',status:''},{name:'Earli Snow',qty:6,loc:'',status:''},{name:'Clementine',qty:6,loc:'',status:''}]},
+  {name:'Cilantro',cat:'Vegetable',type:'Annual',sun:'Full Sun / Partial Shade',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'Apr Wk 1 R1; Apr Wk 3 R2; May Wk 1 R3; Oct (restart)',harvest:'Spring–Fall',lastHarvest:'',seedInstructions:'Direct sow only. Crush seeds and soak overnight.',germination:'',hardening:'',transplanting:'',fert:'Fish Fertilizer',fertFreq:'Monthly',fertNotes:'After established.',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Cilantro',qty:0,loc:'',status:''}]},
+  {name:'Corn',cat:'Vegetable',type:'Annual',sun:'Full Sun',status:'active',loc:'',seedStart:'Mar Wk 3 R1; Apr Wk 2 R2',hardeningSched:'Apr Wk 4 (R1); May Wk 2 (R2)',transplantSched:'May Wk 2 R1; May Wk 4 R2',directSow:'',harvest:'Late Summer–Fall',lastHarvest:'',seedInstructions:'Start R1 Mar Wk 3, R2 Apr Wk 2.',germination:'Indoor starts much better than direct sow.',hardening:'R1: Apr Wk 4. R2: May Wk 2.',transplanting:'Transplant carefully, do not disturb roots.',fert:'Bloodmeal + Fish Fertilizer + TomatoTone',fertFreq:'Every 2 Weeks',fertNotes:'Bloodmeal at planting. Fish every 2 weeks at 10-12". TomatoTone when producing cobs.',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Bloody Butcher (Dent)',qty:0,loc:'',status:''},{name:'Glass Gem (Dent)',qty:0,loc:'',status:''},{name:'Japanese Hulless (Popping)',qty:0,loc:'',status:''},{name:'Red Strawberry (Popping)',qty:0,loc:'',status:''},{name:'Golden Bantam Row 8 (Sweet)',qty:0,loc:'',status:''}]},
+  {name:'Cucumber',cat:'Vegetable',type:'Annual',sun:'Full Sun',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'May Wk 3 (purchase nursery)',directSow:'',harvest:'Summer',lastHarvest:'',seedInstructions:'Purchase from nursery May Wk 3.',germination:'',hardening:'',transplanting:'',fert:'GardenTone',fertFreq:'Monthly',fertNotes:'',pruning:'',disease:'Very prone to disease — do not allow to touch ground.',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Lemon',qty:0,loc:'',status:''},{name:'Boston Pickling',qty:0,loc:'',status:''}]},
+  {name:'Dill',cat:'Vegetable',type:'Annual',sun:'Full Sun',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'Apr Wk 1 R1; Apr Wk 3 R2; May Wk 1 R3',harvest:'Spring–Fall',lastHarvest:'',seedInstructions:'Direct sow only — taproot.',germination:'',hardening:'',transplanting:'',fert:'Fish Fertilizer',fertFreq:'Every 6–8 Weeks',fertNotes:'Every 6 weeks.',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Dill',qty:0,loc:'',status:''}]},
+  {name:'Garlic',cat:'Vegetable',type:'Bulb',sun:'Full Sun',status:'harvested',loc:'Garlic Beds',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'Oct (Halloween)',harvest:'Late May–June',lastHarvest:'2025-06-30',seedInstructions:'Direct sow around Halloween.',germination:'',hardening:'',transplanting:'',fert:'Bloodmeal + Blood Meal Spring',fertFreq:'Once Per Planting',fertNotes:'Bloodmeal at planting; blood meal early spring; lightly again early May.',pruning:'',disease:'',storage:'Cure 75-80°F. Store 45-50°F.',storageLoc:'Garage',season:'2025: 114 heads. Inchilium Red and Chesnok top flavors.',wishlist:'',notes:'',varieties:[{name:'Inchilium Red',qty:0,loc:'',status:''},{name:'Chesnok',qty:0,loc:'',status:''},{name:'Music',qty:0,loc:'',status:''},{name:'Carpathian',qty:0,loc:'',status:''}]},
+  {name:'Kale',cat:'Vegetable',type:'Biennial',sun:'Full Sun / Partial Shade',status:'active',loc:'',seedStart:'Mar Wk 1 R1; Jul Wk 1 R2',hardeningSched:'Apr Wk 3 (R1); Aug Wk 1 (R2)',transplantSched:'May Wk 1 R1; Aug Wk 3 R2',directSow:'',harvest:'Year-Round',lastHarvest:'',seedInstructions:'R1: Mar Wk 1. R2: Jul Wk 1.',germination:'',hardening:'R1: Apr Wk 3. R2: Aug Wk 1.',transplanting:'R1: May Wk 1. R2: Aug Wk 3.',fert:'Fish Fertilizer',fertFreq:'Every 2 Weeks',fertNotes:'4 sets of true leaves. No fertilizer 7 days before picking.',pruning:'',disease:'Spray early for aphids.',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Lacinato / Dinosaur',qty:0,loc:'',status:''},{name:'Blue Scotch / Curly',qty:0,loc:'',status:''}]},
+  {name:'Lettuce',cat:'Vegetable',type:'Annual',sun:'Partial Shade',status:'active',loc:'',seedStart:'Mar Wk 1 R1 thru Jul Wk 1 R5',hardeningSched:'',transplantSched:'',directSow:'',harvest:'Spring–Fall',lastHarvest:'',seedInstructions:'5 succession rounds starting Mar Wk 1.',germination:'',hardening:'',transplanting:'',fert:'Fish Fertilizer',fertFreq:'Every 2 Weeks',fertNotes:'4 sets of true leaves. No fertilizer 7 days before picking.',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'Switch to heat-tolerant varieties June 1.',varieties:[{name:'Marciano',qty:0,loc:'',status:''},{name:'Butter Crunch',qty:0,loc:'',status:''},{name:'Oak Leaf',qty:0,loc:'',status:''},{name:"Gustav's Salad",qty:0,loc:'',status:''},{name:'Salad Bowl (HT)',qty:0,loc:'',status:''},{name:'EZ Park (HT)',qty:0,loc:'',status:''},{name:'Cherokee (HT)',qty:0,loc:'',status:''},{name:'Muir (HT)',qty:0,loc:'',status:''},{name:'Bronze Mignotte (HT)',qty:0,loc:'',status:''}]},
+  {name:'Onion',cat:'Vegetable',type:'Biennial',sun:'Full Sun',status:'active',loc:'Parking Strip',seedStart:'Jan Wk 3',hardeningSched:'Apr Wk 1',transplantSched:'Apr Wk 3',directSow:'Oct (sets)',harvest:'Summer',lastHarvest:'',seedInstructions:'Start seeds Jan Wk 3.',germination:'',hardening:'Harden Apr Wk 1.',transplanting:'Transplant Apr Wk 3 if six inches tall.',fert:'GardenTone + Bloodmeal',fertFreq:'2–3 Times Per Season',fertNotes:'GardenTone at planting. Bloodmeal every 3 weeks once established. Stop when bulbing.',pruning:'',disease:'',storage:'Cure 75-80°F. Store 45-50°F.',storageLoc:'Cool Dark Space',season:'',wishlist:'',notes:'',varieties:[{name:'Walla Walla Sweet',qty:0,loc:'',status:''},{name:'Patterson Yellow',qty:200,loc:'',status:''}]},
+  {name:'Parsley',cat:'Herb',type:'Biennial',sun:'Full Sun / Partial Shade',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'May Wk 3 (purchase nursery)',directSow:'',harvest:'Year-Round',lastHarvest:'',seedInstructions:'Purchase from nursery May Wk 3.',germination:'',hardening:'',transplanting:'',fert:'',fertFreq:'',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Parsley',qty:0,loc:'',status:''}]},
+  {name:'Pepper',cat:'Vegetable',type:'Annual',sun:'Full Sun / Partial Shade',status:'active',loc:'',seedStart:'Jan Wk 3 (Habanero); Feb Wk 2 (others)',hardeningSched:'Apr Wk 4',transplantSched:'May Wk 2',directSow:'',harvest:'Summer–Fall',lastHarvest:'',seedInstructions:'Habanero: Jan Wk 3. Others: Feb Wk 2. All: chamomile tea 24 hrs.',germination:'Soak all peppers in chamomile tea 24 hours.',hardening:'Harden Apr Wk 4.',transplanting:'Transplant May Wk 2. 30% shade improves productivity.',fert:'Fish Fertilizer + GardenTone',fertFreq:'Monthly',fertNotes:'Weekly fish until established; monthly GardenTone after.',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Arbols',qty:2,loc:'',status:''},{name:'Habaneros',qty:2,loc:'',status:''},{name:'Jalapeños',qty:4,loc:'',status:''},{name:'Mirasol',qty:0,loc:'',status:''},{name:'Serranos',qty:2,loc:'',status:''},{name:'Shishitos',qty:4,loc:'',status:''}]},
+  {name:'Pumpkin',cat:'Vegetable',type:'Annual',sun:'Full Sun',status:'active',loc:'',seedStart:'Mar Wk 3',hardeningSched:'May Wk 2',transplantSched:'May Wk 4',directSow:'',harvest:'Fall',lastHarvest:'',seedInstructions:'Start Mar Wk 3.',germination:'',hardening:'Harden May Wk 2.',transplanting:'Transplant May Wk 4. Use peat pots.',fert:'',fertFreq:'',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Pumpkin',qty:0,loc:'',status:''}]},
+  {name:'Radish',cat:'Vegetable',type:'Annual',sun:'Full Sun',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'Mar Wk 4 R1 thru Sep Wk 2 R6',harvest:'Spring, Fall',lastHarvest:'',seedInstructions:'Direct sow only.',germination:'',hardening:'',transplanting:'',fert:'None',fertFreq:'No Fertilizer',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Black Spanish (Fall)',qty:0,loc:'',status:''},{name:'Daikon (Fall)',qty:0,loc:'',status:''},{name:'Easter Egg',qty:0,loc:'',status:''},{name:'French Breakfast',qty:0,loc:'',status:''}]},
+  {name:'Rhubarb',cat:'Vegetable',type:'Perennial',sun:'Full Sun',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'Spring',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'Keep crown exposed. Space 24-36".',fert:'GardenTone',fertFreq:'Once Per Season (Spring)',fertNotes:'When new growth emerges.',pruning:'',disease:'',storage:'',storageLoc:'In-Ground',season:'',wishlist:'',notes:'DO NOT harvest in first year.',varieties:[{name:'Rhubarb',qty:0,loc:'',status:''}]},
+  {name:'Snap Pea',cat:'Vegetable',type:'Annual',sun:'Full Sun',status:'active',loc:'Where Tomatoes Will Later Go',seedStart:'Jan Wk 3',hardeningSched:'Feb Wk 1',transplantSched:'Feb Wk 3',directSow:'',harvest:'Spring',lastHarvest:'2025-05-31',seedInstructions:'Start Jan Wk 3.',germination:'',hardening:'Harden Feb Wk 1.',transplanting:'Transplant Feb Wk 3.',fert:'TomatoTone',fertFreq:'Once Per Season (Spring)',fertNotes:'At 6" tall. Prone to over-fertilization.',pruning:'',disease:'',storage:'Blanch, freeze, vacuum-seal.',storageLoc:'Freezer',season:'2025: 10 gallons!',wishlist:'',notes:'',varieties:[{name:'Cascadia Sugar Snap',qty:36,loc:'',status:''}]},
+  {name:'Squash / Zucchini',cat:'Vegetable',type:'Annual',sun:'Full Sun',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'May Wk 3 (purchase nursery)',directSow:'',harvest:'Summer',lastHarvest:'',seedInstructions:'Purchase from nursery May Wk 3.',germination:'',hardening:'',transplanting:'',fert:'Fish Emulsion + TomatoTone',fertFreq:'Every 2 Weeks',fertNotes:'Fish until buds; TomatoTone after.',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Squash / Zucchini',qty:0,loc:'',status:''}]},
+  {name:'Tomato',cat:'Vegetable',type:'Annual',sun:'Full Sun',status:'active',loc:'',seedStart:'Feb Wk 2 (not cherry); Feb Wk 4 (cherry)',hardeningSched:'Apr Wk 4',transplantSched:'May Wk 2',directSow:'',harvest:'Summer–Fall',lastHarvest:'',seedInstructions:'Non-cherry: Feb Wk 2. Cherry: Feb Wk 4.',germination:'',hardening:'Harden Apr Wk 4.',transplanting:'Transplant May Wk 2. Add bone meal at transplanting.',fert:'TomatoTone',fertFreq:'Every 2 Weeks',fertNotes:'2x per month May–August.',pruning:'',disease:'Blossom end rot — add bone meal.',storage:'',storageLoc:'',season:'2024: Green Zebra best tasting. Sungold best cherry.',wishlist:'',notes:'',varieties:[{name:'Green Zebra',qty:0,loc:'',status:''},{name:'Black Krim',qty:0,loc:'',status:''},{name:'Costoluto Fiorentino',qty:0,loc:'',status:''},{name:"Thornburne's Terra Cotta",qty:0,loc:'',status:''},{name:'Plum Regal',qty:0,loc:'',status:''},{name:'San Marzano Roma',qty:0,loc:'',status:''},{name:'Black Cherry',qty:0,loc:'',status:''},{name:'Sungold',qty:0,loc:'',status:''},{name:'Chocolate Cherry',qty:0,loc:'',status:''}]},
+  {name:'Chives',cat:'Herb',type:'Perennial',sun:'Full Sun / Partial Shade',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'Year-Round',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'',fert:'Fish Fertilizer',fertFreq:'Every 6–8 Weeks',fertNotes:'Every 6 weeks.',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Chives',qty:0,loc:'',status:''}]},
+  {name:'Dill (Herb)',cat:'Herb',type:'Annual',sun:'Full Sun',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'Apr Wk 1 R1; Apr Wk 3 R2; May Wk 1 R3',harvest:'Spring–Fall',lastHarvest:'',seedInstructions:'Direct sow only.',germination:'',hardening:'',transplanting:'',fert:'Fish Fertilizer',fertFreq:'Every 6–8 Weeks',fertNotes:'Every 6 weeks.',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Dill',qty:0,loc:'',status:''}]},
+  {name:'Lemon Balm',cat:'Herb',type:'Perennial',sun:'Full Sun / Partial Shade',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'Year-Round',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'',fert:'None',fertFreq:'No Fertilizer',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Lemon Balm',qty:0,loc:'',status:''}]},
+  {name:'Lavender (Herb)',cat:'Herb',type:'Perennial',sun:'Full Sun',status:'active',loc:'Multiple',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'Summer',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'',fert:'None',fertFreq:'No Fertilizer',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'In-Ground',season:'',wishlist:'',notes:'',varieties:[{name:'English Lavender',qty:0,loc:'Back Fence Bed',status:''},{name:'French Lavender',qty:0,loc:'Front Flower Beds',status:''}]},
+  {name:'Oregano',cat:'Herb',type:'Perennial',sun:'Full Sun',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'Year-Round',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'',fert:'None',fertFreq:'No Fertilizer',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Oregano',qty:0,loc:'',status:''}]},
+  {name:'Sage',cat:'Herb',type:'Perennial',sun:'Full Sun',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'Year-Round',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'',fert:'None',fertFreq:'No Fertilizer',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Sage',qty:0,loc:'',status:''}]},
+  {name:'Tarragon',cat:'Herb',type:'Perennial',sun:'Full Sun',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'Year-Round',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'',fert:'None',fertFreq:'No Fertilizer',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Tarragon',qty:0,loc:'',status:''}]},
+  {name:'Thyme',cat:'Herb',type:'Perennial',sun:'Full Sun',status:'active',loc:'',seedStart:'',hardeningSched:'',transplantSched:'',directSow:'',harvest:'Year-Round',lastHarvest:'',seedInstructions:'',germination:'',hardening:'',transplanting:'',fert:'None',fertFreq:'No Fertilizer',fertNotes:'',pruning:'',disease:'',storage:'',storageLoc:'',season:'',wishlist:'',notes:'',varieties:[{name:'Thyme',qty:0,loc:'',status:''}]},
+];
+
+</script>
+</body>
+</html>
