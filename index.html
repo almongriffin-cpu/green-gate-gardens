@@ -6,12 +6,15 @@
 <title>Green Gate Gardens</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* LIGHT MODE */
   :root {
     --color-text-primary: #1a1a1a;
     --color-text-secondary: #555;
     --color-text-tertiary: #888;
-    --color-background-primary: #fff;
+    --color-background-primary: #ffffff;
     --color-background-secondary: #f5f5f5;
+    --color-background-page: #fafafa;
     --color-border-tertiary: #e5e5e5;
     --color-border-secondary: #d0d0d0;
     --color-text-success: #2d6a2d;
@@ -22,19 +25,98 @@
     --color-border-info: #90bce8;
     --color-text-warning: #854F0B;
     --color-background-warning: #faeeda;
+    --color-border-warning: #e8c870;
     --color-text-danger: #a02020;
     --color-background-danger: #fdeaea;
     --color-border-danger: #e0a0a0;
+    --color-overlay: rgba(0,0,0,0.35);
     --border-radius-md: 8px;
     --border-radius-lg: 12px;
+    --color-bloom: #D4537E;
+    --color-bloom-bg: #FBEAF0;
+    --color-bloom-text: #723e5c;
+    --color-cat-flower-bg: #FBEAF0; --color-cat-flower-text: #723e5c;
+    --color-cat-perennial-bg: #EEEDFE; --color-cat-perennial-text: #3C3489;
+    --color-cat-veg-bg: #EAF3DE; --color-cat-veg-text: #3B6D11;
+    --color-cat-fruit-bg: #FAEEDA; --color-cat-fruit-text: #633806;
+    --color-cat-herb-bg: #E1F5EE; --color-cat-herb-text: #085041;
   }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fafafa; color: var(--color-text-primary); min-height: 100vh; }
+
+  /* DARK MODE — system preference */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --color-text-primary: #f0f0f0;
+      --color-text-secondary: #a0a0a0;
+      --color-text-tertiary: #666;
+      --color-background-primary: #1e1e1e;
+      --color-background-secondary: #2a2a2a;
+      --color-background-page: #141414;
+      --color-border-tertiary: #333;
+      --color-border-secondary: #444;
+      --color-text-success: #6abf6a;
+      --color-background-success: #1a2e1a;
+      --color-border-success: #3a5e3a;
+      --color-text-info: #6aaee8;
+      --color-background-info: #0f2035;
+      --color-border-info: #2a4e6e;
+      --color-text-warning: #e8b46a;
+      --color-background-warning: #2e1f0a;
+      --color-border-warning: #6e4a1a;
+      --color-text-danger: #e87070;
+      --color-background-danger: #2e0f0f;
+      --color-border-danger: #6e2a2a;
+      --color-overlay: rgba(0,0,0,0.6);
+      --color-bloom: #e0607e;
+      --color-bloom-bg: #2e1520;
+      --color-bloom-text: #e898b0;
+      --color-cat-flower-bg: #2e1520; --color-cat-flower-text: #e898b0;
+      --color-cat-perennial-bg: #1e1a35; --color-cat-perennial-text: #a098e8;
+      --color-cat-veg-bg: #1a2e1a; --color-cat-veg-text: #6abf6a;
+      --color-cat-fruit-bg: #2e1f0a; --color-cat-fruit-text: #e8a86a;
+      --color-cat-herb-bg: #0a2220; --color-cat-herb-text: #6adfc8;
+    }
+  }
+
+  /* DARK MODE — manual override */
+  :root[data-theme="dark"] {
+    --color-text-primary: #f0f0f0;
+    --color-text-secondary: #a0a0a0;
+    --color-text-tertiary: #666;
+    --color-background-primary: #1e1e1e;
+    --color-background-secondary: #2a2a2a;
+    --color-background-page: #141414;
+    --color-border-tertiary: #333;
+    --color-border-secondary: #444;
+    --color-text-success: #6abf6a;
+    --color-background-success: #1a2e1a;
+    --color-border-success: #3a5e3a;
+    --color-text-info: #6aaee8;
+    --color-background-info: #0f2035;
+    --color-border-info: #2a4e6e;
+    --color-text-warning: #e8b46a;
+    --color-background-warning: #2e1f0a;
+    --color-border-warning: #6e4a1a;
+    --color-text-danger: #e87070;
+    --color-background-danger: #2e0f0f;
+    --color-border-danger: #6e2a2a;
+    --color-overlay: rgba(0,0,0,0.6);
+    --color-bloom: #e0607e;
+    --color-bloom-bg: #2e1520;
+    --color-bloom-text: #e898b0;
+    --color-cat-flower-bg: #2e1520; --color-cat-flower-text: #e898b0;
+    --color-cat-perennial-bg: #1e1a35; --color-cat-perennial-text: #a098e8;
+    --color-cat-veg-bg: #1a2e1a; --color-cat-veg-text: #6abf6a;
+    --color-cat-fruit-bg: #2e1f0a; --color-cat-fruit-text: #e8a86a;
+    --color-cat-herb-bg: #0a2220; --color-cat-herb-text: #6adfc8;
+  }
+
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--color-background-page); color: var(--color-text-primary); min-height: 100vh; transition: background 0.2s, color 0.2s; }
   input, select, textarea, button { font-family: inherit; font-size: 13px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); padding: 7px 10px; outline: none; background: var(--color-background-primary); color: var(--color-text-primary); }
   input:focus, select:focus, textarea:focus { border-color: var(--color-text-info); }
   button { cursor: pointer; }
 
   /* LOADING */
-  .loading-screen { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #fafafa; gap: 16px; z-index: 1000; }
+  .loading-screen { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--color-background-page); gap: 16px; z-index: 1000; }
   .loading-logo { width: 48px; height: 48px; background: var(--color-background-success); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
   .loading-title { font-size: 20px; font-weight: 500; color: var(--color-text-primary); }
   .loading-sub { font-size: 13px; color: var(--color-text-tertiary); }
@@ -77,12 +159,12 @@
   .plant-card:hover { border-color: var(--color-border-secondary); }
   .card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 4px; }
   .cat-badge { font-size: 11px; font-weight: 500; padding: 3px 8px; border-radius: 100px; }
-  .cat-flower { background: #FBEAF0; color: #723e5c; }
-  .cat-perennial { background: #EEEDFE; color: #3C3489; }
-  .cat-veg { background: #EAF3DE; color: #3B6D11; }
-  .cat-fruit { background: #FAEEDA; color: #633806; }
-  .cat-herb { background: #E1F5EE; color: #085041; }
-  .bloom-tag { font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 100px; background: #FBEAF0; color: #723e5c; }
+  .cat-flower { background: var(--color-cat-flower-bg); color: var(--color-cat-flower-text); }
+  .cat-perennial { background: var(--color-cat-perennial-bg); color: var(--color-cat-perennial-text); }
+  .cat-veg { background: var(--color-cat-veg-bg); color: var(--color-cat-veg-text); }
+  .cat-fruit { background: var(--color-cat-fruit-bg); color: var(--color-cat-fruit-text); }
+  .cat-herb { background: var(--color-cat-herb-bg); color: var(--color-cat-herb-text); }
+  .bloom-tag { font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 100px; background: var(--color-bloom-bg); color: var(--color-bloom-text); }
   .status-pill { font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 100px; }
   .s-active { background: var(--color-background-success); color: var(--color-text-success); }
   .s-dormant { background: var(--color-background-secondary); color: var(--color-text-secondary); }
@@ -98,7 +180,7 @@
   .empty { text-align: center; padding: 3rem; color: var(--color-text-tertiary); font-size: 14px; }
 
   /* DETAIL PANEL */
-  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 100; align-items: flex-start; justify-content: center; padding: 2rem 1rem; overflow-y: auto; }
+  .overlay { display: none; position: fixed; inset: 0; background: var(--color-overlay); z-index: 100; align-items: flex-start; justify-content: center; padding: 2rem 1rem; overflow-y: auto; }
   .overlay.open { display: flex; }
   .detail-panel { background: var(--color-background-primary); border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-tertiary); width: 100%; max-width: 640px; padding: 1.5rem; margin: auto; }
   .detail-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
@@ -117,7 +199,7 @@
   .bloom-toggle-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); margin-bottom: 1.25rem; }
   .bloom-toggle-label { font-size: 13px; flex: 1; cursor: pointer; }
   .bloom-toggle-label span { font-size: 12px; color: var(--color-text-secondary); display: block; }
-  .bloom-toggle-row input[type=checkbox] { width: 18px; height: 18px; accent-color: #D4537E; cursor: pointer; flex-shrink: 0; }
+  .bloom-toggle-row input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--color-bloom); cursor: pointer; flex-shrink: 0; }
   .vtable { width: 100%; border-collapse: collapse; table-layout: fixed; }
   .vtable th { font-size: 11px; color: var(--color-text-tertiary); font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; padding: 0 8px 8px 0; text-align: left; }
   .vtable th.th-qty { text-align: right; width: 44px; padding-right: 0; }
@@ -146,7 +228,7 @@
   .btn-del:hover { background: var(--color-background-danger); }
 
   /* MODAL */
-  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 200; align-items: flex-start; justify-content: center; padding: 2rem 1rem; overflow-y: auto; }
+  .modal-overlay { display: none; position: fixed; inset: 0; background: var(--color-overlay); z-index: 200; align-items: flex-start; justify-content: center; padding: 2rem 1rem; overflow-y: auto; }
   .modal-overlay.open { display: flex; }
   .modal { background: var(--color-background-primary); border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-tertiary); width: 100%; max-width: 540px; padding: 1.5rem; margin: auto; }
   .modal h2 { font-size: 16px; font-weight: 500; margin-bottom: 1.25rem; }
@@ -160,12 +242,12 @@
   .bloom-form-row { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); margin-top: 4px; }
   .bloom-form-row label { font-size: 13px; cursor: pointer; flex: 1; }
   .bloom-form-row label span { font-size: 11px; color: var(--color-text-secondary); display: block; }
-  .bloom-form-row input[type=checkbox] { width: 18px; height: 18px; accent-color: #D4537E; cursor: pointer; flex-shrink: 0; }
+  .bloom-form-row input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--color-bloom); cursor: pointer; flex-shrink: 0; }
   .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1.25rem; }
   .btn-cancel { border: 0.5px solid var(--color-border-secondary); background: transparent; color: var(--color-text-secondary); border-radius: var(--border-radius-md); padding: 8px 16px; font-size: 13px; }
   .btn-save { background: var(--color-background-success); color: var(--color-text-success); border: 0.5px solid var(--color-border-success); border-radius: var(--border-radius-md); padding: 8px 16px; font-size: 13px; font-weight: 500; }
   .combo-wrap { position: relative; width: 100%; }
-  .combo-dropdown { display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--color-background-primary); border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); z-index: 300; max-height: 200px; overflow-y: auto; margin-top: 2px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+  .combo-dropdown { display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--color-background-primary); border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); z-index: 300; max-height: 200px; overflow-y: auto; margin-top: 2px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
   .combo-dropdown.open { display: block; }
   .combo-option { padding: 8px 12px; font-size: 13px; cursor: pointer; }
   .combo-option:hover { background: var(--color-background-secondary); }
@@ -174,7 +256,7 @@
   /* BLOOM TRACKER */
   .sub-nav { display: flex; gap: 6px; margin-bottom: 1.25rem; flex-wrap: wrap; }
   .sub-nav-btn { padding: 5px 14px; font-size: 12px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); background: transparent; color: var(--color-text-secondary); }
-  .sub-nav-btn.active { background: #FBEAF0; color: #723e5c; border-color: #D4537E; font-weight: 500; }
+  .sub-nav-btn.active { background: var(--color-bloom-bg); color: var(--color-bloom-text); border-color: var(--color-bloom); font-weight: 500; }
   .checkin-banner { background: var(--color-background-info); border: 0.5px solid var(--color-border-info); border-radius: var(--border-radius-lg); padding: 1.25rem; margin-bottom: 1.25rem; }
   .checkin-banner-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
   .checkin-title { font-size: 15px; font-weight: 500; color: var(--color-text-info); margin-bottom: 2px; }
@@ -184,7 +266,7 @@
   .week-nav { background: none; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 5px 12px; font-size: 13px; color: var(--color-text-secondary); }
   .week-nav:hover { background: var(--color-background-secondary); }
   .week-label { font-size: 14px; font-weight: 500; }
-  .bloom-pill { display: inline-block; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 100px; background: #FBEAF0; color: #723e5c; margin: 2px; }
+  .bloom-pill { display: inline-block; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 100px; background: var(--color-bloom-bg); color: var(--color-bloom-text); margin: 2px; }
   .weekly-table { width: 100%; border-collapse: collapse; }
   .weekly-table th { font-size: 11px; color: var(--color-text-tertiary); font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; padding: 0 0 8px; text-align: left; border-bottom: 0.5px solid var(--color-border-tertiary); }
   .weekly-table td { padding: 8px 0; border-top: 0.5px solid var(--color-border-tertiary); font-size: 13px; vertical-align: middle; }
@@ -196,7 +278,7 @@
   .tl-plant { font-size: 12px; font-weight: 500; padding-right: 8px !important; white-space: nowrap; max-width: 140px; overflow: hidden; text-overflow: ellipsis; }
   .tl-variety { font-size: 11px; color: var(--color-text-secondary); padding-right: 8px !important; white-space: nowrap; max-width: 150px; overflow: hidden; text-overflow: ellipsis; }
   .tl-dot { width: 12px; height: 12px; border-radius: 50%; margin: 0 auto; }
-  .tl-dot.on { background: #D4537E; }
+  .tl-dot.on { background: var(--color-bloom); }
   .tl-dot.off { border: 0.5px solid var(--color-border-tertiary); }
   .tl-dot.cur { outline: 2px solid var(--color-text-info); outline-offset: 1px; }
   .tl-cell { text-align: center; }
@@ -204,13 +286,13 @@
   .no-log { font-size: 13px; color: var(--color-text-tertiary); font-style: italic; padding: 2rem; text-align: center; }
   .vh-filter { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.25rem; }
   .vh-btn { border: 0.5px solid var(--color-border-tertiary); background: transparent; color: var(--color-text-secondary); border-radius: var(--border-radius-md); padding: 4px 10px; font-size: 12px; }
-  .vh-btn.active { background: #FBEAF0; color: #723e5c; border-color: #D4537E; font-weight: 500; }
+  .vh-btn.active { background: var(--color-bloom-bg); color: var(--color-bloom-text); border-color: var(--color-bloom); font-weight: 500; }
   .vh-table { width: 100%; border-collapse: collapse; }
   .vh-table th { font-size: 11px; color: var(--color-text-tertiary); font-weight: 500; text-transform: uppercase; padding: 0 0 8px; text-align: left; border-bottom: 0.5px solid var(--color-border-tertiary); }
   .vh-table td { padding: 8px 0; border-top: 0.5px solid var(--color-border-tertiary); font-size: 13px; }
 
   /* CHECKIN MODAL */
-  .ci-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 300; align-items: flex-start; justify-content: center; padding: 2rem 1rem; overflow-y: auto; }
+  .ci-overlay { display: none; position: fixed; inset: 0; background: var(--color-overlay); z-index: 300; align-items: flex-start; justify-content: center; padding: 2rem 1rem; overflow-y: auto; }
   .ci-overlay.open { display: flex; }
   .ci-modal { background: var(--color-background-primary); border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-tertiary); width: 100%; max-width: 560px; padding: 1.5rem; margin: auto; }
   .ci-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
@@ -223,10 +305,10 @@
   .variety-list { display: flex; flex-direction: column; gap: 2px; }
   .vcheck-row { display: flex; align-items: center; gap: 10px; padding: 6px 10px; border-radius: var(--border-radius-md); cursor: pointer; }
   .vcheck-row:hover { background: var(--color-background-secondary); }
-  .vcheck-row input[type=checkbox] { width: 16px; height: 16px; flex-shrink: 0; cursor: pointer; accent-color: #D4537E; }
+  .vcheck-row input[type=checkbox] { width: 16px; height: 16px; flex-shrink: 0; cursor: pointer; accent-color: var(--color-bloom); }
   .vcheck-name { font-size: 13px; }
   .ci-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1.25rem; padding-top: 1rem; border-top: 0.5px solid var(--color-border-tertiary); }
-  .btn-bloom-save { background: #D4537E; color: white; border: none; border-radius: var(--border-radius-md); padding: 8px 16px; font-size: 13px; font-weight: 500; }
+  .btn-bloom-save { background: var(--color-bloom); color: white; border: none; border-radius: var(--border-radius-md); padding: 8px 16px; font-size: 13px; font-weight: 500; }
 
   /* SEED SCHEDULE */
   .sched-legend { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1.25rem; }
@@ -242,12 +324,12 @@
   .action-type { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 100px; white-space: nowrap; flex-shrink: 0; margin-top: 1px; }
   .action-plants { font-size: 13px; line-height: 1.5; }
   .action-note { font-size: 12px; color: var(--color-text-secondary); font-style: italic; margin-top: 2px; }
-  .t-start{background:#EAF3DE;color:#3B6D11}.t-fridge{background:#E6F1FB;color:#185FA5}.t-freeze{background:#EEEDFE;color:#3C3489}.t-harden{background:#FAEEDA;color:#854F0B}.t-transplant{background:#FBEAF0;color:#723e5c}.t-directsow{background:#E1F5EE;color:#085041}.t-purchase{background:#F1EFE8;color:#5F5E5A}.t-wakeup{background:#FAEEDA;color:#633806}.t-order{background:var(--color-background-secondary);color:var(--color-text-secondary)}.t-note{background:var(--color-background-secondary);color:var(--color-text-tertiary)}
-  .row-start{background:#EAF3DE22}.row-fridge{background:#E6F1FB22}.row-freeze{background:#EEEDFE22}.row-harden{background:#FAEEDA22}.row-transplant{background:#FBEAF022}.row-directsow{background:#E1F5EE22}.row-purchase{background:#F1EFE822}.row-wakeup{background:#FAEEDA22}.row-order{background:var(--color-background-secondary)}.row-note{background:var(--color-background-secondary)}
+  .t-start{background:var(--color-cat-veg-bg);color:var(--color-cat-veg-text)}.t-fridge{background:var(--color-background-info);color:var(--color-text-info)}.t-freeze{background:var(--color-cat-perennial-bg);color:var(--color-cat-perennial-text)}.t-harden{background:var(--color-background-warning);color:var(--color-text-warning)}.t-transplant{background:var(--color-bloom-bg);color:var(--color-bloom-text)}.t-directsow{background:var(--color-cat-herb-bg);color:var(--color-cat-herb-text)}.t-purchase{background:var(--color-background-secondary);color:var(--color-text-secondary)}.t-wakeup{background:var(--color-cat-fruit-bg);color:var(--color-cat-fruit-text)}.t-order{background:var(--color-background-secondary);color:var(--color-text-secondary)}.t-note{background:var(--color-background-secondary);color:var(--color-text-tertiary)}
+  .row-start{background:var(--color-cat-veg-bg);opacity:0.4}.row-fridge{background:var(--color-background-info);opacity:0.3}.row-freeze{background:var(--color-cat-perennial-bg);opacity:0.3}.row-harden{background:var(--color-background-warning);opacity:0.3}.row-transplant{background:var(--color-bloom-bg);opacity:0.3}.row-directsow{background:var(--color-cat-herb-bg);opacity:0.3}.row-purchase{background:var(--color-background-secondary)}.row-wakeup{background:var(--color-cat-fruit-bg);opacity:0.3}.row-order{background:var(--color-background-secondary)}.row-note{background:var(--color-background-secondary)}
 
   /* FERTILIZER */
   .qr-section{margin-bottom:1.75rem}.qr-section-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}.qr-section-title{font-size:14px;font-weight:500}.qr-freq-badge{font-size:11px;font-weight:500;padding:3px 10px;border-radius:100px}
-  .freq-spring{background:#EAF3DE;color:#3B6D11}.freq-planting{background:#FAEEDA;color:#633806}.freq-season{background:#EEEDFE;color:#3C3489}.freq-weeks{background:#E1F5EE;color:#085041}.freq-monthly{background:#FBEAF0;color:#723e5c}.freq-biweekly{background:#E6F1FB;color:#185FA5}.freq-weekly{background:#FAEEDA;color:#854F0B}.freq-none{background:var(--color-background-secondary);color:var(--color-text-secondary)}.freq-custom{background:#F1EFE8;color:#5F5E5A}
+  .freq-spring{background:var(--color-cat-veg-bg);color:var(--color-cat-veg-text)}.freq-planting{background:var(--color-cat-fruit-bg);color:var(--color-cat-fruit-text)}.freq-season{background:var(--color-cat-perennial-bg);color:var(--color-cat-perennial-text)}.freq-weeks{background:var(--color-cat-herb-bg);color:var(--color-cat-herb-text)}.freq-monthly{background:var(--color-bloom-bg);color:var(--color-bloom-text)}.freq-biweekly{background:var(--color-background-info);color:var(--color-text-info)}.freq-weekly{background:var(--color-background-warning);color:var(--color-text-warning)}.freq-none{background:var(--color-background-secondary);color:var(--color-text-secondary)}.freq-custom{background:var(--color-background-secondary);color:var(--color-text-secondary)}
   .qr-table{width:100%;border-collapse:collapse}.qr-table th{font-size:11px;color:var(--color-text-tertiary);font-weight:500;text-transform:uppercase;letter-spacing:.04em;padding:0 0 8px;text-align:left;border-bottom:.5px solid var(--color-border-tertiary)}.qr-table th.th-fert{width:220px}.qr-table td{padding:8px 12px 8px 0;border-top:.5px solid var(--color-border-tertiary);font-size:13px;vertical-align:top}.qr-table td.td-plant{font-weight:500;width:160px}.qr-table td.td-fert{color:var(--color-text-secondary)}.qr-table td.td-notes{color:var(--color-text-tertiary);font-style:italic;font-size:12px}
   .qr-divider{border:none;border-top:.5px solid var(--color-border-tertiary);margin:1.5rem 0}
   .no-fert-pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}.no-fert-pill{font-size:13px;background:var(--color-background-secondary);padding:4px 12px;border-radius:100px;color:var(--color-text-secondary)}
@@ -255,7 +337,7 @@
 
   /* FIELD LOG */
   .fl-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 10px; }
-  .fl-add-btn { background: #2d6a2d; color: #fff; border: none; border-radius: var(--border-radius-md); padding: 9px 18px; font-size: 14px; font-weight: 500; }
+  .fl-add-btn { background: var(--color-text-success); color: #fff; border: none; border-radius: var(--border-radius-md); padding: 9px 18px; font-size: 14px; font-weight: 500; }
   .fl-add-btn:hover { opacity: 0.88; }
   .fl-sub-nav { display: flex; gap: 6px; margin-bottom: 1.25rem; flex-wrap: wrap; }
   .fl-sub-btn { padding: 5px 14px; font-size: 12px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); background: transparent; color: var(--color-text-secondary); }
@@ -268,9 +350,9 @@
   .fl-entry:hover { border-color: var(--color-border-secondary); }
   .fl-entry-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
   .fl-type-badge { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 100px; }
-  .fl-type-note { background: #E6F1FB; color: #185FA5; }
-  .fl-type-harvest { background: #EAF3DE; color: #2d6a2d; }
-  .fl-type-reminder { background: #FAEEDA; color: #854F0B; }
+  .fl-type-note { background: var(--color-background-info); color: var(--color-text-info); }
+  .fl-type-harvest { background: var(--color-cat-veg-bg); color: var(--color-cat-veg-text); }
+  .fl-type-reminder { background: var(--color-background-warning); color: var(--color-text-warning); }
   .fl-entry-plant { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
   .fl-entry-date { font-size: 11px; color: var(--color-text-tertiary); margin-left: auto; }
   .fl-entry-body { font-size: 13px; color: var(--color-text-secondary); line-height: 1.5; }
@@ -289,9 +371,9 @@
   .fl-reminder-upcoming { background: var(--color-background-secondary); color: var(--color-text-secondary); }
   .fl-reminder-done { background: var(--color-background-success); color: var(--color-text-success); text-decoration: line-through; opacity: 0.6; }
   .fl-empty { text-align: center; padding: 3rem; color: var(--color-text-tertiary); font-size: 14px; }
-  .fl-reminder-banner { background: var(--color-background-warning); border: 0.5px solid #e8c870; border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 1.25rem; }
+  .fl-reminder-banner { background: var(--color-background-warning); border: 0.5px solid var(--color-border-warning); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 1.25rem; }
   .fl-reminder-banner-title { font-size: 14px; font-weight: 500; color: var(--color-text-warning); margin-bottom: 8px; }
-  .fl-reminder-item { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-top: 0.5px solid #e8c870; gap: 10px; flex-wrap: wrap; }
+  .fl-reminder-item { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-top: 0.5px solid var(--color-border-warning); gap: 10px; flex-wrap: wrap; }
   .fl-reminder-item-text { font-size: 13px; color: var(--color-text-primary); }
   .fl-reminder-item-plant { font-size: 11px; color: var(--color-text-secondary); }
   .fl-reminder-done-btn { font-size: 11px; padding: 3px 10px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-text-success); background: transparent; color: var(--color-text-success); }
@@ -315,7 +397,7 @@
 
   /* GARDEN SUPPLIES */
   .gs-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 10px; }
-  .gs-add-btn { background: #2d6a2d; color: #fff; border: none; border-radius: var(--border-radius-md); padding: 9px 18px; font-size: 14px; font-weight: 500; }
+  .gs-add-btn { background: var(--color-text-success); color: #fff; border: none; border-radius: var(--border-radius-md); padding: 9px 18px; font-size: 14px; font-weight: 500; }
   .gs-add-btn:hover { opacity: 0.88; }
   .gs-sub-nav { display: flex; gap: 6px; margin-bottom: 1.25rem; flex-wrap: wrap; }
   .gs-sub-btn { padding: 5px 14px; font-size: 12px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); background: transparent; color: var(--color-text-secondary); }
@@ -373,15 +455,15 @@
   .task-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-top: 0.5px solid var(--color-border-tertiary); }
   .task-item:first-child { border-top: none; padding-top: 0; }
   .task-badge { font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 100px; white-space: nowrap; flex-shrink: 0; margin-top: 2px; }
-  .task-b-reminder { background: #FAEEDA; color: #854F0B; }
-  .task-b-schedule { background: #EAF3DE; color: #3B6D11; }
-  .task-b-bloom { background: #E6F1FB; color: #185FA5; }
-  .task-b-timing { background: #EEEDFE; color: #3C3489; }
+  .task-b-reminder { background: var(--color-background-warning); color: var(--color-text-warning); }
+  .task-b-schedule { background: var(--color-cat-veg-bg); color: var(--color-cat-veg-text); }
+  .task-b-bloom { background: var(--color-background-info); color: var(--color-text-info); }
+  .task-b-timing { background: var(--color-cat-perennial-bg); color: var(--color-cat-perennial-text); }
   .task-text { font-size: 13px; color: var(--color-text-primary); line-height: 1.5; flex: 1; }
   .task-sub { font-size: 11px; color: var(--color-text-tertiary); display: block; margin-top: 1px; }
 
   /* BLOOM SUMMARY */
-  .bloom-plant-pill { display: inline-block; font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 100px; background: #FBEAF0; color: #723e5c; margin: 3px; }
+  .bloom-plant-pill { display: inline-block; font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 100px; background: var(--color-bloom-bg); color: var(--color-bloom-text); margin: 3px; }
 
   /* HARVEST RECENT */
   .harvest-row { display: flex; align-items: center; justify-content: space-between; padding: 7px 0; border-top: 0.5px solid var(--color-border-tertiary); gap: 10px; }
@@ -415,6 +497,13 @@
 </style>
 </head>
 <body>
+<script>
+  // Apply saved theme immediately before render to avoid flash
+  (function() {
+    const saved = localStorage.getItem('ggg-theme');
+    if (saved) document.documentElement.setAttribute('data-theme', saved);
+  })();
+</script>
 
 <!-- LOADING SCREEN -->
 <div class="loading-screen" id="loadingScreen">
@@ -446,6 +535,7 @@
     </div>
     <div class="header-actions">
       <div class="sync-label"><span class="sync-dot" id="syncDot"></span><span id="syncLabel">Synced</span></div>
+      <button class="backup-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle dark/light mode">🌙</button>
       <button class="backup-btn" onclick="openBackup()">⬇ Backup / Restore</button>
       <button class="add-btn" id="addPlantBtn" onclick="openModal()" style="display:none">+ Add Plant</button>
     </div>
@@ -719,6 +809,28 @@ const firebaseConfig = {
 
 const fbApp = initializeApp(firebaseConfig);
 const db = getFirestore(fbApp);
+
+// ─── THEME ───────────────────────────────────────────────────────
+function getEffectiveTheme() {
+  const saved = localStorage.getItem('ggg-theme');
+  if (saved) return saved;
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('ggg-theme', theme);
+  const btn = document.getElementById('themeToggleBtn');
+  if (btn) btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+}
+window.toggleTheme = function() {
+  const current = getEffectiveTheme();
+  applyTheme(current === 'dark' ? 'light' : 'dark');
+};
+// Init theme button icon on load
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('themeToggleBtn');
+  if (btn) btn.textContent = getEffectiveTheme() === 'dark' ? '☀️' : '🌙';
+});
 
 // ─── STATE ──────────────────────────────────────────────────────
 let plants = [], bloomData = {}, freqGroups = [], fieldLog = [], supplies = [];
@@ -1267,7 +1379,7 @@ function renderDetail() {
     </div>
     <div class="detail-name">${p.name}</div>
     <div class="bloom-toggle-row">
-      <input type="checkbox" id="dt-bloom" ${p.inBloom?'checked':''} onchange="toggleBloom('${p.id}',this.checked)" style="width:18px;height:18px;accent-color:#D4537E;cursor:pointer;flex-shrink:0;">
+      <input type="checkbox" id="dt-bloom" ${p.inBloom?'checked':''} onchange="toggleBloom('${p.id}',this.checked)" style="width:18px;height:18px;accent-color:var(--color-bloom);cursor:pointer;flex-shrink:0;">
       <label for="dt-bloom" class="bloom-toggle-label">Include In Bloom Tracker<span>${p.inBloom?'Appears in bloom tracker check-in and timeline.':'Not currently tracked in bloom tracker.'}</span></label>
     </div>
     <div class="detail-section"><div class="detail-section-label">Identity &amp; Location</div><div class="detail-grid">
@@ -1441,7 +1553,7 @@ function renderBTimeline() {
   });
   h+=`</tbody></table></div>
   <div style="display:flex;gap:16px;margin-top:12px;flex-wrap:wrap;">
-    <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--color-text-secondary);"><div style="width:12px;height:12px;border-radius:50%;background:#D4537E;"></div>In Bloom</div>
+    <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--color-text-secondary);"><div style="width:12px;height:12px;border-radius:50%;background:var(--color-bloom);"></div>In Bloom</div>
     <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--color-text-secondary);"><div style="width:12px;height:12px;border-radius:50%;border:0.5px solid var(--color-border-tertiary);"></div>Not In Bloom</div>
     <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--color-text-secondary);"><div style="width:12px;height:12px;border-radius:50%;border:0.5px solid var(--color-border-tertiary);outline:2px solid var(--color-text-info);outline-offset:1px;"></div>Current Week</div>
   </div>`;
@@ -1476,7 +1588,7 @@ function renderBHistory() {
   h+=`<table class="vh-table"><thead><tr><th>Variety</th><th>Weeks In Bloom</th><th>Timeline</th></tr></thead><tbody>`;
   (p.varieties||[{name:p.name}]).forEach(v=>{
     const bwks=wks.filter(wk=>(bloomData[wk]?.[p.name]||[]).includes(v.name));
-    const dots=wks.map(wk=>{ const on=(bloomData[wk]?.[p.name]||[]).includes(v.name); return `<span title="${fmtWK(wk)}" style="display:inline-block;width:10px;height:10px;border-radius:50%;margin:0 1px;background:${on?'#D4537E':'transparent'};border:0.5px solid ${on?'#D4537E':'var(--color-border-tertiary)'};"></span>`; }).join('');
+    const dots=wks.map(wk=>{ const on=(bloomData[wk]?.[p.name]||[]).includes(v.name); return `<span title="${fmtWK(wk)}" style="display:inline-block;width:10px;height:10px;border-radius:50%;margin:0 1px;background:${on?'var(--color-bloom)':'transparent'};border:0.5px solid ${on?'var(--color-bloom)':'var(--color-border-tertiary)'};"></span>`; }).join('');
     h+=`<tr><td style="font-weight:500;padding-right:16px;white-space:nowrap;">${v.name}</td><td style="white-space:nowrap;padding-right:16px;">${bwks.length>0?`${bwks.length} wk${bwks.length!==1?'s':''}`:'<span style="color:var(--color-text-tertiary);font-style:italic;">None logged</span>'}</td><td><div style="display:flex;align-items:center;flex-wrap:wrap;">${dots}</div></td></tr>`;
   });
   h+=`</tbody></table>`; el.innerHTML=h;
@@ -1580,14 +1692,14 @@ const RC={start:'row-start',fridge:'row-fridge',freeze:'row-freeze',harden:'row-
 
 window.renderSchedule = function() {
   let h=`<div class="sched-legend">
-    <div class="leg-item"><div class="leg-dot" style="background:#639922"></div>Start Indoor</div>
-    <div class="leg-item"><div class="leg-dot" style="background:#185FA5"></div>Fridge / Cold Stratify</div>
-    <div class="leg-item"><div class="leg-dot" style="background:#534AB7"></div>Freeze</div>
-    <div class="leg-item"><div class="leg-dot" style="background:#854F0B"></div>Harden</div>
-    <div class="leg-item"><div class="leg-dot" style="background:#723e5c"></div>Transplant / Plant</div>
-    <div class="leg-item"><div class="leg-dot" style="background:#085041"></div>Direct Sow</div>
-    <div class="leg-item"><div class="leg-dot" style="background:#5F5E5A"></div>Purchase / Order</div>
-    <div class="leg-item"><div class="leg-dot" style="background:#633806"></div>Wake Up / Remove</div>
+    <div class="leg-item"><div class="leg-dot t-start" style="border-radius:2px;"></div>Start Indoor</div>
+    <div class="leg-item"><div class="leg-dot t-fridge" style="border-radius:2px;"></div>Fridge / Cold Stratify</div>
+    <div class="leg-item"><div class="leg-dot t-freeze" style="border-radius:2px;"></div>Freeze</div>
+    <div class="leg-item"><div class="leg-dot t-harden" style="border-radius:2px;"></div>Harden</div>
+    <div class="leg-item"><div class="leg-dot t-transplant" style="border-radius:2px;"></div>Transplant / Plant</div>
+    <div class="leg-item"><div class="leg-dot t-directsow" style="border-radius:2px;"></div>Direct Sow</div>
+    <div class="leg-item"><div class="leg-dot t-purchase" style="border-radius:2px;"></div>Purchase / Order</div>
+    <div class="leg-item"><div class="leg-dot t-wakeup" style="border-radius:2px;"></div>Wake Up / Remove</div>
   </div>`;
   SCHEDULE.forEach(m=>{
     h+=`<div class="sched-month"><div class="sched-month-header">${m.month}</div>`;
