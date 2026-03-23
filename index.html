@@ -345,6 +345,57 @@
   /* Fert reference status badge */
   .fert-stock-badge { font-size: 10px; font-weight: 500; padding: 1px 6px; border-radius: 100px; margin-left: 6px; vertical-align: middle; }
 
+  /* DASHBOARD */
+  .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 680px) { .dash-grid { grid-template-columns: 1fr; } }
+  .dash-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; }
+  .dash-card.full { grid-column: 1 / -1; }
+  .dash-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .dash-card-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); text-transform: uppercase; letter-spacing: 0.05em; }
+  .dash-card-link { font-size: 12px; color: var(--color-text-info); background: none; border: none; cursor: pointer; padding: 0; }
+  .dash-card-link:hover { text-decoration: underline; }
+  .dash-empty { font-size: 13px; color: var(--color-text-tertiary); font-style: italic; }
+
+  /* WEATHER */
+  .weather-wrap { overflow-x: auto; padding-bottom: 4px; }
+  .weather-days { display: flex; gap: 6px; min-width: max-content; }
+  .weather-day { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 10px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); min-width: 72px; }
+  .weather-day.today { background: var(--color-background-success); }
+  .weather-day-label { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); }
+  .weather-day.today .weather-day-label { color: var(--color-text-success); }
+  .weather-icon { font-size: 20px; }
+  .weather-hi { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
+  .weather-lo { font-size: 11px; color: var(--color-text-tertiary); }
+  .weather-precip { font-size: 10px; color: var(--color-text-info); }
+  .weather-loading { font-size: 13px; color: var(--color-text-tertiary); font-style: italic; padding: 8px 0; }
+
+  /* TASKS */
+  .task-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-top: 0.5px solid var(--color-border-tertiary); }
+  .task-item:first-child { border-top: none; padding-top: 0; }
+  .task-badge { font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 100px; white-space: nowrap; flex-shrink: 0; margin-top: 2px; }
+  .task-b-reminder { background: #FAEEDA; color: #854F0B; }
+  .task-b-schedule { background: #EAF3DE; color: #3B6D11; }
+  .task-b-bloom { background: #E6F1FB; color: #185FA5; }
+  .task-b-timing { background: #EEEDFE; color: #3C3489; }
+  .task-text { font-size: 13px; color: var(--color-text-primary); line-height: 1.5; flex: 1; }
+  .task-sub { font-size: 11px; color: var(--color-text-tertiary); display: block; margin-top: 1px; }
+
+  /* BLOOM SUMMARY */
+  .bloom-plant-pill { display: inline-block; font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 100px; background: #FBEAF0; color: #723e5c; margin: 3px; }
+
+  /* HARVEST RECENT */
+  .harvest-row { display: flex; align-items: center; justify-content: space-between; padding: 7px 0; border-top: 0.5px solid var(--color-border-tertiary); gap: 10px; }
+  .harvest-row:first-child { border-top: none; padding-top: 0; }
+  .harvest-plant { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+  .harvest-meta { font-size: 11px; color: var(--color-text-tertiary); }
+  .harvest-qty { font-size: 13px; color: var(--color-text-success); font-weight: 500; white-space: nowrap; }
+
+  /* SHOPPING DASH */
+  .shop-row { display: flex; align-items: center; justify-content: space-between; padding: 7px 0; border-top: 0.5px solid var(--color-border-tertiary); gap: 10px; }
+  .shop-row:first-child { border-top: none; padding-top: 0; }
+  .shop-name { font-size: 13px; color: var(--color-text-primary); }
+  .shop-status { font-size: 11px; font-weight: 500; padding: 2px 7px; border-radius: 100px; white-space: nowrap; }
+
   /* SYNC INDICATOR */
   .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-text-success); display: inline-block; margin-right: 4px; }
   .sync-dot.saving { background: var(--color-text-warning); animation: pulse 1s ease-in-out infinite; }
@@ -401,7 +452,8 @@
   </div>
 
   <div class="nav">
-    <button class="nav-btn active" onclick="showSection('catalog')">Plant Catalog</button>
+    <button class="nav-btn active" onclick="showSection('dashboard')">Dashboard</button>
+    <button class="nav-btn" onclick="showSection('catalog')">Plant Catalog</button>
     <button class="nav-btn" onclick="showSection('bloom')">Bloom Tracker</button>
     <button class="nav-btn" onclick="showSection('fieldlog')">Field Log</button>
     <button class="nav-btn" onclick="showSection('schedule')">Seed Schedule</button>
@@ -409,8 +461,13 @@
     <button class="nav-btn" onclick="showSection('supplies')">Garden Supplies</button>
   </div>
 
+  <!-- DASHBOARD -->
+  <div id="sec-dashboard">
+    <div id="dashContent"></div>
+  </div>
+
   <!-- CATALOG -->
-  <div id="sec-catalog">
+  <div id="sec-catalog" style="display:none">
     <div class="stats" id="stats"></div>
     <div class="controls">
       <div class="search-wrap">
@@ -766,7 +823,7 @@ async function init() {
   hsYear = new Date().getFullYear().toString();
   document.getElementById('loadingScreen').style.display = 'none';
   document.getElementById('mainApp').style.display = '';
-  renderGrid();
+  renderDashboard();
 }
 init();
 
@@ -810,15 +867,303 @@ window.importBackup = async (e) => {
 // ─── SECTION ROUTING ─────────────────────────────────────────────
 window.showSection = function(s) {
   currentSection = s;
-  ['catalog','bloom','fieldlog','schedule','fert','supplies'].forEach(x => { document.getElementById('sec-'+x).style.display = x===s?'':'none'; });
+  ['dashboard','catalog','bloom','fieldlog','schedule','fert','supplies'].forEach(x => { document.getElementById('sec-'+x).style.display = x===s?'':'none'; });
   document.getElementById('addPlantBtn').style.display = s==='catalog'?'':'none';
-  document.querySelectorAll('.nav-btn').forEach((b,i) => b.classList.toggle('active', ['catalog','bloom','fieldlog','schedule','fert','supplies'][i]===s));
+  document.querySelectorAll('.nav-btn').forEach((b,i) => b.classList.toggle('active', ['dashboard','catalog','bloom','fieldlog','schedule','fert','supplies'][i]===s));
+  if(s==='dashboard') renderDashboard();
+  if(s==='catalog') renderGrid();
   if(s==='bloom') renderBloom();
   if(s==='fieldlog') renderFieldLog();
   if(s==='schedule') renderSchedule();
   if(s==='fert') renderFert();
   if(s==='supplies') renderSupplies();
 };
+
+// ─── DASHBOARD ───────────────────────────────────────────────────
+const WEATHER_CODES = {
+  0:'☀️',1:'🌤',2:'⛅',3:'☁️',45:'🌫',48:'🌫',51:'🌦',53:'🌦',55:'🌧',
+  61:'🌧',63:'🌧',65:'🌧',71:'🌨',73:'🌨',75:'🌨',80:'🌦',81:'🌧',82:'🌧',
+  95:'⛈',96:'⛈',99:'⛈'
+};
+
+async function fetchWeather() {
+  try {
+    // Seattle coordinates
+    const url = 'https://api.open-meteo.com/v1/forecast?latitude=47.6062&longitude=-122.3321&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&timezone=America%2FLos_Angeles&forecast_days=7';
+    const res = await fetch(url);
+    const data = await res.json();
+    return data.daily;
+  } catch(e) {
+    return null;
+  }
+}
+
+function parseMonthWeek(str) {
+  // Parse strings like "Jan Wk 3", "Feb Wk 1", "Mar Wk 3 R1; Apr Wk 2 R2"
+  // Returns array of {month, week} objects
+  if (!str) return [];
+  const months = {jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
+  const results = [];
+  const parts = str.split(/[;,]/);
+  parts.forEach(part => {
+    const m = part.trim().match(/([a-z]+)\s+wk\s*(\d+)/i);
+    if (m) {
+      const mo = months[m[1].toLowerCase()];
+      const wk = parseInt(m[2]);
+      if (mo && wk) results.push({month: mo, week: wk});
+    }
+  });
+  return results;
+}
+
+function getCurrentMonthWeek() {
+  const now = new Date();
+  const month = now.getMonth() + 1;
+  const day = now.getDate();
+  const week = Math.ceil(day / 7);
+  return {month, week};
+}
+
+function isWithinWindow(schedStr, lookaheadWeeks = 2) {
+  const parsed = parseMonthWeek(schedStr);
+  if (!parsed.length) return false;
+  const now = getCurrentMonthWeek();
+  return parsed.some(({month, week}) => {
+    if (month === now.month) {
+      return week >= now.week && week <= now.week + lookaheadWeeks;
+    }
+    // Handle month rollover
+    if (month === now.month + 1 && now.week + lookaheadWeeks > 4) {
+      const overflow = (now.week + lookaheadWeeks) - 4;
+      return week <= overflow;
+    }
+    return false;
+  });
+}
+
+function getTimingTasks() {
+  const tasks = [];
+  plants.forEach(p => {
+    if (isWithinWindow(p.seedStart)) tasks.push({ type: 'timing', text: `Start seeds: ${p.name}`, sub: p.seedStart });
+    if (isWithinWindow(p.hardeningSched)) tasks.push({ type: 'timing', text: `Harden off: ${p.name}`, sub: p.hardeningSched });
+    if (isWithinWindow(p.transplantSched)) tasks.push({ type: 'timing', text: `Transplant: ${p.name}`, sub: p.transplantSched });
+    if (isWithinWindow(p.directSow)) tasks.push({ type: 'timing', text: `Direct sow: ${p.name}`, sub: p.directSow });
+  });
+  return tasks;
+}
+
+function getScheduleTasks() {
+  const now = getCurrentMonthWeek();
+  const tasks = [];
+  const monthNames = ['','January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  SCHEDULE.forEach(m => {
+    const mIdx = monthNames.indexOf(m.month);
+    if (mIdx < 0) return;
+    m.weeks.forEach(w => {
+      // Parse week number from label
+      const wMatch = w.week.match(/Week\s*(\d+)/i);
+      if (!wMatch) return;
+      const wNum = parseInt(wMatch[1]);
+      // Show current week and next week
+      const isCurrent = mIdx === now.month && wNum === now.week;
+      const isNext = (mIdx === now.month && wNum === now.week + 1) ||
+                     (mIdx === now.month + 1 && now.week === 4 && wNum === 1);
+      if (!isCurrent && !isNext) return;
+      w.actions.forEach(a => {
+        if (a.type === 'note' || a.type === 'order') return;
+        tasks.push({ type: 'schedule', text: `${a.label}: ${a.plants}`, sub: `${m.month} ${w.week}` });
+      });
+    });
+  });
+  return tasks;
+}
+
+async function renderDashboard() {
+  const el = document.getElementById('dashContent');
+
+  // Date header
+  const today = new Date();
+  const dateStr = today.toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric', year:'numeric'});
+
+  // Start rendering immediately with loading state for weather
+  el.innerHTML = buildDashHTML('loading');
+
+  // Fetch weather async and update
+  const weather = await fetchWeather();
+  el.innerHTML = buildDashHTML(weather);
+}
+
+function buildDashHTML(weather) {
+  const today = new Date();
+  const dateStr = today.toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric', year:'numeric'});
+  const cWk = curWK();
+
+  // ── WEATHER ──
+  let weatherHtml = '';
+  if (weather === 'loading') {
+    weatherHtml = `<div class="weather-loading">Loading forecast…</div>`;
+  } else if (!weather) {
+    weatherHtml = `<div class="dash-empty">Weather unavailable — check your connection.</div>`;
+  } else {
+    const days = weather.time.map((date, i) => {
+      const d = new Date(date + 'T12:00:00');
+      const isToday = i === 0;
+      const label = isToday ? 'Today' : d.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'});
+      const icon = WEATHER_CODES[weather.weathercode[i]] || '🌡';
+      const hi = Math.round(weather.temperature_2m_max[i]);
+      const lo = Math.round(weather.temperature_2m_min[i]);
+      const precip = weather.precipitation_probability_max[i];
+      return `<div class="weather-day${isToday?' today':''}">
+        <div class="weather-day-label">${label}</div>
+        <div class="weather-icon">${icon}</div>
+        <div class="weather-hi">${hi}°</div>
+        <div class="weather-lo">${lo}°</div>
+        ${precip > 10 ? `<div class="weather-precip">💧${precip}%</div>` : ''}
+      </div>`;
+    }).join('');
+    weatherHtml = `<div class="weather-wrap"><div class="weather-days">${days}</div></div>`;
+  }
+
+  // ── TASKS ──
+  const tasks = [];
+  // Bloom check-in
+  if (!bloomData[cWk]) {
+    tasks.push({ type: 'bloom', text: 'Log this week\'s blooms', sub: `Bloom Tracker check-in — ${fmtWK(cWk)}`, action: `showSection('bloom')` });
+  }
+  // Field log reminders due/overdue
+  const todayISO2 = new Date().toISOString().slice(0,10);
+  fieldLog.filter(e => e.type==='reminder' && !e.done && e.dueDate <= todayISO2).forEach(e => {
+    tasks.push({ type: 'reminder', text: e.task, sub: `${e.plantName} · Due ${flDateStr(e.dueDate)}`, action: `showSection('fieldlog')` });
+  });
+  // Seed schedule tasks
+  getScheduleTasks().forEach(t => tasks.push(t));
+  // Timing tasks from catalog
+  getTimingTasks().forEach(t => tasks.push(t));
+
+  const taskBadgeClass = { reminder:'task-b-reminder', schedule:'task-b-schedule', bloom:'task-b-bloom', timing:'task-b-timing' };
+  const taskBadgeLabel = { reminder:'Reminder', schedule:'Schedule', bloom:'Bloom Log', timing:'Season Timing' };
+
+  let tasksHtml = '';
+  if (!tasks.length) {
+    tasksHtml = `<div class="dash-empty">Nothing pressing right now — enjoy the garden.</div>`;
+  } else {
+    tasksHtml = tasks.slice(0,8).map(t => `<div class="task-item" ${t.action?`onclick="${t.action}" style="cursor:pointer;"`:''}>
+      <span class="task-badge ${taskBadgeClass[t.type]||''}">${taskBadgeLabel[t.type]||t.type}</span>
+      <div class="task-text">${t.text}${t.sub?`<span class="task-sub">${t.sub}</span>`:''}</div>
+    </div>`).join('');
+    if (tasks.length > 8) tasksHtml += `<div style="font-size:12px;color:var(--color-text-tertiary);margin-top:8px;">+${tasks.length-8} more tasks</div>`;
+  }
+
+  // ── BLOOM SUMMARY ──
+  const recentBloomWk = Object.keys(bloomData).sort().reverse().find(wk => Object.keys(bloomData[wk]).length > 0);
+  let bloomHtml = '';
+  if (!recentBloomWk) {
+    bloomHtml = `<div class="dash-empty">No bloom data yet.</div>`;
+  } else {
+    const bloomEntry = bloomData[recentBloomWk];
+    const bloomPlantNames = Object.keys(bloomEntry).filter(k => (bloomEntry[k]||[]).length > 0).sort();
+    const isCurrentWk = recentBloomWk === cWk;
+    bloomHtml = `<div style="font-size:11px;color:var(--color-text-tertiary);margin-bottom:8px;">${isCurrentWk?'This week':'Week of '+fmtWK(recentBloomWk)} · ${bloomPlantNames.length} plant${bloomPlantNames.length!==1?'s':''}</div>`;
+    bloomHtml += bloomPlantNames.length
+      ? bloomPlantNames.map(n=>`<span class="bloom-plant-pill">${n}</span>`).join('')
+      : `<div class="dash-empty">Nothing logged.</div>`;
+  }
+
+  // ── RECENT HARVESTS ──
+  const recentHarvests = [...fieldLog]
+    .filter(e => e.type==='harvest')
+    .sort((a,b)=>(b.date||'').localeCompare(a.date||''))
+    .slice(0,6);
+  let harvestHtml = '';
+  if (!recentHarvests.length) {
+    harvestHtml = `<div class="dash-empty">No harvests logged yet.</div>`;
+  } else {
+    harvestHtml = recentHarvests.map(h => `<div class="harvest-row">
+      <div>
+        <div class="harvest-plant">${h.plantName}</div>
+        <div class="harvest-meta">${flDateStr(h.date)}</div>
+      </div>
+      <div class="harvest-qty">${h.qty} ${h.unit}</div>
+    </div>`).join('');
+  }
+
+  // ── SHOPPING LIST ──
+  const shopItems = supplies.filter(s => {
+    if (['Seed Starting Supplies','Tools & Equipment'].includes(s.cat)) return (parseInt(s.qty)||0) <= 2;
+    return s.status === 'low' || s.status === 'out';
+  }).slice(0,8);
+  let shopHtml = '';
+  if (!shopItems.length) {
+    shopHtml = `<div class="dash-empty">All stocked up.</div>`;
+  } else {
+    shopHtml = shopItems.map(s => {
+      const isQty = ['Seed Starting Supplies','Tools & Equipment'].includes(s.cat);
+      const stLabel = isQty ? `${parseInt(s.qty)||0} left` : (s.status==='out'?'Out':'Low');
+      const stClass = (s.status==='out'||(isQty&&(parseInt(s.qty)||0)===0)) ? 'gs-out' : 'gs-low';
+      return `<div class="shop-row">
+        <div class="shop-name">${s.name}</div>
+        <span class="shop-status ${stClass}">${stLabel}</span>
+      </div>`;
+    }).join('');
+    if (shopItems.length >= 8) shopHtml += `<button class="dash-card-link" onclick="showSection('supplies');showGSView('shopping')" style="margin-top:8px;display:block;">View full list →</button>`;
+  }
+
+  return `
+    <div style="margin-bottom:1.25rem;">
+      <div style="font-size:20px;font-weight:500;color:var(--color-text-primary);">Good ${today.getHours()<12?'morning':today.getHours()<17?'afternoon':'evening'}</div>
+      <div style="font-size:13px;color:var(--color-text-tertiary);margin-top:2px;">${dateStr} · Seattle, WA</div>
+    </div>
+
+    <!-- Weather full width -->
+    <div class="dash-card full" style="margin-bottom:16px;">
+      <div class="dash-card-header">
+        <div class="dash-card-title">7-Day Forecast</div>
+      </div>
+      ${weatherHtml}
+    </div>
+
+    <!-- 2-column grid -->
+    <div class="dash-grid">
+
+      <!-- Tasks -->
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <div class="dash-card-title">Upcoming Tasks</div>
+          <button class="dash-card-link" onclick="showSection('fieldlog')">Field Log →</button>
+        </div>
+        ${tasksHtml}
+      </div>
+
+      <!-- Bloom summary -->
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <div class="dash-card-title">In Bloom</div>
+          <button class="dash-card-link" onclick="showSection('bloom')">Bloom Tracker →</button>
+        </div>
+        ${bloomHtml}
+      </div>
+
+      <!-- Recent harvests -->
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <div class="dash-card-title">Recent Harvests</div>
+          <button class="dash-card-link" onclick="showSection('fieldlog');showFLView('harvest')">All Harvests →</button>
+        </div>
+        ${harvestHtml}
+      </div>
+
+      <!-- Shopping list -->
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <div class="dash-card-title">Need to Buy</div>
+          <button class="dash-card-link" onclick="showSection('supplies');showGSView('shopping')">Full List →</button>
+        </div>
+        ${shopHtml}
+      </div>
+
+    </div>`;
+}
 
 // ─── CATALOG ─────────────────────────────────────────────────────
 window.renderGrid = function() {
