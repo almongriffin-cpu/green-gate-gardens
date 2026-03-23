@@ -573,6 +573,11 @@
       <div class="form-section">History &amp; Notes</div>
       <div class="form-field full"><label class="form-label">Wishlist / To-Do</label><textarea id="f-wishlist"></textarea></div>
       <div class="form-field full"><label class="form-label">General Notes</label><textarea id="f-notes"></textarea></div>
+      <div class="form-section">Varieties &amp; Quantities</div>
+      <div class="form-field full" style="grid-column:1/-1;">
+        <div id="f-varieties-list" style="display:flex;flex-direction:column;gap:6px;"></div>
+        <button type="button" onclick="addModalVariety()" style="margin-top:8px;width:100%;font-size:12px;color:var(--color-text-secondary);background:none;border:0.5px dashed var(--color-border-secondary);border-radius:var(--border-radius-md);padding:7px;cursor:pointer;">+ Add Variety</button>
+      </div>
     </div>
     <div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">Cancel</button><button class="btn-save" onclick="savePlant()">Save Plant</button></div>
   </div>
@@ -1236,6 +1241,7 @@ function renderDetail() {
       <td class="td-exp"><button class="expand-btn" onclick="toggleVar(${i})">${isE?'▲':'▼'}</button></td>
     </tr>
     ${isE ? `<tr><td colspan="5" style="padding:4px 0 10px 0;"><div class="ov-inner">
+      <div class="ov-field"><div class="ov-label">Variety Name</div><input class="ov-input" style="width:160px;" type="text" placeholder="Variety name" value="${v.name||''}" oninput="updVar(${i},'name',this.value)"></div>
       <div class="ov-field"><div class="ov-label">Qty</div><input class="ov-input" style="width:60px;" type="number" min="0" value="${v.qty||0}" onchange="updVar(${i},'qty',this.value)"></div>
       <div class="ov-field"><div class="ov-label">Location Override</div><input class="ov-input" style="width:130px;" type="text" placeholder="Leave blank for shared" value="${v.loc||''}" oninput="updVar(${i},'loc',this.value)"></div>
       <div class="ov-field"><div class="ov-label">Status Override</div><select class="ov-select" onchange="updVar(${i},'status',this.value)">
@@ -1319,16 +1325,72 @@ window.addVar = async () => { const p=plants.find(x=>x.id===detailId); if(!p)ret
 window.toggleBloom = async (id,v) => { const p=plants.find(x=>x.id===id); if(!p)return; p.inBloom=v; await saveToFirebase('plants'); renderGrid(); renderDetail(); };
 
 // ─── MODAL ───────────────────────────────────────────────────────
-window.openModal = id => { editId=id||null; const p=id?plants.find(x=>x.id===id):null; document.getElementById('modalTitle').textContent=p?'Edit Plant':'Add Plant'; FIELDS.forEach((f,i)=>{ const el=document.getElementById(FIDS[i]); if(el)el.value=p?(p[f]||''):''; }); document.getElementById('f-bloom').checked=p?!!p.inBloom:false; document.getElementById('modalBg').classList.add('open'); };
+window.openModal = id => {
+  editId = id || null;
+  const p = id ? plants.find(x=>x.id===id) : null;
+  document.getElementById('modalTitle').textContent = p ? 'Edit Plant' : 'Add Plant';
+  FIELDS.forEach((f,i) => { const el=document.getElementById(FIDS[i]); if(el) el.value=p?(p[f]||''):''; });
+  document.getElementById('f-bloom').checked = p ? !!p.inBloom : false;
+  // Populate varieties
+  const list = document.getElementById('f-varieties-list');
+  list.innerHTML = '';
+  (p?.varieties||[]).forEach(v => addModalVariety(v));
+  document.getElementById('modalBg').classList.add('open');
+};
+
+window.addModalVariety = (v) => {
+  const list = document.getElementById('f-varieties-list');
+  const idx = list.children.length;
+  const div = document.createElement('div');
+  div.className = 'modal-variety-row';
+  div.style.cssText = 'display:flex;gap:6px;align-items:center;flex-wrap:wrap;background:var(--color-background-secondary);padding:8px 10px;border-radius:var(--border-radius-md);';
+  div.innerHTML = `
+    <input type="text" placeholder="Variety name" value="${v?.name||''}" style="flex:1;min-width:120px;" class="mv-name">
+    <input type="number" min="0" placeholder="Qty" value="${v?.qty||0}" style="width:64px;" class="mv-qty">
+    <input type="text" placeholder="Location (optional)" value="${v?.loc||''}" style="width:140px;" class="mv-loc">
+    <button type="button" onclick="this.closest('.modal-variety-row').remove()" style="background:none;border:none;color:var(--color-text-danger);cursor:pointer;font-size:16px;padding:0 4px;flex-shrink:0;">×</button>`;
+  list.appendChild(div);
+};
+
 window.closeModal = () => document.getElementById('modalBg').classList.remove('open');
+
 window.savePlant = async () => {
-  const name = document.getElementById('f-name').value.trim(); if(!name){alert('Please enter a Plant Name.');return;}
-  const plant = {name, inBloom: document.getElementById('f-bloom').checked};
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { alert('Please enter a Plant Name.'); return; }
+  const plant = { name, inBloom: document.getElementById('f-bloom').checked };
   FIELDS.forEach((f,i) => { plant[f] = document.getElementById(FIDS[i]).value; });
   const freq = plant.fertFreq?.trim();
   if (freq && !freqGroups.includes(freq)) { freqGroups.push(freq); await saveToFirebase('freq'); }
-  if (editId) { const i=plants.findIndex(x=>x.id===editId); if(i>-1){plant.id=editId;plant.varieties=plants[i].varieties||[];plants[i]=plant;} }
-  else { plant.id=uid(); plant.varieties=[]; plants.push(plant); }
+
+  // Collect varieties from modal
+  const varRows = document.querySelectorAll('.modal-variety-row');
+  const modalVarieties = [...varRows].map(row => ({
+    name: row.querySelector('.mv-name').value.trim() || 'Unnamed Variety',
+    qty: parseInt(row.querySelector('.mv-qty').value) || 0,
+    loc: row.querySelector('.mv-loc').value.trim(),
+    status: ''
+  })).filter(v => v.name !== 'Unnamed Variety' || v.qty > 0);
+
+  if (editId) {
+    const i = plants.findIndex(x=>x.id===editId);
+    if (i > -1) {
+      plant.id = editId;
+      // Merge: keep existing varieties, add new ones from modal that aren't already present
+      const existing = plants[i].varieties || [];
+      const existingNames = existing.map(v=>v.name.toLowerCase());
+      const newOnes = modalVarieties.filter(v => !existingNames.includes(v.name.toLowerCase()));
+      // Update names/qty/loc for existing if modal has same-index entries
+      plant.varieties = modalVarieties.length > 0 ? modalVarieties.map((mv, mi) => {
+        const ex = existing[mi];
+        return ex ? { ...ex, name: mv.name, qty: mv.qty, loc: mv.loc } : mv;
+      }).concat(existing.slice(modalVarieties.length)) : existing;
+      plants[i] = plant;
+    }
+  } else {
+    plant.id = uid();
+    plant.varieties = modalVarieties;
+    plants.push(plant);
+  }
   await saveToFirebase('plants'); closeModal(); renderGrid();
 };
 window.delPlant = async id => { if(!confirm('Remove this plant?'))return; plants=plants.filter(p=>p.id!==id); await saveToFirebase('plants'); closeDetail(); renderGrid(); };
@@ -1933,6 +1995,7 @@ function gsStatusBadge(s) {
 }
 
 function gsNeedsRestocking(s) {
+  if (s.excludeFromShop) return false;
   if (GS_QTY_CATS.includes(s.cat)) return (parseInt(s.qty)||0) <= 2;
   return s.status === 'low' || s.status === 'out';
 }
@@ -1979,6 +2042,10 @@ function renderGSCard(s) {
       ${gsStatusBadge(s)}
     </div>
     ${s.notes ? `<div class="gs-notes">${s.notes}</div>` : ''}
+    <div style="display:flex;align-items:center;gap:6px;margin-top:8px;padding-top:8px;border-top:0.5px solid var(--color-border-tertiary);">
+      <input type="checkbox" id="excl-${s.id}" ${s.excludeFromShop?'checked':''} onchange="toggleGSExclude('${s.id}',this.checked)" style="width:14px;height:14px;cursor:pointer;flex-shrink:0;">
+      <label for="excl-${s.id}" style="font-size:11px;color:var(--color-text-tertiary);cursor:pointer;">Exclude from shopping list</label>
+    </div>
     <div class="gs-card-actions">
       <button class="gs-card-btn" onclick="editGSItem('${s.id}')">Edit</button>
       ${isQty ? `
@@ -2078,6 +2145,13 @@ window.deleteGSItem = async id => {
   await saveToFirebase('supplies');
   renderSupplies();
   if (currentSection === 'fert') renderFert();
+};
+
+window.toggleGSExclude = async (id, excluded) => {
+  const s = supplies.find(x=>x.id===id); if(!s) return;
+  s.excludeFromShop = excluded;
+  await saveToFirebase('supplies');
+  renderGSShopBanner();
 };
 
 window.cycleGSStatus = async id => {
