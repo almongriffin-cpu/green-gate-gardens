@@ -1353,9 +1353,9 @@ function renderDetail() {
       <td class="td-exp"><button class="expand-btn" onclick="toggleVar(${i})">${isE?'▲':'▼'}</button></td>
     </tr>
     ${isE ? `<tr><td colspan="5" style="padding:4px 0 10px 0;"><div class="ov-inner">
-      <div class="ov-field"><div class="ov-label">Variety Name</div><input class="ov-input" style="width:160px;" type="text" placeholder="Variety name" value="${v.name||''}" oninput="updVar(${i},'name',this.value)"></div>
+      <div class="ov-field"><div class="ov-label">Variety Name</div><input class="ov-input" style="width:160px;" type="text" placeholder="Variety name" value="${v.name||''}" onblur="updVarSilent(${i},'name',this.value)"></div>
       <div class="ov-field"><div class="ov-label">Qty</div><input class="ov-input" style="width:60px;" type="number" min="0" value="${v.qty||0}" onchange="updVar(${i},'qty',this.value)"></div>
-      <div class="ov-field"><div class="ov-label">Location Override</div><input class="ov-input" style="width:130px;" type="text" placeholder="Leave blank for shared" value="${v.loc||''}" oninput="updVar(${i},'loc',this.value)"></div>
+      <div class="ov-field"><div class="ov-label">Location Override</div><input class="ov-input" style="width:130px;" type="text" placeholder="Leave blank for shared" value="${v.loc||''}" onblur="updVarSilent(${i},'loc',this.value)"></div>
       <div class="ov-field"><div class="ov-label">Status Override</div><select class="ov-select" onchange="updVar(${i},'status',this.value)">
         <option value="" ${!v.status?'selected':''}>Use Shared</option>
         <option value="active" ${v.status==='active'?'selected':''}>Active</option>
@@ -1432,6 +1432,7 @@ function renderDetail() {
 
 window.toggleVar = i => { expandedVars[i]=!expandedVars[i]; renderDetail(); };
 window.updVar = async (i,k,v) => { const p=plants.find(x=>x.id===detailId); if(!p)return; if(k==='qty')p.varieties[i].qty=parseInt(v)||0; else p.varieties[i][k]=v; debouncedSave('plants'); renderDetail(); renderGrid(); };
+window.updVarSilent = (i,k,v) => { const p=plants.find(x=>x.id===detailId); if(!p)return; p.varieties[i][k]=v; debouncedSave('plants'); };
 window.delVar = async i => { const p=plants.find(x=>x.id===detailId); if(!p)return; p.varieties.splice(i,1); delete expandedVars[i]; await saveToFirebase('plants'); renderDetail(); renderGrid(); };
 window.addVar = async () => { const p=plants.find(x=>x.id===detailId); if(!p)return; p.varieties.push({name:'New Variety',qty:0,loc:'',status:''}); expandedVars[p.varieties.length-1]=true; await saveToFirebase('plants'); renderDetail(); renderGrid(); };
 window.toggleBloom = async (id,v) => { const p=plants.find(x=>x.id===id); if(!p)return; p.inBloom=v; await saveToFirebase('plants'); renderGrid(); renderDetail(); };
